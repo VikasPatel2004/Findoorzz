@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HomeSection from '../../components/HomeComponents/HomeSection';
 import CardSection from '../../components/HomeComponents/CardSection';
 import HowItWorksSection from '../../components/HomeComponents/HowItWorks';
+import FeatureSection from '../../components/HomeComponents/FeaturesSection';
 
 function HomePage() {
     const [isCard1Visible, setIsCard1Visible] = useState(false);
@@ -56,6 +57,7 @@ function HomePage() {
                 isCard2Visible={isCard2Visible} 
             />
             <HowItWorksSection isVisible={isWorksVisible} />
+            <FeatureSection isVisible={isWorksVisible} />
         </div>
     );
 }

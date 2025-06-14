@@ -36,60 +36,75 @@ const HowItWorksSection = ({ isVisible }) => {
   };
 
   return (
-    <section id="works-section" className="max-w-5xl mx-auto px-4 py-10 md:py-16 bg-white">
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <motion.div
-          className="flex-1 max-w-xs md:max-w-none hidden md:block" // Hide on mobile
-          initial={{ opacity: 0, x: -100 }}
-          animate={isVisible ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+    <section id="works-section" className="max-w-6xl mx-auto px-4 py-10 bg-white">
+      {/* Card Container */}
+      <motion.div 
+        className="border rounded-lg shadow-lg p-6 bg-amber-50" // Changed background to light yellow
+        initial={{ opacity: 0, y: 20 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Centered Heading */}
+        <motion.h2 
+          className="text-lg md:text-3xl font-bold text-gray-800 text-center mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
-          <img
-            src={Works}
-            alt="How Findoorz Works"
-            className="rounded-lg w-3/4 h-auto object-cover" // Smaller size
-            loading="lazy"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-        </motion.div>
-        
-        <motion.div
-          className="flex-1"
-          initial={{ opacity: 0, x: 100 }}
-          animate={isVisible ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <h2 className="text-xl md:text-3xl font-extrabold mb-8 text-gray-800"> {/* Smaller text size */}
-            How Findoorz Works
-          </h2>
-          <div className="space-y-5"> {/* Smaller spacing */}
-            {steps.map((step, idx) => (
-              <motion.div
-                key={idx}
-                className="flex items-start gap-3" // Smaller gap
-                custom={idx}
-                initial="hidden"
-                animate={isVisible ? "visible" : "hidden"}
-                variants={stepVariants}
-              >
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-teal-400 text-white flex items-center justify-center font-bold text-lg shadow-md">
-                    {idx + 1}
+          How Findoorz Works
+        </motion.h2>
+
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <motion.div
+            className="flex-1 max-w-xs md:max-w-sm flex justify-center" // Center the image container
+            initial={{ opacity: 0, x: -100 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <img
+              src={Works}
+              alt="How Findoorz Works"
+              className="rounded-lg w-48 h-auto object-cover shadow-md" // Set a fixed width for the image
+              loading="lazy"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </motion.div>
+          
+          <motion.div
+            className="flex-1"
+            initial={{ opacity: 0, x: 100 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="space-y-3">
+              {steps.map((step, idx) => (
+                <motion.div
+                  key={idx}
+                  className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm"
+                  custom={idx}
+                  initial="hidden"
+                  animate={isVisible ? "visible" : "hidden"}
+                  variants={stepVariants}
+                >
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-teal-400 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                      {idx + 1}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1"> {/* Smaller title size */}
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed text-xs md:text-sm"> {/* Smaller description size */}
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+                  <div>
+                    <h3 className="text-md font-semibold text-gray-900 mb-1">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed text-xs">
+                      {step.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </section>
   );
 };
