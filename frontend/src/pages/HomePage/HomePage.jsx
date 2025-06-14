@@ -3,6 +3,8 @@ import HomeSection from '../../components/HomeComponents/HomeSection';
 import CardSection from '../../components/HomeComponents/CardSection';
 import HowItWorksSection from '../../components/HomeComponents/HowItWorks';
 import FeatureSection from '../../components/HomeComponents/FeaturesSection';
+import HomeCards from "../../components/HomeComponents/HomeCards";
+import ReviewSlider from "../../components/HomeComponents/ReviewSlides";
 
 function HomePage() {
     const [isCard1Visible, setIsCard1Visible] = useState(false);
@@ -58,6 +60,7 @@ function HomePage() {
             />
             <HowItWorksSection isVisible={isWorksVisible} />
             <FeatureSection isVisible={isWorksVisible} />
+            <ReviewSlider/>
         </div>
     );
 }

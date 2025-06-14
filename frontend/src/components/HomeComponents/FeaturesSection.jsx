@@ -74,7 +74,9 @@ const FeatureSection = () => {
         animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
       >
-        Why Choose Findoorz?
+       <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight">
+              <span className="text-yellow-400">Why </span>Findoorz ?
+                    </h1>
       </motion.h2>
 
       <motion.div 
@@ -92,7 +94,7 @@ const FeatureSection = () => {
             {features.map((feature, index) => (
               <motion.div 
                 key={index} 
-                className="flex flex-col md:flex-row md:items-start gap-4 p-4 border rounded-lg shadow-md"
+                className="flex flex-col md:flex-row md:items-start gap-4 p-4 border rounded-lg shadow-md bg-white" // Added background color for card effect
                 custom={index}
                 variants={featureVariants}
               >

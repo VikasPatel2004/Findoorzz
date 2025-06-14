@@ -51,7 +51,8 @@ const HowItWorksSection = ({ isVisible }) => {
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
         >
-          How Findoorz Works
+         "How it Works"
+
         </motion.h2>
 
         <div className="flex flex-col md:flex-row items-center gap-6">
