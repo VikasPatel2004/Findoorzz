@@ -3,7 +3,7 @@ import HomeSection from '../../components/HomeComponents/HomeSection';
 import CardSection from '../../components/HomeComponents/CardSection';
 import HowItWorksSection from '../../components/HomeComponents/HowItWorks';
 import FeatureSection from '../../components/HomeComponents/FeaturesSection';
-import HomeCards from "../../components/HomeComponents/HomeCards";
+import HomeCards from "../../components/HomeComponents/RoomCards";
 import ReviewSlider from "../../components/HomeComponents/ReviewSlides";
 
 function HomePage() {

@@ -61,21 +61,21 @@ export default function ResponsiveNavbarWithZoomInHover() {
           {/* Right side navigation for Home, Flat, PG, and Login sections */}
           <div className="hidden md:flex items-center space-x-6">
             <a
-              href="#home"
+              href="/"
               className={linkClassNames}
               aria-label="Home page"
             >
               Home
             </a>
             <a
-              href="#flat"
+              href="/flat"
               className={linkClassNames}
               aria-label="Flat section"
             >
               Flat
             </a>
             <a
-              href="#pg"
+              href="/pg"
               className={linkClassNames}
               aria-label="PG section"
             >

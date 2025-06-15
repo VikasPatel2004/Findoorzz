@@ -1,6 +1,6 @@
 // Slider.js
 import React, { useState, useEffect } from 'react';
-import RoomCard from "../../components/Cards/RoomCard";
+import RoomCard from "../Cards/RoomCard";
 
 const listings = [
   { title: "Arcadia", location: "Sapna Sangeeta 452001, Indore (M.P.)", price: 8500, originalPrice: 11500, discount: "26%" },

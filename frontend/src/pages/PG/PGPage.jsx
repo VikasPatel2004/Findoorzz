@@ -5,7 +5,7 @@ import PgFaq from '../../components/PGComponents/PGFaq';
 
 export default function PGPage() {
   return (
-    <main className="bg-gray-50 min-h-screen">
+    <main className=" min-h-screen">
       {/* Landing section with Landlord and Student cards */}
       <PgCard/>
 

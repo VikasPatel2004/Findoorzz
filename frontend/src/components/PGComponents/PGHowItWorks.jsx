@@ -1,14 +1,42 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function PgHowItWorks() {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Stop observing once visible
+        }
+      },
+      { threshold: 0.3 } // Trigger when 10% of the section is visible
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+    <section
+      ref={sectionRef}
+      className={`max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8 bg-amber-50 rounded-lg shadow-md transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+    >
+      <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight py-8 text-center">
         How PG Renting Works
-      </h2>
+      </h1>
       <div className="grid gap-10 md:grid-cols-3">
         {/* Step 1 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
+        <div className={`bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center transform transition-transform duration-700 ${isVisible ? 'translate-y-0' : 'translate-y-10 opacity-0'}`}>
           <div className="mb-6 flex justify-center">
             {/* Icon */}
             <svg
@@ -33,7 +61,7 @@ export default function PgHowItWorks() {
         </div>
 
         {/* Step 2 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
+        <div className={`bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center transform transition-transform duration-700 ${isVisible ? 'translate-y-0' : 'translate-y-10 opacity-0'}`}>
           <div className="mb-6 flex justify-center">
             {/* Icon */}
             <svg
@@ -59,7 +87,7 @@ export default function PgHowItWorks() {
         </div>
 
         {/* Step 3 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
+        <div className={`bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center transform transition-transform duration-700 ${isVisible ? 'translate-y-0' : 'translate-y-10 opacity-0'}`}>
           <div className="mb-6 flex justify-center">
             {/* Icon */}
             <svg
