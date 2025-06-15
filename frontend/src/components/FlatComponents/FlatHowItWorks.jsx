@@ -1,88 +1,62 @@
 import React from 'react';
 
-export default function PgHowItWorks() {
+export default function FlatHowItWorks() {
   return (
-    <section className="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8 bg-white rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-        How PG Renting Works
-      </h2>
-      <div className="grid gap-10 md:grid-cols-3">
-        {/* Step 1 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
-          <div className="mb-6 flex justify-center">
-            {/* Icon */}
-            <svg
-              className="h-16 w-16 text-indigo-600"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 10h18M3 14h18M10 18h4"
-              />
-            </svg>
+    <section className="bg-yellow-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-4xl font-extrabold text-amber-700 mb-6">
+          How Findoorz Flat Section Works
+        </h2>
+        <p className="text-lg text-amber-900 max-w-3xl mx-auto mb-12">
+          Seamlessly connect lenders, renters, and brokers in a simple 4-step process designed for ease and trust.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 max-w-5xl mx-auto">
+          {/* Step 1 */}
+          <div className="bg-amber-100 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform hover:scale-105">
+            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
+              1
+            </div>
+            <h3 className="font-semibold text-amber-800 text-xl mb-2">List the Flat</h3>
+            <p className="text-amber-700">
+              Lenders add their flat listings with images and detailed amenities.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-4">Landlord Lists PG</h3>
-          <p className="text-gray-700">
-            Landlords register and upload images and details of their PG rooms with facilities.
-          </p>
-        </div>
 
-        {/* Step 2 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
-          <div className="mb-6 flex justify-center">
-            {/* Icon */}
-            <svg
-              className="h-16 w-16 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="7" r="4" strokeLinejoin="round" />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5.121 17.804A4.005 4.005 0 0112 15a4.005 4.005 0 016.879 2.804"
-              />
-            </svg>
+          {/* Step 2 */}
+          <div className="bg-amber-100 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform hover:scale-105">
+            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
+              2
+            </div>
+            <h3 className="font-semibold text-amber-800 text-xl mb-2">Search & Book</h3>
+            <p className="text-amber-700">
+              Renters browse available flats, apply filters, and book their preferred flat.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-4">Student Searches PG</h3>
-          <p className="text-gray-700">
-            Students browse listings based on location, price, and facilities for free.
-          </p>
-        </div>
 
-        {/* Step 3 */}
-        <div className="bg-gray-50 p-8 rounded-lg shadow hover:shadow-lg transition-shadow text-center">
-          <div className="mb-6 flex justify-center">
-            {/* Icon */}
-            <svg
-              className="h-16 w-16 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 17l6-6M15 17l-6-6"
-              />
-            </svg>
+          {/* Step 3 */}
+          <div className="bg-amber-100 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform hover:scale-105">
+            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
+              3
+            </div>
+            <h3 className="font-semibold text-amber-800 text-xl mb-2">Broker Assigned</h3>
+            <p className="text-amber-700">
+              A trusted broker is assigned to coordinate viewings and facilitate communication.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-4">Connect &amp; Book</h3>
-          <p className="text-gray-700">
-            Students contact landlords directly to finalize bookings, initially without charges.
-          </p>
+
+          {/* Step 4 */}
+          <div className="bg-amber-100 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform hover:scale-105">
+            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
+              4
+            </div>
+            <h3 className="font-semibold text-amber-800 text-xl mb-2">Secure Payment</h3>
+            <p className="text-amber-700">
+              Payments are processed securely and split transparently between lender, broker, and Findoorz.
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
