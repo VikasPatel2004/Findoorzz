@@ -10,10 +10,10 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
     return (
         <>
             {/* First Image Card Section */}
-            <div className="flex flex-col justify-center items-center p-4 mt-8" id="card1-section">
+            <div className="flex flex-col justify-center items-center p-4 mt-12" id="card1-section">
                 <motion.div 
                     ref={card1Ref}
-                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 shadow-lg rounded-lg overflow-hidden m-2"
+                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 rounded-lg overflow-hidden m-2"
                     initial={{ opacity: 0, x: -100 }}
                     animate={isCard1Visible ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
@@ -23,11 +23,11 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                         alt="PG Accommodation" 
                         className="w-full h-full object-cover" // Changed to object-cover
                     />
-                    <div className="absolute top-1/2 left-2/3 transform -translate-x-1/2 -translate-y-1/2 text-center bg-opacity-50 p-4 rounded">
-                        <h1 className="text-lg md:text-3xl font-bold leading-tight">
+                    <div className="absolute top-1/2 left-[60%] transform -translate-x-1/2 -translate-y-1/2 text-center bg-opacity-50 p-4 rounded">
+                        <h1 className="text-sm md:text-3xl font-bold leading-tight">
                             "Find Your <span className="text-yellow-400">PG</span> Fast And <span className="text-yellow-400">Fuse</span> Free!"
                         </h1>
-                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-4 rounded hover:bg-yellow-500 transition duration-300 text-sm md:text-lg">
+                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg">
                             Learn More
                         </button>
                     </div>
@@ -35,10 +35,10 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
             </div>
 
             {/* Second Image Card Section */}
-            <div className="flex flex-col justify-center items-center p-2 mt-4" id="card2-section">
+            <div className="flex flex-col justify-center items-center p-2 mb-8" id="card2-section">
                 <motion.div 
                     ref={card2Ref}
-                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 shadow-lg rounded-lg overflow-hidden m-2"
+                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 rounded-lg overflow-hidden m-2"
                     initial={{ opacity: 0, x: 100 }}
                     animate={isCard2Visible ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
@@ -48,11 +48,11 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                         alt="Flat Accommodation" 
                         className="w-full h-full object-cover" // Changed to object-cover
                     />
-                    <div className="absolute top-1/2 left-2/3 transform -translate-x-1/2 -translate-y-1/2 text-center bg-opacity-50 p-4 rounded">
-                        <h1 className="text-lg md:text-3xl font-bold leading-tight">
+                    <div className="absolute top-1/2 left-[60%] transform -translate-x-1/2 -translate-y-1/2 text-center bg-opacity-50 p-4 rounded">
+                        <h1 className="text-sm md:text-3xl font-bold leading-tight">
                             "Find Flat, <span className="text-yellow-400">Roomates</span>, Family <span className="text-yellow-400">Make</span> Memories!"
                         </h1>
-                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-4 rounded hover:bg-yellow-500 transition duration-300 text-sm md:text-lg">
+                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg">
                             Learn More
                         </button>
                     </div>

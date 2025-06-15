@@ -30,19 +30,18 @@ export default function PGcard() {
   }, []);
 
   return (
-    <section className="flex flex-col items-center justify-center px-4 pt-12">
-      <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight py-8 text-center">
+    <section className="bg-white flex flex-col items-center justify-center pt-12">
+      <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight pb-12 text-center">
         "Find your <span className="text-yellow-400">perfect</span> PG: where <span className="text-yellow-400">comfort</span> meets convenience!"
       </h1>
-      <div ref={cardRef} className="max-w-5xl w-full grid gap-8 md:grid-cols-2">
+      <div ref={cardRef} className="max-w-4xl w-full grid gap-4 md:grid-cols-2">
         {/* Landlord Card */}
         <div
-          className={`bg-gradient-to-r from-purple-700 to-indigo-600 rounded-lg shadow-lg p-10 text-white flex flex-col items-center transition-transform duration-700 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
+          className={`bg-sky-100 rounded-2xl shadow-lg p-6 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-1000 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
         >
-          <div className="mb-6">
-            {/* Video placeholder for Landlord */}
+          <div className="mb-1 ">
             <video
-              className="mx-auto h-50 w-50 object-cover rounded-md"
+              className="mx-auto h-70 w-70 object-cover  rounded-full" // Changed to rounded-full for circular video
               src={landlordVideo}
               autoPlay
               loop
@@ -51,26 +50,19 @@ export default function PGcard() {
               aria-label="Landlord video demonstration"
             />
           </div>
-          <h2 className="text-2xl font-bold text-amber-300 mb-4 relative">
-            <span className="absolute inset-0 text-yellow-400 -z-10" style={{ filter: 'blur(1px)' }} />
-            Landlord
-          </h2>
-          <p className="mb-6 text-center ">
-            Upload your PG room images and facilities. Manage your listings and connect with students easily.
-          </p>
-          <button className="px-6 py-3 bg-lime-100 text-black font-semibold rounded-md hover:bg-yellow-200 transition">
-            Go to Landlord Section
+          <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Landlord</h3>
+          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition">
+            Explore
           </button>
         </div>
 
         {/* Student Card */}
         <div
-          className={`bg-gradient-to-r from-green-500 to-teal-400 rounded-lg shadow-lg p-10 text-white flex flex-col items-center transition-transform duration-700 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
+          className={`bg-green-100 rounded-2xl shadow-lg p-6 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-1000 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
         >
-          <div className="mb-6">
-            {/* Video placeholder for Student */}
+          <div className="mb-1">
             <video
-              className="mx-auto h-50 w-50 object-cover rounded-md"
+              className="mx-auto h-70 w-70 object-cover rounded-full" // Changed to rounded-full for circular video
               src={studentVideo}
               autoPlay
               loop
@@ -79,15 +71,9 @@ export default function PGcard() {
               aria-label="Student video demonstration"
             />
           </div>
-          <h2 className="text-2xl font-bold text-amber-200 mb-4 relative">
-            <span className="absolute inset-0 text-yellow-400 -z-10" style={{ filter: 'blur(1px)' }} />
-            Student
-          </h2>
-          <p className="mb-6 text-center">
-            Search PG rooms by location, price, and facilities. Connect directly with landlords.
-          </p>
-          <button className="px-6 py-3 bg-lime-100 text-black font-semibold rounded-md hover:bg-yellow-200 transition">
-            Go to Student Section
+          <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Student</h3>
+          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition">
+            Explore
           </button>
         </div>
       </div>
