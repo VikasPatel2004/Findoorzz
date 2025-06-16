@@ -30,7 +30,7 @@ function MyListings() {
                 </button>
             </div>
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">"My Listings"</h2>
-            <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-3 bg-gray-50 rounded-lg gap-6 px-4 md:px-20 py-10">
+            <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-3 bg-gray-50 rounded-lg gap-6 px-4 md:px-20 py-12">
                 {Array(6).fill().map((_, index) => ( // Limit to 6 cards
                     <div className="rounded-lg shadow-md overflow-hidden" key={index}>
                         <img 
