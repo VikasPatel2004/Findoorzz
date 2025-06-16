@@ -68,13 +68,6 @@ export default function ResponsiveNavbarWithZoomInHover() {
               Home
             </a>
             <a
-              href="/flat"
-              className={linkClassNames}
-              aria-label="Flat section"
-            >
-              Flat
-            </a>
-            <a
               href="/pg"
               className={linkClassNames}
               aria-label="PG section"
@@ -82,15 +75,25 @@ export default function ResponsiveNavbarWithZoomInHover() {
               PG
             </a>
             <a
-              href="#login"
-              className={`${linkClassNames} font-semibold border border-black rounded-md transition-all duration-500`}
-              aria-label="Login"
-              style={{ backgroundColor: 'transparent' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f6f0e4'}  // light cream
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              href="/flat"
+              className={linkClassNames}
+              aria-label="Flat section"
             >
-              Login
+              Flat
             </a>
+            <button
+              className={`relative ${linkClassNames} font-semibold border border-black rounded-md overflow-hidden`}
+              aria-label="Login"
+              onClick={() => {
+                // Handle login action here
+                console.log("Login button clicked");
+              }}
+            >
+              {/* Background fill span */}
+              <span className="absolute inset-0 bg-yellow-500 scale-x-0 origin-center transition-transform duration-500 ease-in-out hover:scale-x-100 pointer-events-none" />
+              {/* Text */}
+              <span className="relative z-10 text-black">Login</span>
+            </button>
           </div>
 
           {/* Mobile hamburger menu */}
@@ -143,14 +146,13 @@ export default function ResponsiveNavbarWithZoomInHover() {
           >
             PG
           </a>
-          <a
-            href="#login"
+          <button
             className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
             role="menuitem"
             onClick={() => setMenuOpen(false)}
           >
             Login
-          </a>
+          </button>
         </div>
       )}
     </nav>
