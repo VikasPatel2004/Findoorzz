@@ -1,5 +1,5 @@
 import React from 'react';
-import MyListings from '../../../components/PGComponents/LandLordComponent/MyListings';
+import MyListings from '../../../components/PGComponents/LandLordComponent/MyPGListings';
 
 function LandlordPage() {
     return ( 
