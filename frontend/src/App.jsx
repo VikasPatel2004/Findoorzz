@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import Footer from './components/Footer';
 import PgPage from './pages/PG/PGPage';
 import FlatPage from './pages/Flat/FlatPage';
+import LandlordPage from './pages/PG/Landlord/LandlordPage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/PG" element={<PgPage/>} />
         <Route path="/Flat" element={<FlatPage/>} />
+        <Route path="/Landlord" element={<LandlordPage/>} />
       </Routes>
       <Footer />
     </BrowserRouter>

@@ -51,7 +51,7 @@ export default function PGcard() {
             />
           </div>
           <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Landlord</h3>
-          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition">
+          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" >
             Explore
           </button>
         </div>
