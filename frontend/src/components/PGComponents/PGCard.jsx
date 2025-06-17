@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-// Replace the paths with your actual video file paths or URLs
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import landlordVideo from '../../assets/landlord.mp4';
 import studentVideo from '../../assets/Student.mp4';
 
 export default function PGcard() {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,6 +30,16 @@ export default function PGcard() {
     };
   }, []);
 
+  // Handle click for landlord button
+  const handleLandlordClick = () => {
+    navigate('/landlord'); // Replace with the actual path to the landlord page
+  };
+
+  // Handle click for student button
+  const handleStudentClick = () => {
+    navigate('/student'); // Replace with the actual path to the student page
+  };
+
   return (
     <section className="bg-white flex flex-col items-center justify-center pt-12">
       <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight pb-12 text-center">
@@ -41,7 +52,7 @@ export default function PGcard() {
         >
           <div className="mb-1 ">
             <video
-              className="mx-auto h-70 w-70 object-cover  rounded-full" // Changed to rounded-full for circular video
+              className="mx-auto h-70 w-70 object-cover rounded-full" // Changed to rounded-full for circular video
               src={landlordVideo}
               autoPlay
               loop
@@ -51,7 +62,10 @@ export default function PGcard() {
             />
           </div>
           <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Landlord</h3>
-          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" >
+          <button 
+            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" 
+            onClick={handleLandlordClick} // Add onClick handler
+          >
             Explore
           </button>
         </div>
@@ -72,7 +86,10 @@ export default function PGcard() {
             />
           </div>
           <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Student</h3>
-          <button className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition">
+          <button 
+            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" 
+            onClick={handleStudentClick} // Add onClick handler
+          >
             Explore
           </button>
         </div>
