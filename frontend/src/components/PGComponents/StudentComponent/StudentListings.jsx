@@ -15,7 +15,7 @@ function StudentListings() {
         <div className="container mx-auto text-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-4">
                 {Array(6).fill().map((_, index) => ( // Limit to 6 cards
-                    <div className="rounded-lg bg-orange-50 shadow-md overflow-hidden" key={index}>
+                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={index}>
                         <img 
                             src={PGListings} 
                             className="w-full h-52 object-cover" // Increased height

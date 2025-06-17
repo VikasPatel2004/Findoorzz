@@ -32,7 +32,7 @@ function MyListings() {
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">"My Listings"</h2>
             <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
                 {Array(6).fill().map((_, index) => ( // Limit to 6 cards
-                    <div className="rounded-lg bg-orange-50 shadow-md overflow-hidden" key={index}>
+                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={index}>
                         <img 
                             src={PGListings} 
                             className="w-full h-52 object-cover" // Increased height
