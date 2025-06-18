@@ -1,11 +1,11 @@
 import React from 'react';
-import MyListings from '../../../components/PGComponents/LandLordComponent/MyPGListings';
+import MyLandlordListings from '../../../components/PGComponents/LandLordComponent/MyLandlordListings';
 import LandlordHelpSection from '../../../components/PGComponents/LandLordComponent/Help';
 
 function LandlordPage() {
     return ( 
         <>
-        <MyListings />
+        <MyLandlordListings />
         <LandlordHelpSection/>
         </>
      );
