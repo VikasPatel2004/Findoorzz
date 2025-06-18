@@ -14,7 +14,7 @@ function StudentListingDetailPage() {
         airConditioning: true,
         rentAmount: '2000',
         independent: true,
-        propertyImages: [], // Add image files here
+        // propertyImages: [], // Add image files here
         description: 'A beautiful flat located in a quiet neighborhood with all amenities.',
     };
 
