@@ -7,7 +7,7 @@ function MyLenderListings() {
     
     // Navigate to the Landlord route
     const handleNewClick = () => {
-        navigate('/PGLandlordFormHome'); // Navigate to the Landlord route
+        navigate('/LenderForm'); // Navigate to the Landlord route
     };
 
     // Navigate to the Renter route

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function LandlordListingForm() {
+function LenderListingForm() {
     const [formData, setFormData] = useState({
         landlordName: '',
         contactNumber: '',
@@ -279,4 +279,4 @@ function LandlordListingForm() {
     );
 }
 
-export default LandlordListingForm;
+export default LenderListingForm;

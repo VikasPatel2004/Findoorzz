@@ -11,6 +11,7 @@ import StudentPage from './pages/PG/Student/StudentPage';
 import LenderPage from './pages/Flat/Lender/LenderPage';
 import RenterPage from './pages/Flat/Renter/RenterPage';
 import LandlordListingForm from './pages/PG/Landlord/LandlordListingForm';
+import LenderListingForm from './pages/Flat/Lender/LenderListingForm';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/LandlordForm" element={<LandlordListingForm/>} />
         <Route path="/Student" element={<StudentPage/>} />
         <Route path="/Lender" element={<LenderPage/>} />
+        <Route path="/LenderForm" element={<LenderListingForm/>} />
         <Route path="/Renter" element={<RenterPage/>} />
       </Routes>
       <Footer />
