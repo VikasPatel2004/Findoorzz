@@ -12,6 +12,7 @@ import LenderPage from './pages/Flat/Lender/LenderPage';
 import RenterPage from './pages/Flat/Renter/RenterPage';
 import LandlordListingForm from './pages/PG/Landlord/LandlordListingForm';
 import LenderListingForm from './pages/Flat/Lender/LenderListingForm';
+import StudentListingDetailPage from './pages/PG/Student/StudentListingFullPage';
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Route path="/Flat" element={<FlatPage/>} />
         <Route path="/Landlord" element={<LandlordPage/>} />
         <Route path="/LandlordForm" element={<LandlordListingForm/>} />
-        <Route path="/Student" element={<StudentPage/>} />
+        <Route path="/Student" element={<StudentPage/>} /> 
+        <Route path="/RoomDetail" element={<StudentListingDetailPage/>} />
         <Route path="/Lender" element={<LenderPage/>} />
         <Route path="/LenderForm" element={<LenderListingForm/>} />
         <Route path="/Renter" element={<RenterPage/>} />
