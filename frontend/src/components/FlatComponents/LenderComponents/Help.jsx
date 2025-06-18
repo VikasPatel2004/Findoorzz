@@ -4,7 +4,7 @@ import HelpVideo from "../../../assets/HelpSupport.mp4"; // Import the video
 
 export default function LenderHelpSection() {
   return (
-    <section className="bg-white px-4 md:px-20 max-w-8xl mx-auto rounded-lg mt-8 text-center  py-6">
+    <section className="bg-white px-4 md:px-20 max-w-8xl mx-auto rounded-lg mt-8 text-center py-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
         {/* Left: Video */}
         <div className="p-2 rounded-lg bg-white">
@@ -20,24 +20,25 @@ export default function LenderHelpSection() {
 
         {/* Right: Text content */}
         <div className="p-4 py-12 rounded-lg bg-amber-50 shadow-md"> {/* Added shadow for depth */}
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-4">
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-8 ">
             Help & Support
           </h2>
-          <p className="text-gray-700 mb-3 text-lg leading-relaxed">
-            At Findoorz, we make it simple and hassle-free for landlords to list their PG rooms and flats. Here’s how we can assist you:
-          </p>
-          <ul className="list-disc list-inside text-left text-gray-700 mb-4">
+          <ul className="list-disc list-inside text-left text-gray-700 mb-4 px-6">
             <li className="mb-2">
               <FaQuestionCircle className="inline-block text-blue-500 mr-2" />
-              <strong>Easy Listing:</strong> Upload images and update facilities effortlessly.
+              <strong>Simple Listing Process:</strong> Effortlessly upload images and details of your flats.
             </li>
             <li className="mb-2">
               <FaQuestionCircle className="inline-block text-blue-500 mr-2" />
-              <strong>Support Team:</strong> Get assistance with pricing and connecting with tenants.
+              <strong>Dedicated Support Team:</strong> Get help with pricing strategies and connecting with potential renters.
             </li>
             <li className="mb-2">
               <FaQuestionCircle className="inline-block text-blue-500 mr-2" />
-              <strong>Reach Your Audience:</strong> Your listings will be seen by the right people.
+              <strong>Maximize Your Reach:</strong> Your listings will be promoted to a wide audience of interested renters.
+            </li>
+            <li className="mb-2">
+              <FaQuestionCircle className="inline-block text-blue-500 mr-2" />
+              <strong>Broker Assistance:</strong> Our registered brokers can help facilitate viewings and bookings.
             </li>
           </ul>
           <div className="flex space-x-4 mt-4 justify-center">

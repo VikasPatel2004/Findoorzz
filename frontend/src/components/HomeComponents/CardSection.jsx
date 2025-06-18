@@ -1,11 +1,23 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import PGcard from "../../assets/PG.svg"; // Path to your PG image
 import Flatcard from "../../assets/Flat.svg"; // Path to your Flat image
 
 const CardSection = ({ isCard1Visible, isCard2Visible }) => {
+    const navigate = useNavigate(); // Initialize useNavigate
     const card1Ref = useRef(null);
     const card2Ref = useRef(null);
+
+    // Handler for PG button click
+    const handlePGButtonClick = () => {
+        navigate('/Pg'); // Navigate to PG listings
+    };
+
+    // Handler for Flat button click
+    const handleFlatButtonClick = () => {
+        navigate('/Flat'); // Navigate to Flat listings
+    };
 
     return (
         <>
@@ -27,8 +39,11 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                         <h1 className="text-sm md:text-3xl font-bold leading-tight">
                             "Find Your <span className="text-yellow-400">PG</span> Fast And <span className="text-yellow-400">Fuse</span> Free!"
                         </h1>
-                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg">
-                            Learn More
+                        <button 
+                            className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg"
+                            onClick={handlePGButtonClick} // Add onClick handler
+                        >
+                            Explore
                         </button>
                     </div>
                 </motion.div>
@@ -52,8 +67,11 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                         <h1 className="text-sm md:text-3xl font-bold leading-tight">
                             "Find Flat, <span className="text-yellow-400">Roomates</span>, Family <span className="text-yellow-400">Make</span> Memories!"
                         </h1>
-                        <button className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg">
-                            Learn More
+                        <button 
+                            className="mt-2 md:mt-4 bg-yellow-400 text-white font-semibold py-1 px-2 md:py-1 md:px-4 rounded hover:bg-yellow-500 transition duration-300 text-xs md:text-lg"
+                            onClick={handleFlatButtonClick} // Add onClick handler
+                        >
+                            Explore
                         </button>
                     </div>
                 </motion.div>

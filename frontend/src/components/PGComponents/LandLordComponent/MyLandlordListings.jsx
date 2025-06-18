@@ -5,9 +5,9 @@ import PGListings from "../../../assets/Room1.svg";
 function MyListings() {
     const navigate = useNavigate();
     
-    // Navigate to the Landlord route
+    // Navigate to the Landlord Form route
     const handleNewClick = () => {
-        navigate('/PGLandlordFormHome'); // Navigate to the Landlord route
+        navigate('/LandlordForm'); // Navigate to the Landlord Form route
     };
 
     // Navigate to the Renter route
@@ -30,7 +30,7 @@ function MyListings() {
                 </button>
             </div>
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">"My Listings"</h2>
-            <div className="grid grid-cols- sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
                 {Array(6).fill().map((_, index) => ( // Limit to 6 cards
                     <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={index}>
                         <img 
@@ -40,7 +40,7 @@ function MyListings() {
                         />
                         <div className="p-4 text-center">
                             <p className="text-lg font-bold">
-                                <div><b>my address</b></div>
+                                <div><b>My Address</b></div>
                                 <div>
                                     &#8377;2000/night 
                                     <span className="text-gray-500"> +18% GST</span>
