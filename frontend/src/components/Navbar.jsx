@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function ResponsiveNavbarWithZoomInHover() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollingUp, setScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Close menu if screen resized larger than mobile breakpoint
   useEffect(() => {
@@ -28,6 +30,11 @@ export default function ResponsiveNavbarWithZoomInHover() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
 
+  // Navigate to the Signup route
+  const handleButtonClick = () => {
+    navigate('/Signup'); // Navigate to the Signup route
+  };
+
   // Handle scroll to show/hide navbar
   useEffect(() => {
     function handleScroll() {
@@ -50,7 +57,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
           {/* Left side: Logo */}
           <div className="flex items-center space-x-6">
             <a
-              href="#"
+              href="/"
               className="text-black font-bold text-xl select-none"
               aria-label="Logo"
             >
@@ -84,10 +91,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
             <button
               className={`relative ${linkClassNames} font-semibold border border-black rounded-md overflow-hidden`}
               aria-label="Login"
-              onClick={() => {
-                // Handle login action here
-                console.log("Login button clicked");
-              }}
+              onClick={handleButtonClick} // Navigate to Signup on click
             >
               {/* Background fill span */}
               <span className="absolute inset-0 bg-yellow-500 scale-x-0 origin-center transition-transform duration-500 ease-in-out hover:scale-x-100 pointer-events-none" />
@@ -123,7 +127,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
           aria-label="Mobile navigation"
         >
           <a
-            href="#home"
+            href="/"
             className={`${linkClassNames} block px-4 py-3 border-b border-black`}
             role="menuitem"
             onClick={() => setMenuOpen(false)}
@@ -131,7 +135,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
             Home
           </a>
           <a
-            href="#flat"
+            href="/Flat"
             className={`${linkClassNames} block px-4 py-3 border-b border-black`}
             role="menuitem"
             onClick={() => setMenuOpen(false)}
@@ -139,7 +143,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
             Flat
           </a>
           <a
-            href="#pg"
+            href="/Pg"
             className={`${linkClassNames} block px-4 py-3 border-b border-black`}
             role="menuitem"
             onClick={() => setMenuOpen(false)}
@@ -149,7 +153,10 @@ export default function ResponsiveNavbarWithZoomInHover() {
           <button
             className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
             role="menuitem"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => {
+              setMenuOpen(false);
+              handleButtonClick(); // Navigate to Signup on click
+            }}
           >
             Login
           </button>

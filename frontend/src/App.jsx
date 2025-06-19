@@ -14,6 +14,10 @@ import LandlordListingForm from './pages/PG/Landlord/LandlordListingForm';
 import LenderListingForm from './pages/Flat/Lender/LenderListingForm';
 import StudentListingDetailPage from './pages/PG/Student/StudentListingFullPage';
 import RenterListingDetailPage from './pages/Flat/Renter/RenterListingDetailPage';
+import SignupPage from './pages/HomePage/SignupPage';
+import BrokerRegistrationPage from './pages/Flat/Broker/BrokerPage';
+import BrokerDashboardPage from './pages/Flat/Broker/BrokerDashboardPage';
+import BrokerAssignmentPage from './pages/Flat/Broker/BrokerAssignmentPage';
 
 function App() {
   return (
@@ -23,6 +27,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/PG" element={<PgPage/>} />
         <Route path="/Flat" element={<FlatPage/>} />
+        <Route path="/Signup" element={<SignupPage/>} />
         <Route path="/Landlord" element={<LandlordPage/>} />
         <Route path="/LandlordForm" element={<LandlordListingForm/>} />
         <Route path="/Student" element={<StudentPage/>} /> 
@@ -30,6 +35,9 @@ function App() {
         <Route path="/Lender" element={<LenderPage/>} />
         <Route path="/LenderForm" element={<LenderListingForm/>} />
         <Route path="/Renter" element={<RenterPage/>} />
+        <Route path='/BrokerRegistration' element={<BrokerRegistrationPage/>} />
+        <Route path='/BrokerDashboard' element={<BrokerDashboardPage/>} />
+        <Route path="/BrokerAssignment" element={<BrokerAssignmentPage/>} />
         <Route path="/FlatDetails" element={<RenterListingDetailPage/>} />
       </Routes>
       <Footer />
