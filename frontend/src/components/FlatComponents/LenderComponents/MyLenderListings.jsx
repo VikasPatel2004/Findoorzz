@@ -12,7 +12,7 @@ function MyLenderListings() {
 
     // Navigate to the Renter route
     const handleButtonClick = () => {
-        navigate('/PgListingHome'); // Navigate to the Renter route
+        navigate('/FlatDetails'); // Navigate to the Renter route
     };
 
     return (

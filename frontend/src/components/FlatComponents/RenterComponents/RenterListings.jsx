@@ -7,7 +7,7 @@ function RenterListings() {
 
     // Navigate to the Renter details route
     const handleButtonClick = () => {
-        navigate('/RenterDetails'); // Navigate to the Renter details route
+        navigate('/FlatDetails'); // Navigate to the Renter details route
     };
 
     return (

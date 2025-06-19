@@ -1,12 +1,12 @@
 import React from 'react';
 import roomimage from '../../../assets/Room1.svg'; // Ensure this path is correct for your project structure   
 
-const StudentListingDetail = ({ listing }) => {
+const RenterListingDetail = ({ listing }) => {
     return (
         <div className="container mx-auto flex flex-col justify-center items-center py-4 my-4">
             <div className="w-3/4 text-center mb-4">
                 <h3 className="text-3xl pb-2">
-                    This is <span className="text-yellow-500">your</span> selected <span className="text-yellow-500">Room</span>!!
+                    This is <span className="text-yellow-500">your</span> selected <span className="text-yellow-500">Flat</span>!!
                 </h3>
             </div>
             <div className="bg-white p-6 m-2 shadow-lg rounded-2xl w-full max-w-3xl">
@@ -45,4 +45,4 @@ const StudentListingDetail = ({ listing }) => {
     );
 };
 
-export default StudentListingDetail;
+export default RenterListingDetail;
