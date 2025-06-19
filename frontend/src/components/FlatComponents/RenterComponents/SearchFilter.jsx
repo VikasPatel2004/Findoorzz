@@ -31,9 +31,12 @@ const RenterSearchFilter = () => {
     return (
         <div className="container mx-auto pt-4 max-w-8xl">
             <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-20">
-                <h1 className='text-left py-8 text-2xl md:text-3xl'>
-                    "Find your <span className='text-yellow-500'>Flat</span> here!"
-                </h1>
+               <h1 className="text-left font-semibold py-5 text-2xl">
+  "Flat walls may be <span className="text-yellow-500">plain</span>, 
+  but they're <span className="text-yellow-500">painted</span> with 
+  <span className="text-yellow-500"> memories</span> of friends!"
+</h1>
+
                 <button 
                     type="button" 
                     className="btn px-5 py-2 mt-4 md:mt-0 bg-blue-400 text-white rounded-md hover:bg-blue-500 transition duration-300" 

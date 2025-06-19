@@ -31,8 +31,8 @@ const SearchFilter = () => {
     return (
         <div className="container mx-auto pt-4 max-w-8xl">
             <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-20">
-                <h1 className='text-left py-8 text-2xl md:text-3xl'>
-                    "Find your <span className='text-yellow-500'>room</span> here!"
+                <h1 className='text-left font-semibold py-6 text-2xl md:text-3xl'>
+                    "Your <span className='text-yellow-500'>Home</span> Away From <span className='text-yellow-500'>Home </span>!"
                 </h1>
                 <button 
                     type="button" 

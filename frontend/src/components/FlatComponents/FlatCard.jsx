@@ -43,7 +43,7 @@ export default function FlatCard() {
 
   // Handle click for broker button
   const handleBrokerClick = () => {
-    navigate('/broker'); // Replace with the actual path to the broker page
+    navigate('/BrokerRegistration'); // Replace with the actual path to the broker page
   };
 
   return (

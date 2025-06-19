@@ -29,13 +29,12 @@ export default function BrokerRegistrationPage() {
     phone: '',
     address: '',
     aadharNumber: '',
-    panNumber: '',
     experience: '',
     languages: [],
     areas: [],
     photo: null,
     idProof: null,
-    addressProof: null
+    upiId: '', // Added UPI ID field
   });
 
   const handleChange = (e) => {
@@ -51,19 +50,21 @@ export default function BrokerRegistrationPage() {
     e.preventDefault();
     // Here you would typically upload files and submit form data to your backend
     console.log('Form submitted:', formData);
-    navigate('/broker/dashboard');
+    navigate('/BrokerDashboard');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">Broker Registration</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-12">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md px-16 py-6">
+        <h1 className="text-3xl font-bold text-center my-6">
+          <span className="text-amber-400">Broker</span> Registration
+        </h1> 
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Personal Information */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">Personal Information</h2>
+              <h2 className="text-lg font-semibold border-b pb-2 text-center">Personal Information</h2>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700">Full Name</label>
@@ -113,56 +114,30 @@ export default function BrokerRegistrationPage() {
                 />
               </div>
             </div>
+          </div>
+          
+          {/* UPI ID Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold border-b pb-2 text-center">Payment Information</h2>
             
-            {/* Professional Information */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">Professional Information</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Years of Experience</label>
-                <input
-                  type="number"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Languages Spoken</label>
-                <input
-                  type="text"
-                  name="languages"
-                  value={formData.languages.join(', ')}
-                  onChange={(e) => setFormData({...formData, languages: e.target.value.split(',').map(l => l.trim())})}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                  placeholder="English, Hindi, etc."
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Areas of Operation</label>
-                <input
-                  type="text"
-                  name="areas"
-                  value={formData.areas.join(', ')}
-                  onChange={(e) => setFormData({...formData, areas: e.target.value.split(',').map(a => a.trim())})}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                  placeholder="Andheri, Bandra, etc."
-                  required
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">UPI ID</label>
+              <input
+                type="text"
+                name="upiId"
+                value={formData.upiId}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+                required
+              />
             </div>
           </div>
           
           {/* ID Proofs Section */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold border-b pb-2">Identity Verification</h2>
+            <h2 className="text-lg font-semibold border-b pb-2 text-center">Identity Verification</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Photo Upload */}
               <div className="flex flex-col items-center">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
@@ -185,7 +160,7 @@ export default function BrokerRegistrationPage() {
               
               {/* ID Proof Upload */}
               <div className="flex flex-col items-center">
-                <label className="block text-sm font-medium text-gray-700 mb-2">ID Proof (Aadhar/PAN)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">ID Proof (Aadhar)</label>
                 <div className="relative w-32 h-32 bg-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300">
                   {formData.idProof ? (
                     <DocumentTextIcon />
@@ -202,47 +177,15 @@ export default function BrokerRegistrationPage() {
                   required
                 />
               </div>
-              
-              {/* Address Proof Upload */}
-              <div className="flex flex-col items-center">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address Proof</label>
-                <div className="relative w-32 h-32 bg-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300">
-                  {formData.addressProof ? (
-                    <DocumentTextIcon />
-                  ) : (
-                    <IdentificationIcon />
-                  )}
-                </div>
-                <input
-                  type="file"
-                  name="addressProof"
-                  onChange={handleChange}
-                  accept="image/*,.pdf"
-                  className="mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100"
-                  required
-                />
-              </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Aadhar Number</label>
                 <input
                   type="text"
                   name="aadharNumber"
                   value={formData.aadharNumber}
-                  onChange={handleChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">PAN Number</label>
-                <input
-                  type="text"
-                  name="panNumber"
-                  value={formData.panNumber}
                   onChange={handleChange}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
                   required
