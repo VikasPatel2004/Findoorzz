@@ -1,5 +1,6 @@
 import React from 'react';
 import RenterListingDetail from '../../../components/FlatComponents/RenterComponents/RenterListingDetail';
+import FlatReviewsSection from '../../../components/FlatComponents/FlatReviewsAndRatings';
 
 function RenterListingDetailPage() {
     const listingData = {
@@ -21,6 +22,7 @@ function RenterListingDetailPage() {
     return (
         <>
           <RenterListingDetail listing={listingData} />
+          <FlatReviewsSection/>
         </>
     );
 }

@@ -16,12 +16,6 @@ const ClipboardListIcon = () => (
   </svg>
 );
 
-const UserGroupIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 14v2a2 2 0 01-2 2H8a2 2 0 01-2-2v-2m12 0a4 4 0 10-8 0m8 0a4 4 0 01-4 4m-4-4a4 4 0 00-4-4m0 0a4 4 0 00-4 4m0 0a4 4 0 014 4" />
-  </svg>
-);
-
 const CashIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h18v18H3V3z" />
@@ -32,9 +26,8 @@ const CashIcon = () => (
 export default function BrokerDashboardPage() {
   // Sample data - in a real app, this would come from your backend
   const stats = [
-    { name: 'Total Listings', value: '24', icon: ClipboardListIcon },
-    { name: 'Active Clients', value: '8', icon: UserGroupIcon },
-    { name: 'Completed Deals', value: '16', icon: ChartBarIcon },
+    { name: 'Total Deals', value: '16', icon: ClipboardListIcon },
+    { name: 'Completed Listings', value: '24', icon: CashIcon },
     { name: 'Earnings', value: '₹42,500', icon: CashIcon },
   ];
 
@@ -50,7 +43,7 @@ export default function BrokerDashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900">Broker Dashboard</h1>
         
         {/* Stats */}
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat) => (
             <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
@@ -119,7 +112,7 @@ export default function BrokerDashboardPage() {
                 <div className="mt-4">
                   <p className="font-medium">John Smith</p>
                   <p className="text-sm text-gray-600">Andheri, Bandra, Khar</p>
-                  <p className="text-sm text-gray-600">Experience: 5 years</p>
+                  <p className="text-sm text-gray-600">Mobile: 9876543210</p> {/* Added Mobile Number */}
                 </div>
                 <div className="mt-4 pt-2 border-t border-gray-200">
                   <p className="text-xs text-gray-500">Valid until: 31/12/2023</p>

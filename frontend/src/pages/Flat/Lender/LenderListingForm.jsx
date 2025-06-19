@@ -47,7 +47,7 @@ function LenderListingForm() {
         <div className="container mx-auto flex justify-center items-center min-h-screen my-6 ">
             <div className="w-full max-w-4xl p-8 bg-gray-50 px-12 rounded-lg shadow-md">
                 <h3 className="text-center my-8 font-bold text-3xl">
-                    Tell <span className="text-yellow-500">Us About</span> Your Room !!
+                    Tell <span className="text-yellow-500">Us About</span> Your Flat !!
                 </h3>
 
                 <form onSubmit={handleSubmit}>

@@ -19,7 +19,7 @@ const RenterSearchFilter = () => {
 
     // Navigate to the Saved Listings route
     const handleSavedListingsClick = () => {
-        navigate('/SavedListings'); // Navigate to the Saved Listings route
+        navigate('/RenterSavedFlats'); // Navigate to the Saved Listings route
     };
 
     const localities = {

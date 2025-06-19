@@ -1,5 +1,6 @@
 import React from 'react';
 import StudentListingDetail from '../../../components/PGComponents/StudentComponent/StudentListingDetails';
+import ReviewsSection from '../../../components/PGComponents/ReviewAndRating';
 
 function StudentListingDetailPage() {
     const listingData = {
@@ -21,6 +22,10 @@ function StudentListingDetailPage() {
     return (
         <>
           <StudentListingDetail listing={listingData} />
+             {/* Add the ReviewsSection at the bottom */}
+  
+      <ReviewsSection />
+);
         </>
     );
 }

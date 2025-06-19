@@ -19,7 +19,7 @@ const SearchFilter = () => {
 
     // Navigate to the Saved Listings route
     const handleSavedListingsClick = () => {
-        navigate('/SavedListings'); // Navigate to the Saved Listings route
+        navigate('/StudentSavedRooms'); // Navigate to the Saved Listings route
     };
 
     const localities = {
