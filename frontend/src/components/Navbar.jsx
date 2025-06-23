@@ -30,9 +30,9 @@ export default function ResponsiveNavbarWithZoomInHover() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
 
-  // Navigate to the Signup route
+  // Navigate to the Login route
   const handleButtonClick = () => {
-    navigate('/Signup'); // Navigate to the Signup route
+    navigate('/LoginPage'); // Navigate to the Login page
   };
 
   // Handle scroll to show/hide navbar
@@ -51,7 +51,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
     "text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none";
 
   return (
-    <nav className={`bg-white sticky top-0 z-50 transition-opacity duration-300 ${scrollingUp ? 'opacity-100' : 'opacity-0'}`}>
+    <nav className={`bg-white sticky top-0 z-50 transition-opacity transition-transform duration-300 ${scrollingUp ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side: Logo */}
@@ -69,32 +69,32 @@ export default function ResponsiveNavbarWithZoomInHover() {
           <div className="hidden md:flex items-center space-x-6">
             <a
               href="/"
-              className={linkClassNames}
+              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
               aria-label="Home page"
             >
               Home
             </a>
             <a
               href="/pg"
-              className={linkClassNames}
+              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
               aria-label="PG section"
             >
               PG
             </a>
             <a
               href="/flat"
-              className={linkClassNames}
+              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
               aria-label="Flat section"
             >
               Flat
             </a>
             <button
-              className={`relative ${linkClassNames} font-semibold border border-black rounded-md overflow-hidden`}
+              className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden`}
               aria-label="Login"
               onClick={handleButtonClick} // Navigate to Signup on click
             >
               {/* Background fill span */}
-              <span className="absolute inset-0 bg-yellow-500 scale-x-0 origin-center transition-transform duration-500 ease-in-out hover:scale-x-100 pointer-events-none" />
+              <span className="absolute inset-0 bg-yellow-300 scale-y-0 origin-bottom transition-transform duration-700 ease-in-out group-hover:scale-y-100 pointer-events-none" />
               {/* Text */}
               <span className="relative z-10 text-black">Login</span>
             </button>

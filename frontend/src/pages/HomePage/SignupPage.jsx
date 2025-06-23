@@ -1,7 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SignupPage() {
-    return ( 
+    const navigate = useNavigate(); // Initialize useNavigate
+     // Navigate to the Login route
+  const handleButtonClick = () => {
+    navigate('/LoginPage'); // Navigate to the Login page
+  };
+    return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-lg border-2 border-black" style={{ width: '30rem' }}>
                 <h2 className="text-center text-yellow-500 text-2xl font-bold mb-4">Signup</h2>
@@ -24,7 +30,9 @@ function SignupPage() {
                     </div>
                     <button type="submit" className="bg-yellow-500 text-white font-semibold py-2 rounded-md w-full hover:bg-yellow-600 transition duration-300">Sign Up</button>
                 </form>
-                <p className="text-center mt-3 text-gray-600">Already have an account? <a href="#" className="text-yellow-500 font-semibold">Login</a></p>
+                <p className="text-center mt-3 text-gray-600">Already have an account? <a href="#" className="text-yellow-500 font-semibold " onClick={() => {
+              handleButtonClick(); // Navigate to Signup on click
+            }} >Login</a></p>
             </div>
         </div>
     );

@@ -20,6 +20,7 @@ import BrokerDashboardPage from './pages/Flat/Broker/BrokerDashboardPage';
 import BrokerAssignmentPage from './pages/Flat/Broker/BrokerAssignmentPage';
 import RenterSavedListings from './pages/Flat/Renter/RenterSavedListings';
 import StudentSavedListings from './pages/PG/Student/StudentSavedListings';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/PG" element={<PgPage/>} />
         <Route path="/Flat" element={<FlatPage/>} />
         <Route path="/Signup" element={<SignupPage/>} />
+        <Route path="/LoginPage" element={<LoginPage/>} />
         <Route path="/Landlord" element={<LandlordPage/>} />
         <Route path="/LandlordForm" element={<LandlordListingForm/>} />
         <Route path="/Student" element={<StudentPage/>} /> 
