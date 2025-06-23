@@ -54,7 +54,7 @@ export default function FlatCard() {
       >
         {/* Lender Card */}
         <div
-          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
+          className={`bg-sky-50 rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
           onClick={handleLenderClick}
         >
           <div className="mb-4">
@@ -75,7 +75,7 @@ export default function FlatCard() {
 
         {/* Renter Card */}
         <div
-          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-10 opacity-0'}`}
+          className={`bg-sky-50 rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-10 opacity-0'}`}
           onClick={handleRenterClick}
         >
           <div className="mb-4">
@@ -96,7 +96,7 @@ export default function FlatCard() {
 
         {/* Broker Card */}
         <div
-          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
+          className={`bg-sky-50 rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
           onClick={handleBrokerClick}
         >
           <div className="mb-4">

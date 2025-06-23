@@ -3,6 +3,7 @@ import FlatCard from '../../components/FlatComponents/FlatCard';
 import FlatHowItWorks from '../../components/FlatComponents/FlatHowItWorks';
 import FlatFaq from '../../components/FlatComponents/FlatFaq';
 import FlatTestimonials from '../../components/FlatComponents/FlatTestimonials';
+import FlatTrustSection from '../../components/FlatComponents/FlatTrustSection';
 
 export default function FlatPage() {
   return (
@@ -18,6 +19,9 @@ export default function FlatPage() {
       <div className="mt-20 mb-20">
         <FlatFaq/>
       </div>
+
+      {/* Trust section */}
+      <FlatTrustSection />
 
       {/* Testimonials section */}
       <div className="mt-20">
