@@ -37,13 +37,22 @@ const RenterSearchFilter = () => {
   <span className="text-yellow-500"> memories</span> of friends!"
 </h1>
 
-                <button 
+              <div className="button">
+                  <button 
                     type="button" 
                     className="btn px-5 py-2 mt-4 md:mt-0 bg-blue-400 text-white rounded-md hover:bg-blue-500 transition duration-300" 
                     onClick={handleSavedListingsClick}
                 >
                     Saved Listings
                 </button>
+                <button
+                    type="button"
+                    className="btn px-5 py-2 mt-4 md:mt-0 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300 ml-4"
+                    onClick={() => navigate('/RenterDashboard')}
+                >
+                    Dashboard
+                </button>
+              </div>
             </div>
            <div className="search max-w-8xl p-8 "> 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

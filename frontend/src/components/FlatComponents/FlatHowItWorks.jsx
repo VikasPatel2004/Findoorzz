@@ -1,4 +1,6 @@
+
 import React, { useEffect, useRef, useState } from 'react';
+import { FaListAlt, FaSearch, FaHandshake, FaLock } from 'react-icons/fa';
 
 export default function FlatHowItWorks() {
   const [isVisible, setIsVisible] = useState(false);
@@ -9,10 +11,10 @@ export default function FlatHowItWorks() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Stop observing once visible
+          observer.disconnect();
         }
       },
-      { threshold: 0.1 } // Trigger when 10% of the section is visible
+      { threshold: 0.1 }
     );
 
     if (sectionRef.current) {
@@ -26,56 +28,46 @@ export default function FlatHowItWorks() {
     };
   }, []);
 
+  const steps = [
+    {
+      icon: <FaListAlt className="text-yellow-500 w-12 h-12 mb-4" />,
+      title: 'List the Flat',
+      description: 'Lenders add their flat listings with images and detailed amenities.',
+    },
+    {
+      icon: <FaSearch className="text-yellow-500 w-12 h-12 mb-4" />,
+      title: 'Search & Book',
+      description: 'Renters browse available flats, apply filters, and book their preferred flat.',
+    },
+    {
+      icon: <FaHandshake className="text-yellow-500 w-12 h-12 mb-4" />,
+      title: 'Broker Assigned',
+      description: 'A trusted broker is assigned to coordinate viewings and facilitate communication.',
+    },
+    {
+      icon: <FaLock className="text-yellow-500 w-12 h-12 mb-4" />,
+      title: 'Secure Payment',
+      description: 'Payments are processed securely and split transparently between lender, broker, and Findoorz.',
+    },
+  ];
+
   return (
-    <section ref={sectionRef} className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="bg-gradient-to-r bg-amber-50 py-18 px-4 sm:px-6 lg:px-8 rounded-lg shadow-lg">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-4xl font-extrabold mb-12">
+        <h2 className="text-4xl font-extrabold mb-12 ">
           How Flat Section Works
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 max-w-5xl mx-auto">
-          {/* Step 1 */}
-          <div className={`bg-amber-50 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
-              1
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`bg-white rounded-xl p-8 shadow-xl flex flex-col items-center transform transition-transform duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            >
+              {step.icon}
+              <h3 className="font-semibold text-xl mb-2 text-yellow-700">{step.title}</h3>
+              <p className="text-cyan-900">{step.description}</p>
             </div>
-            <h3 className="font-semibold text-xl mb-2">List the Flat</h3>
-            <p className="text-cyan-900">
-              Lenders add their flat listings with images and detailed amenities.
-            </p>
-          </div>
-
-          {/* Step 2 */}
-          <div className={`bg-amber-50 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
-              2
-            </div>
-            <h3 className="font-semibold text-xl mb-2">Search & Book</h3>
-            <p className="text-cyan-900">
-              Renters browse available flats, apply filters, and book their preferred flat.
-            </p>
-          </div>
-
-          {/* Step 3 */}
-          <div className={`bg-amber-50 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
-              3
-            </div>
-            <h3 className="font-semibold text-xl mb-2">Broker Assigned</h3>
-            <p className="text-cyan-900">
-              A trusted broker is assigned to coordinate viewings and facilitate communication.
-            </p>
-          </div>
-
-          {/* Step 4 */}
-          <div className={`bg-amber-50 rounded-xl p-8 shadow-lg flex flex-col items-center transform transition-transform duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="flex items-center justify-center h-16 w-16 mb-4 rounded-full bg-yellow-400 text-amber-900 font-bold text-xl">
-              4
-            </div>
-            <h3 className="font-semibold text-xl mb-2">Secure Payment</h3>
-            <p className="text-cyan-900">
-              Payments are processed securely and split transparently between lender, broker, and Findoorz.
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </section>

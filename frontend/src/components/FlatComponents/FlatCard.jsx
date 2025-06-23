@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import lenderImage from "../../assets/lender.svg"; // Replace with your actual image path
-import renterImage from "../../assets/Renter.svg"; // Replace with your actual image path
-import brokerImage from "../../assets/broker.svg"; // Replace with your actual image path
+import { useNavigate } from "react-router-dom";
+import lenderImage from "../../assets/lender.svg";
+import renterImage from "../../assets/Renter.svg";
+import brokerImage from "../../assets/broker.svg";
 
 export default function FlatCard() {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Stop observing once visible
+          observer.disconnect();
         }
       },
-      { threshold: 0.1 } // Trigger when 10% of the section is visible
+      { threshold: 0.1 }
     );
 
     if (cardRef.current) {
@@ -31,46 +31,43 @@ export default function FlatCard() {
     };
   }, []);
 
-  // Handle click for lender button
   const handleLenderClick = () => {
-    navigate('/lender'); // Replace with the actual path to the lender page
+    navigate('/lender');
   };
 
-  // Handle click for renter button
   const handleRenterClick = () => {
-    navigate('/renter'); // Replace with the actual path to the renter page
+    navigate('/renter');
   };
 
-  // Handle click for broker button
   const handleBrokerClick = () => {
-    navigate('/BrokerRegistration'); // Replace with the actual path to the broker page
+    navigate('/BrokerRegistration');
   };
 
   return (
-    <section className="bg-white flex flex-col items-center justify-center pt-12">
-      <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight pb-12 text-center">
-        " Experience The <span className="text-yellow-400">Easy</span> Way To <span className="text-yellow-400">Rent </span>
-        And <span className="text-yellow-400">Lend</span> Flats With Findoorz! "
+    <section className="bg-gradient-to-r  flex flex-col items-center justify-center pt-12">
+      <h1 className="text-3xl sm:text-4xl md:text-3xl font-bold leading-tight pb-12 text-center ">
+       " Experience The <span className="text-yellow-500">Easy</span> Way To <span className="text-yellow-500">Rent</span> And <span className="text-yellow-500">Lend</span> Flats With Findoorz! "
       </h1>
       <div
         ref={cardRef}
-        className="max-w-7xl w-full grid gap-10 md:grid-cols-3"
+        className="max-w-7xl w-full grid gap-12 md:grid-cols-3"
       >
         {/* Lender Card */}
         <div
-          className={`bg-sky-50 rounded-2xl shadow-lg p-6 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-1000 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
+          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-full opacity-0'}`}
+          onClick={handleLenderClick}
         >
-          <div className="mb-1">
+          <div className="mb-4">
             <img
               src={lenderImage}
               alt="Lender"
-              className="mx-auto h-70 w-70 object-cover rounded-full"
+              className="mx-auto h-72 w-72 object-cover rounded-full border-4  border-gray-50  shadow-lg"
             />
           </div>
-          <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Lender</h3>
+          <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Lender</h3>
           <button 
-            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" 
-            onClick={handleLenderClick} // Add onClick handler
+            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            onClick={handleLenderClick}
           >
             Explore
           </button>
@@ -78,19 +75,20 @@ export default function FlatCard() {
 
         {/* Renter Card */}
         <div
-          className={`bg-sky-50 rounded-2xl shadow-lg p-6 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-1000 ${isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-10 opacity-0'}`}
+          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-10 opacity-0'}`}
+          onClick={handleRenterClick}
         >
-          <div className="mb-1">
+          <div className="mb-4">
             <img
               src={renterImage}
               alt="Renter"
-              className="mx-auto h-70 w-70 object-cover rounded-full"
+              className="mx-auto h-72 w-72 object-cover rounded-full border-4  border-gray-50 shadow-lg"
             />
           </div>
-          <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Renter</h3>
+          <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Renter</h3>
           <button 
-            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-lime-100 transition" 
-            onClick={handleRenterClick} // Add onClick handler
+            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            onClick={handleRenterClick}
           >
             Explore
           </button>
@@ -98,19 +96,20 @@ export default function FlatCard() {
 
         {/* Broker Card */}
         <div
-          className={`bg-sky-50 rounded-2xl shadow-lg p-6 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-1000 ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
+          className={`bg-white rounded-3xl shadow-2xl p-8 text-amber-900 flex flex-col items-center w-full md:w-96 transition-transform duration-700 hover:scale-105 hover:shadow-2xl cursor-pointer ${isVisible ? 'transform translate-x-0 opacity-100' : 'transform translate-x-full opacity-0'}`}
+          onClick={handleBrokerClick}
         >
-          <div className="mb-1">
+          <div className="mb-4">
             <img
               src={brokerImage}
               alt="Broker"
-              className="mx-auto h-70 w-70 object-cover rounded-full"
+              className="mx-auto h-72 w-72 object-cover rounded-full border-4 border-gray-50 shadow-lg"
             />
           </div>
-          <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Broker</h3>
+          <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Broker</h3>
           <button 
-            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-lime-100 transition" 
-            onClick={handleBrokerClick} // Add onClick handler
+            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            onClick={handleBrokerClick}
           >
             Explore
           </button>

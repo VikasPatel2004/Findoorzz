@@ -21,6 +21,8 @@ import BrokerAssignmentPage from './pages/Flat/Broker/BrokerAssignmentPage';
 import RenterSavedListings from './pages/Flat/Renter/RenterSavedListings';
 import StudentSavedListings from './pages/PG/Student/StudentSavedListings';
 import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import RenterDashboard from './pages/RenterDashboard';
 
 function App() {
   return (
@@ -38,9 +40,12 @@ function App() {
         <Route path="/StudentSavedRooms" element={<StudentSavedListings/>} /> 
         <Route path="/RoomDetail" element={<StudentListingDetailPage/>} />
         <Route path="/Lender" element={<LenderPage/>} />
+        <Route path="/dashboard" element={<Dashboard/>} />
+        
         <Route path="/LenderForm" element={<LenderListingForm/>} />
         <Route path="/Renter" element={<RenterPage/>} />
         <Route path="/RenterSavedFlats" element={<RenterSavedListings/>} />
+        <Route path="/RenterDashboard" element={<RenterDashboard/>} />
         <Route path='/BrokerRegistration' element={<BrokerRegistrationPage/>} />
         <Route path='/BrokerDashboard' element={<BrokerDashboardPage/>} />
         <Route path="/BrokerAssignment" element={<BrokerAssignmentPage/>} />
