@@ -99,9 +99,6 @@ const SearchFilter = () => {
                         <label className="flex items-center mr-4">
                             <input type="checkbox" className="mr-2" /> AC
                         </label>
-                        <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> Food Included
-                        </label>
                     </div>
                 </div>
             </div>

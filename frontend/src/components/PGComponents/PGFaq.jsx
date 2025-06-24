@@ -40,7 +40,7 @@ export default function PgFaq() {
     );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+      observer.observe(sectionRef.current);//this actually help to obser the observer for scroll based animation animatino will only applied when it observe the html enttities of animated function 
     }
 
     return () => {

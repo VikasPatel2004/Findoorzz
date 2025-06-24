@@ -27,7 +27,7 @@ function MyLenderListings() {
                       className="btn px-5 py-2 mt-4 md:mt-0 bg-red-400 text-white rounded-md hover:bg-red-500 transition duration-300" 
                       onClick={handleNewClick}
                   >
-                      Add Your Room +
+                      Add Your Flat +
                   </button>
                   <button
                     type="button"

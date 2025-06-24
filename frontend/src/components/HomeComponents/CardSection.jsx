@@ -25,7 +25,7 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
             <div className="flex flex-col justify-center items-center p-4 mt-12" id="card1-section">
                 <motion.div 
                     ref={card1Ref}
-                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 rounded-lg overflow-hidden m-2"
+                    className="relative w-full md:w-[100vw] transition-transform transform rounded-lg overflow-hidden m-2"
                     initial={{ opacity: 0, x: -100 }}
                     animate={isCard1Visible ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
@@ -53,7 +53,7 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
             <div className="flex flex-col justify-center items-center p-2 mb-8" id="card2-section">
                 <motion.div 
                     ref={card2Ref}
-                    className="relative w-full md:w-[90vw] transition-transform transform hover:scale-105 rounded-lg overflow-hidden m-2"
+                    className="relative w-full md:w-[100vw] transition-transform transform rounded-lg overflow-hidden m-2"
                     initial={{ opacity: 0, x: 100 }}
                     animate={isCard2Visible ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
