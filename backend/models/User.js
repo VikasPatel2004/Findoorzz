@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  name: { type: String, required: true, minlength: 2, maxlength: 50 },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    match: [emailRegex, 'Please fill a valid email address'] 
+  },
   passwordHash: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 // Method to set password hash
 userSchema.methods.setPassword = async function(password) {
@@ -18,5 +24,8 @@ userSchema.methods.setPassword = async function(password) {
 userSchema.methods.validatePassword = async function(password) {
   return await bcrypt.compare(password, this.passwordHash);
 };
+
+// Create index on email for uniqueness and performance
+userSchema.index({ email: 1 }, { unique: true });
 
 module.exports = mongoose.model('User', userSchema);
