@@ -31,6 +31,14 @@ describe('Bookings API', () => {
       pricePerNight: 1000,
       location: 'Test City',
       gstPercentage: 18,
+      rentAmount: 15000,
+      furnishingStatus: 'Furnished',
+      numberOfRooms: 3,
+      city: 'Test City',
+      colony: 'Test Colony',
+      houseNumber: '123',
+      contactNumber: '1234567890',
+      landlordName: 'John Doe',
       owner: userId,
     });
     await listing.save();
@@ -49,13 +57,13 @@ describe('Bookings API', () => {
       .post('/api/bookings')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        listingType: 'flat',
+        listingType: 'FlatListing',
         listingId: listingId,
         bookingStartDate: '2024-07-01',
         bookingEndDate: '2024-07-10',
       });
     expect(res.statusCode).toEqual(201);
-    expect(res.body.listingType).toBe('flat');
+    expect(res.body.listingType).toBe('FlatListing');
     expect(res.body.user).toBe(userId.toString());
   });
 

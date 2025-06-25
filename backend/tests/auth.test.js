@@ -20,7 +20,7 @@ describe('Auth API', () => {
         password: 'password123',
       });
     expect(res.statusCode).toEqual(201);
-    expect(res.body).toHaveProperty('token');
+    expect(res.body).toHaveProperty('message', 'User registered successfully');
   });
 
   test('Login user', async () => {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const pgListingSchema = new mongoose.Schema({
+  title: { type: String, required: true },
   landlordName: { type: String, required: true },
   contactNumber: { type: String, required: true },
   houseNumber: { type: String, required: true },

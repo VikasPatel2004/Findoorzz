@@ -26,7 +26,7 @@ describe('Payments API', () => {
 
     // Create a booking for payment
     const booking = new Booking({
-      listingType: 'flat',
+      listingType: 'FlatListing',
       listingId: userId, // For test, using userId as dummy listingId
       user: userId,
       bookingStartDate: '2024-07-01',

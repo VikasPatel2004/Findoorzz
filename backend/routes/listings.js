@@ -1,5 +1,6 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
+const { checkListingOwnership } = require('../middleware/ownershipMiddleware');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
 
@@ -28,15 +29,12 @@ router.get('/flat', async (req, res) => {
 });
 
 // Update a flat listing (only owner)
-router.put('/flat/:id', authenticateToken, async (req, res) => {
+router.put('/flat/:id', authenticateToken, checkListingOwnership, async (req, res) => {
   try {
-    const listing = await FlatListing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
-    if (listing.owner.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Not authorized to update this listing' });
+    const listing = await FlatListing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
     }
-    Object.assign(listing, req.body);
-    await listing.save();
     res.json(listing);
   } catch (err) {
     res.status(500).json({ message: 'Error updating flat listing', error: err.message });
@@ -44,14 +42,12 @@ router.put('/flat/:id', authenticateToken, async (req, res) => {
 });
 
 // Delete a flat listing (only owner)
-router.delete('/flat/:id', authenticateToken, async (req, res) => {
+router.delete('/flat/:id', authenticateToken, checkListingOwnership, async (req, res) => {
   try {
-    const listing = await FlatListing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
-    if (listing.owner.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Not authorized to delete this listing' });
+    const listing = await FlatListing.findByIdAndDelete(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
     }
-    await listing.remove();
     res.json({ message: 'Listing deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Error deleting flat listing', error: err.message });
@@ -81,15 +77,12 @@ router.get('/pg', async (req, res) => {
 });
 
 // Update a PG listing (only owner)
-router.put('/pg/:id', authenticateToken, async (req, res) => {
+router.put('/pg/:id', authenticateToken, checkListingOwnership, async (req, res) => {
   try {
-    const listing = await PGListing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
-    if (listing.owner.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Not authorized to update this listing' });
+    const listing = await PGListing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
     }
-    Object.assign(listing, req.body);
-    await listing.save();
     res.json(listing);
   } catch (err) {
     res.status(500).json({ message: 'Error updating PG listing', error: err.message });
@@ -97,14 +90,12 @@ router.put('/pg/:id', authenticateToken, async (req, res) => {
 });
 
 // Delete a PG listing (only owner)
-router.delete('/pg/:id', authenticateToken, async (req, res) => {
+router.delete('/pg/:id', authenticateToken, checkListingOwnership, async (req, res) => {
   try {
-    const listing = await PGListing.findById(req.params.id);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
-    if (listing.owner.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Not authorized to delete this listing' });
+    const listing = await PGListing.findByIdAndDelete(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
     }
-    await listing.remove();
     res.json({ message: 'Listing deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Error deleting PG listing', error: err.message });
