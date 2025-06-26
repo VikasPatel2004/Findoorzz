@@ -63,7 +63,7 @@ describe('Listings API', () => {
     const res = await request(app)
       .get('/api/listings/flat');
     expect(res.statusCode).toEqual(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(Array.isArray(res.body.listings)).toBe(true);
   });
 
   test('Update flat listing by owner', async () => {

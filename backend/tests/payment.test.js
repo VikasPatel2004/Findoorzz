@@ -4,6 +4,7 @@ const { connectTestDB, closeTestDB } = require('./setupTestDB');
 const User = require('../models/User');
 const Booking = require('../models/Booking');
 const Payment = require('../models/Payment');
+const FlatListing = require('../models/FlatListing');
 
 let token;
 let userId;
@@ -24,10 +25,26 @@ describe('Payments API', () => {
       .send({ email: 'paymentuser@example.com', password: 'password123' });
     token = res.body.token;
 
+    // Create a flat listing for booking and payment
+    const listing = new FlatListing({
+      title: 'Payment Test Flat',
+      description: 'Flat for payment test',
+      rentAmount: 15000,
+      furnishingStatus: 'Furnished',
+      numberOfRooms: 3,
+      city: 'Test City',
+      colony: 'Test Colony',
+      houseNumber: '123',
+      contactNumber: '1234567890',
+      landlordName: 'John Doe',
+      owner: userId,
+    });
+    await listing.save();
+
     // Create a booking for payment
     const booking = new Booking({
       listingType: 'FlatListing',
-      listingId: userId, // For test, using userId as dummy listingId
+      listingId: listing._id,
       user: userId,
       bookingStartDate: '2024-07-01',
       bookingEndDate: '2024-07-10',
@@ -48,7 +65,7 @@ describe('Payments API', () => {
       .post('/api/payments')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        booking: bookingId,
+        bookingId: bookingId,
         amount: 1000,
         paymentMethod: 'credit_card',
         paymentStatus: 'completed',

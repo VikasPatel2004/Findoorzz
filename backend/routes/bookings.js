@@ -7,7 +7,26 @@ const router = express.Router();
 // Create a new booking
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const bookingData = { ...req.body, user: req.user.userId };
+    const { listingType, listingId, bookingStartDate, bookingEndDate } = req.body;
+    const userId = req.user.userId;
+
+    // Check for overlapping bookings for the same listing
+    const overlappingBooking = await Booking.findOne({
+      listingType,
+      listingId,
+      status: { $ne: 'cancelled' },
+      $or: [
+        { bookingStartDate: { $lte: bookingEndDate, $gte: bookingStartDate } },
+        { bookingEndDate: { $lte: bookingEndDate, $gte: bookingStartDate } },
+        { bookingStartDate: { $lte: bookingStartDate }, bookingEndDate: { $gte: bookingEndDate } }
+      ]
+    });
+
+    if (overlappingBooking) {
+      return res.status(409).json({ message: 'Listing is already booked for the selected dates' });
+    }
+
+    const bookingData = { listingType, listingId, bookingStartDate, bookingEndDate, user: userId };
     const booking = new Booking(bookingData);
     await booking.save();
     res.status(201).json(booking);
