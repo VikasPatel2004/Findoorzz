@@ -19,15 +19,23 @@ async function getListingById(type, id) {
 }
 
 async function createListing(type, listingData, token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  if (listingData instanceof FormData) {
+    headers['Content-Type'] = 'multipart/form-data';
+  }
   const response = await axios.post(`${API_BASE_URL}/listings/${type}`, listingData, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers
   });
   return response.data;
 }
 
 async function updateListing(type, id, listingData, token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  if (listingData instanceof FormData) {
+    headers['Content-Type'] = 'multipart/form-data';
+  }
   const response = await axios.put(`${API_BASE_URL}/listings/${type}/${id}`, listingData, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers
   });
   return response.data;
 }

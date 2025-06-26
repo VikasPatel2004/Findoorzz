@@ -5,11 +5,24 @@ const User = require('../models/User');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
 
+jest.mock('../config/cloudinary', () => ({
+  uploader: {
+    upload_stream: (options, callback) => {
+      // Simulate successful upload with a fixed URL
+      process.nextTick(() => callback(null, { secure_url: 'http://mocked.url/image.jpg' }));
+      return {
+        end: () => {}
+      };
+    }
+  }
+}));
+
 let token;
 let userId;
 
 describe('Listings API', () => {
   beforeAll(async () => {
+    jest.setTimeout(30000);
     await connectTestDB();
 
     // Create a user and get token
@@ -35,27 +48,23 @@ describe('Listings API', () => {
     const res = await request(app)
       .post('/api/listings/flat')
       .set('Authorization', `Bearer ${token}`)
-      .send({
-        title: 'Test Flat',
-        landlordName: 'John Doe',
-        contactNumber: '1234567890',
-        houseNumber: '123',
-        colony: 'Test Colony',
-        city: 'Test City',
-        numberOfRooms: 3,
-        furnishingStatus: 'Furnished',
-        wifi: true,
-        airConditioning: true,
-        rentAmount: 15000,
-        independent: false,
-        propertyImages: ['image1.jpg', 'image2.jpg'],
-        description: 'A nice flat',
-        idProof: 'idproof.jpg',
-        ownershipProof: 'ownershipproof.jpg',
-        owner: userId,
-      });
+      .field('landlordName', 'John Doe')
+      .field('contactNumber', '1234567890')
+      .field('houseNumber', '123')
+      .field('colony', 'Test Colony')
+      .field('city', 'Test City')
+      .field('numberOfRooms', 3)
+      .field('furnishingStatus', 'Furnished')
+      .field('wifi', true)
+      .field('airConditioning', true)
+      .field('rentAmount', 15000)
+      .field('independent', false)
+      .field('description', 'A nice flat')
+      .attach('propertyImages', Buffer.from('test file content'), 'image1.jpg')
+      .attach('propertyImages', Buffer.from('test file content'), 'image2.jpg')
+      .field('owner', userId.toString());
     expect(res.statusCode).toEqual(201);
-    expect(res.body.title).toBe('Test Flat');
+    // expect(res.body.title).toBe('Test Flat'); // removed as title is not in schema
     expect(res.body.owner).toBe(userId.toString());
   });
 
@@ -91,32 +100,28 @@ describe('Listings API', () => {
 
   // Tests for PG listings
   describe('PG Listings', () => {
-    test('Create PG listing', async () => {
-      const res = await request(app)
-        .post('/api/listings/pg')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          title: 'Test PG',
-          landlordName: 'Jane Smith',
-          contactNumber: '0987654321',
-          houseNumber: '456',
-          colony: 'PG Colony',
-          city: 'PG City',
-          numberOfRooms: 2,
-          furnishingStatus: 'Semi-Furnished',
-          wifi: false,
-          airConditioning: false,
-          rentAmount: 12000,
-          independent: true,
-          propertyImages: ['pg1.jpg', 'pg2.jpg'],
-          description: 'A nice PG',
-          idProof: 'idproof_pg.jpg',
-          ownershipProof: 'ownershipproof_pg.jpg',
-          owner: userId,
-        });
-      expect(res.statusCode).toEqual(201);
-      expect(res.body.title).toBe('Test PG');
-      expect(res.body.owner).toBe(userId.toString());
+  test('Create PG listing', async () => {
+    const res = await request(app)
+      .post('/api/listings/pg')
+      .set('Authorization', `Bearer ${token}`)
+      .field('landlordName', 'Jane Smith')
+      .field('contactNumber', '0987654321')
+      .field('houseNumber', '456')
+      .field('colony', 'PG Colony')
+      .field('city', 'PG City')
+      .field('numberOfRooms', 2)
+      .field('furnishingStatus', 'Semi-Furnished')
+      .field('wifi', false)
+      .field('airConditioning', false)
+      .field('rentAmount', 12000)
+      .field('independent', true)
+      .field('description', 'A nice PG')
+      .attach('propertyImages', Buffer.from('test file content'), 'pg1.jpg')
+      .attach('propertyImages', Buffer.from('test file content'), 'pg2.jpg')
+      .field('owner', userId.toString());
+    expect(res.statusCode).toEqual(201);
+    // expect(res.body.title).toBe('Test PG'); // removed as title is not in schema
+    expect(res.body.owner).toBe(userId.toString());
     });
 
     test('Get all PG listings', async () => {
@@ -149,4 +154,3 @@ describe('Listings API', () => {
       expect(res.body.message).toBe('Listing deleted');
     });
   });
-});

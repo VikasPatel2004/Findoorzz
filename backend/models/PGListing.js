@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const pgListingSchema = new mongoose.Schema({
-  title: { type: String, required: true },
   landlordName: { type: String, required: true },
   contactNumber: { type: String, required: true },
   houseNumber: { type: String, required: true },
@@ -19,8 +18,6 @@ const pgListingSchema = new mongoose.Schema({
   independent: { type: Boolean, default: false },
   propertyImages: [{ type: String }], // store image URLs or paths
   description: { type: String, required: true },
-  idProof: { type: String }, // store file path or URL
-  ownershipProof: { type: String }, // store file path or URL
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
