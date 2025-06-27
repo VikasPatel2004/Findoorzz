@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import logo from '../assets/logo.png';
+import defaultProfile from '../assets/lender.svg';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 export default function ResponsiveNavbarWithZoomInHover() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollingUp, setScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
+
+  const { user, logout } = useContext(AuthContext);
 
   // Close menu if screen resized larger than mobile breakpoint
   useEffect(() => {
@@ -30,9 +35,36 @@ export default function ResponsiveNavbarWithZoomInHover() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
 
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      const dropdown = document.querySelector('.profile-dropdown');
+      const profileSection = document.querySelector('.profile-section');
+      if (
+        profileMenuOpen &&
+        dropdown &&
+        !dropdown.contains(event.target) &&
+        profileSection &&
+        !profileSection.contains(event.target)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileMenuOpen]);
+
   // Navigate to the Login route
-  const handleButtonClick = () => {
+  const handleLoginClick = () => {
     navigate('/LoginPage'); // Navigate to the Login page
+  };
+
+  // Handle logout
+  const handleLogoutClick = () => {
+    logout();
+    navigate('/'); // Redirect to home after logout
   };
 
   // Handle scroll to show/hide navbar
@@ -46,7 +78,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  // Common classes for nav links and login with zoom in hover effect
+  // Common classes for nav links and login/logout with zoom in hover effect
   const linkClassNames = 
     "text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none";
 
@@ -65,7 +97,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
             </a>
           </div>
 
-          {/* Right side navigation for Home, Flat, PG, and Login sections */}
+          {/* Right side navigation for Home, Flat, PG, and Login/Logout sections */}
           <div className="hidden md:flex items-center space-x-6">
             <a
               href="/"
@@ -88,16 +120,68 @@ export default function ResponsiveNavbarWithZoomInHover() {
             >
               Flat
             </a>
-            <button
-              className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden`}
-              aria-label="Login"
-              onClick={handleButtonClick} // Navigate to Signup on click
-            >
-              {/* Background fill span */}
-              <span className="absolute inset-0 bg-yellow-300 scale-y-0 origin-bottom transition-transform duration-700 ease-in-out group-hover:scale-y-100 pointer-events-none" />
-              {/* Text */}
-              <span className="relative z-10 text-black">Login</span>
-            </button>
+            {!user ? (
+              <button
+                className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden`}
+                aria-label="Login"
+                onClick={handleLoginClick}
+              >
+                {/* Background fill span */}
+                <span className="absolute inset-0 bg-yellow-300 scale-y-0 origin-bottom transition-transform duration-700 ease-in-out group-hover:scale-y-100 pointer-events-none" />
+                {/* Text */}
+                <span className="relative z-10 text-black">Login</span>
+              </button>
+            ) : (
+              <>
+
+                {/* Notification Button */}
+                <button
+                  className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden mr-4 flex items-center justify-center`}
+                  aria-label="Notifications"
+                  onClick={() => {
+                    navigate('/Notifications');
+                  }}
+                >
+                  <span className="text-white text-xl relative z-10">🔔</span>
+                </button>
+
+                {/* Profile Section with dropdown */}
+                <div className="relative profile-section" >
+                  <div
+                    className="flex items-center cursor-pointer select-none"
+                    onClick={() => setProfileMenuOpen(prev => !prev)}
+                  >
+                    <img
+                      src={user.profilePicture || defaultProfile}
+                      alt="Profile"
+                      className="h-8 w-8 rounded-full border border-gray-300"
+                    />
+                  </div>
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50 profile-dropdown">
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          navigate('/Profile');
+                        }}
+                      >
+                        Edit Profile
+                      </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          handleLogoutClick();
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Mobile hamburger menu */}
@@ -150,16 +234,29 @@ export default function ResponsiveNavbarWithZoomInHover() {
           >
             PG
           </a>
-          <button
-            className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
-            role="menuitem"
-            onClick={() => {
-              setMenuOpen(false);
-              handleButtonClick(); // Navigate to Signup on click
-            }}
-          >
-            Login
-          </button>
+          {!user ? (
+            <button
+              className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                handleLoginClick();
+              }}
+            >
+              Login
+            </button>
+          ) : (
+            <button
+              className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                handleLogoutClick();
+              }}
+            >
+              Logout
+            </button>
+          )}
         </div>
       )}
     </nav>

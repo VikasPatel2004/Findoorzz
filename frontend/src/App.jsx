@@ -24,35 +24,108 @@ import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import RenterDashboard from './pages/RenterDashboard';
 
+import { AuthProvider } from './context/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
+
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/PG" element={<PgPage/>} />
-        <Route path="/Flat" element={<FlatPage/>} />
-        <Route path="/Signup" element={<SignupPage/>} />
-        <Route path="/LoginPage" element={<LoginPage/>} />
-        <Route path="/Landlord" element={<LandlordPage/>} />
-        <Route path="/LandlordForm" element={<LandlordListingForm/>} />
-        <Route path="/Student" element={<StudentPage/>} /> 
-        <Route path="/StudentSavedRooms" element={<StudentSavedListings/>} /> 
-        <Route path="/RoomDetail" element={<StudentListingDetailPage/>} />
-        <Route path="/Lender" element={<LenderPage/>} />
-        <Route path="/dashboard" element={<Dashboard/>} />
-        
-        <Route path="/LenderForm" element={<LenderListingForm/>} />
-        <Route path="/Renter" element={<RenterPage/>} />
-        <Route path="/RenterSavedFlats" element={<RenterSavedListings/>} />
-        <Route path="/RenterDashboard" element={<RenterDashboard/>} />
-        <Route path='/BrokerRegistration' element={<BrokerRegistrationPage/>} />
-        <Route path='/BrokerDashboard' element={<BrokerDashboardPage/>} />
-        <Route path="/BrokerAssignment" element={<BrokerAssignmentPage/>} />
-        <Route path="/FlatDetails" element={<RenterListingDetailPage/>} />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/Signup" element={<SignupPage />} />
+          <Route path="/LoginPage" element={<LoginPage />} />
+
+          <Route path="/PG" element={
+            <PrivateRoute>
+              <PgPage />
+            </PrivateRoute>
+          } />
+          <Route path="/Flat" element={
+            <PrivateRoute>
+              <FlatPage />
+            </PrivateRoute>
+          } />
+          <Route path="/Landlord" element={
+            <PrivateRoute>
+              <LandlordPage />
+            </PrivateRoute>
+          } />
+          <Route path="/LandlordForm" element={
+            <PrivateRoute>
+              <LandlordListingForm />
+            </PrivateRoute>
+          } />
+          <Route path="/Student" element={
+            <PrivateRoute>
+              <StudentPage />
+            </PrivateRoute>
+          } />
+          <Route path="/StudentSavedRooms" element={
+            <PrivateRoute>
+              <StudentSavedListings />
+            </PrivateRoute>
+          } />
+          <Route path="/RoomDetail" element={
+            <PrivateRoute>
+              <StudentListingDetailPage />
+            </PrivateRoute>
+          } />
+          <Route path="/Lender" element={
+            <PrivateRoute>
+              <LenderPage />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/LenderForm" element={
+            <PrivateRoute>
+              <LenderListingForm />
+            </PrivateRoute>
+          } />
+          <Route path="/Renter" element={
+            <PrivateRoute>
+              <RenterPage />
+            </PrivateRoute>
+          } />
+          <Route path="/RenterSavedFlats" element={
+            <PrivateRoute>
+              <RenterSavedListings />
+            </PrivateRoute>
+          } />
+          <Route path="/RenterDashboard" element={
+            <PrivateRoute>
+              <RenterDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/BrokerRegistration" element={
+            <PrivateRoute>
+              <BrokerRegistrationPage />
+            </PrivateRoute>
+          } />
+          <Route path="/BrokerDashboard" element={
+            <PrivateRoute>
+              <BrokerDashboardPage />
+            </PrivateRoute>
+          } />
+          <Route path="/BrokerAssignment" element={
+            <PrivateRoute>
+              <BrokerAssignmentPage />
+            </PrivateRoute>
+          } />
+          <Route path="/FlatDetails" element={
+            <PrivateRoute>
+              <RenterListingDetailPage />
+            </PrivateRoute>
+          } />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
