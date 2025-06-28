@@ -10,6 +10,8 @@ let userId;
 let listingId;
 
 describe('Bookings API', () => {
+  let bookingId;
+
   beforeAll(async () => {
     await connectTestDB();
 
@@ -62,9 +64,11 @@ describe('Bookings API', () => {
         bookingStartDate: '2024-07-01',
         bookingEndDate: '2024-07-10',
       });
+    console.log('Create booking response:', res.statusCode, res.body);
     expect(res.statusCode).toEqual(201);
     expect(res.body.listingType).toBe('FlatListing');
     expect(res.body.user).toBe(userId.toString());
+    bookingId = res.body._id;
   });
 
   test('Get user bookings', async () => {
@@ -76,8 +80,19 @@ describe('Bookings API', () => {
   });
 
   test('Cancel booking', async () => {
-    const bookings = await Booking.find({ user: userId });
-    const bookingId = bookings[0]._id;
+    if (!bookingId) {
+      // Create a booking if not exists
+      const resCreate = await request(app)
+        .post('/api/bookings')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          listingType: 'FlatListing',
+          listingId: listingId,
+          bookingStartDate: '2024-07-01',
+          bookingEndDate: '2024-07-10',
+        });
+      bookingId = resCreate.body._id;
+    }
 
     const res = await request(app)
       .delete(`/api/bookings/${bookingId}`)

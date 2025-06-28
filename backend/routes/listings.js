@@ -25,11 +25,14 @@ const flatListingValidationRules = [
 async function uploadFilesToCloudinary(files) {
   const urls = [];
   for (const file of files) {
-    const result = await cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
-      if (error) throw error;
-      return result;
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+      stream.end(file.buffer);
     });
-    // Since upload_stream is callback based, we need to wrap it in a promise
+    urls.push(uploadResult.secure_url);
   }
   return urls;
 }
@@ -45,7 +48,7 @@ router.post('/flat', authenticateToken, upload.fields([
   try {
     // Upload files to Cloudinary
     const propertyImages = [];
-    if (req.files['propertyImages']) {
+    if (req.files && req.files['propertyImages']) {
       for (const file of req.files['propertyImages']) {
         const uploadResult = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
@@ -117,7 +120,6 @@ const flatListingUpdateValidationRules = [
 ];
 
 // Update a flat listing (only owner)
-
 router.put('/flat/:id', authenticateToken, checkListingOwnership, upload.fields([
   { name: 'propertyImages', maxCount: 10 }
 ]), flatListingUpdateValidationRules, async (req, res) => {
@@ -280,6 +282,10 @@ router.put('/pg/:id', authenticateToken, checkListingOwnership, upload.fields([
     };
 
     if (propertyImages.length > 0) {
+      updateData.propertyImages = propertyImages;
+    }
+
+    const listing = await PGListing.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!listing) {
       return res.status(404).json({ message: 'Listing not found' });
     }

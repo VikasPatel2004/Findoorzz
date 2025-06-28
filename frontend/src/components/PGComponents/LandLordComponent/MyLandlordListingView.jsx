@@ -28,7 +28,7 @@ function MyLandlordListingView() {
     ];
 
     const handleExploreClick = (id) => {
-        navigate(`/pg/landlord/listing/${id}`);
+        navigate(`/MyLandlordListingView/${id}`);
     };
 
     return (

@@ -15,7 +15,7 @@ function MyListings() {
 
     // Navigate to the Renter route
     const handleButtonClick = (id) => {
-        navigate(`/pg/landlord/listing/${id}`); // Navigate to the listing details route
+        navigate(`/MyLanlordListingView/${id}`); // Navigate to the listing details route
     };
 
     useEffect(() => {

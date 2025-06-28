@@ -6,7 +6,7 @@ const flatListingSchema = new mongoose.Schema({
   houseNumber: { type: String, required: true },
   colony: { type: String, required: true },
   city: { type: String, required: true },
-  numberOfRooms: { type: Number, required: true, min: 1 },
+  numberOfRooms: { type: String, required: true, min: 1 },
   furnishingStatus: { 
     type: String, 
     enum: ['Furnished', 'Semi-Furnished', 'Unfurnished'], 
@@ -15,7 +15,7 @@ const flatListingSchema = new mongoose.Schema({
   wifi: { type: Boolean, default: false },
   airConditioning: { type: Boolean, default: false },
   independent: { type: Boolean, default: false },
-  rentAmount: { type: Number, required: true, min: 0 },
+  rentAmount: { type: String, required: true, min: 0 },
   propertyImages: [{ type: String }], // store image URLs or paths
   description: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

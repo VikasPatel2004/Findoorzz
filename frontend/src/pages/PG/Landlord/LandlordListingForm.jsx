@@ -46,6 +46,8 @@ function LandlordListingForm() {
     try {
       const token = localStorage.getItem('token');
       const data = new FormData();
+            navigate('/');
+
 
       // Append text fields
       Object.entries(formData).forEach(([key, value]) => {
@@ -65,7 +67,7 @@ function LandlordListingForm() {
 
       await listingService.createListing('pg', data, token);
       alert('Listing created successfully');
-      navigate('/pg/landlord');
+      navigate('/landlord');
     } catch (error) {
       console.error('Error creating listing:', error);
       alert('Failed to create listing');
