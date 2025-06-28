@@ -141,10 +141,16 @@ router.put('/flat/:id', authenticateToken, checkListingOwnership, upload.fields(
       }
     }
 
+    // Convert number fields to numbers
     const updateData = {
       ...req.body,
-      propertyImages,
+      numberOfRooms: req.body.numberOfRooms ? Number(req.body.numberOfRooms) : undefined,
+      rentAmount: req.body.rentAmount ? Number(req.body.rentAmount) : undefined,
     };
+
+    if (propertyImages.length > 0) {
+      updateData.propertyImages = propertyImages;
+    }
 
     const listing = await FlatListing.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!listing) {
@@ -152,6 +158,7 @@ router.put('/flat/:id', authenticateToken, checkListingOwnership, upload.fields(
     }
     res.json(listing);
   } catch (err) {
+    console.error('Error updating flat listing:', err);
     res.status(500).json({ message: 'Error updating flat listing', error: err.message });
   }
 });
@@ -265,17 +272,20 @@ router.put('/pg/:id', authenticateToken, checkListingOwnership, upload.fields([
       }
     }
 
+    // Convert number fields to numbers
     const updateData = {
       ...req.body,
-      propertyImages,
+      numberOfRooms: req.body.numberOfRooms ? Number(req.body.numberOfRooms) : undefined,
+      rentAmount: req.body.rentAmount ? Number(req.body.rentAmount) : undefined,
     };
 
-    const listing = await PGListing.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
+    if (propertyImages.length > 0) {
     if (!listing) {
       return res.status(404).json({ message: 'Listing not found' });
     }
     res.json(listing);
   } catch (err) {
+    console.error('Error updating PG listing:', err);
     res.status(500).json({ message: 'Error updating PG listing', error: err.message });
   }
 });
