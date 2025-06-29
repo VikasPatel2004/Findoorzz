@@ -46,17 +46,20 @@ function LandlordListingForm() {
     try {
       const token = localStorage.getItem('token');
       const data = new FormData();
-            navigate('/landlord');
 
-
-      // Append text fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (
-          key !== 'propertyImages'
-        ) {
-          data.append(key, value);
-        }
-      });
+      // Append text fields with correct types
+      data.append('landlordName', formData.landlordName);
+      data.append('contactNumber', formData.contactNumber);
+      data.append('houseNumber', formData.houseNumber);
+      data.append('colony', formData.colony);
+      data.append('city', formData.city);
+      data.append('numberOfRooms', Number(formData.numberOfRooms));
+      data.append('furnishingStatus', formData.furnishingStatus);
+      data.append('wifi', formData.wifi ? 'true' : 'false');
+      data.append('airConditioning', formData.airConditioning ? 'true' : 'false');
+      data.append('rentAmount', Number(formData.rentAmount));
+      data.append('independent', formData.independent ? 'true' : 'false');
+      data.append('description', formData.description);
 
       // Append property images (multiple)
       if (formData.propertyImages && formData.propertyImages.length > 0) {

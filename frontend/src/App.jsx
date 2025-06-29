@@ -97,6 +97,13 @@ function App() {
               <RenterSavedListings />
             </PrivateRoute>
           } />
+
+           <Route path="/FlatDetail/:id" element={
+            <PrivateRoute>
+              <RenterListingDetailPage />
+            </PrivateRoute>
+          } />
+
           <Route path="/RenterDashboard" element={
             <PrivateRoute>
               <RenterDashboard />

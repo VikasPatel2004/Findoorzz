@@ -108,7 +108,6 @@ router.get('/flat', async (req, res) => {
 
 // Validation rules for flat listing update
 const flatListingUpdateValidationRules = [
-  body('title').optional().notEmpty().withMessage('Title is required'),
   body('landlordName').optional().notEmpty().withMessage('Landlord name is required'),
   body('contactNumber').optional().notEmpty().withMessage('Contact number is required'),
   body('houseNumber').optional().notEmpty().withMessage('House number is required'),

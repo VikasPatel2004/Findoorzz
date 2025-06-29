@@ -1,28 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import listingService from '../../../services/listingService';
 import RenterListingDetail from '../../../components/FlatComponents/RenterComponents/RenterListingDetail';
 import FlatReviewsSection from '../../../components/FlatComponents/FlatReviewsAndRatings';
 
 function RenterListingDetailPage() {
-    const listingData = {
-        landlordName: 'John Doe',
-        contactNumber: '123-456-7890',
-        houseNumber: 'C/253',
-        colony: 'Chhatra Chhaya Colony',
-        city: 'Pithampur',
-        numberOfRooms: '3',
-        furnishingStatus: 'Furnished',
-        wifi: true,
-        airConditioning: true,
-        rentAmount: '2000',
-        independent: true,
-        // propertyImages: [], // Add image files here
-        description: 'A beautiful flat located in a quiet neighborhood with all amenities.',
-    };
+    const { id } = useParams();
+    const [listingData, setListingData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchListing() {
+            try {
+                setLoading(true);
+                const data = await listingService.getListingById('flat', id);
+                setListingData(data);
+            } catch (err) {
+                setError('Failed to fetch listing');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        if (id) {
+            fetchListing();
+        }
+    }, [id]);
+
+    if (loading) {
+        return <div className="text-center py-10">Loading listing details...</div>;
+    }
+
+    if (error) {
+        return <div className="text-center py-10 text-red-500">{error}</div>;
+    }
+
+    if (!listingData) {
+        return <div className="text-center py-10">Listing not found.</div>;
+    }
 
     return (
         <>
-          <RenterListingDetail listing={listingData} />
-          <FlatReviewsSection/>
+            <RenterListingDetail listing={listingData} />
+            <FlatReviewsSection />
         </>
     );
 }
