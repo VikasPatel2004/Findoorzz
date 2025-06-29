@@ -10,11 +10,15 @@ const StudentListingDetail = ({ listing }) => {
                 </h3>
             </div>
             <div className="bg-white p-6 m-2 shadow-lg rounded-2xl w-full max-w-3xl">
-                <img src={roomimage} className="rounded-t-2xl w-full h-64 object-cover" alt="listing_image" />
-                
+                {listing.propertyImages && listing.propertyImages.length > 0 ? (
+                    <img src={listing.propertyImages[0]} className="rounded-t-2xl w-full h-64 object-cover" alt="listing_image" />
+                ) : (
+                    <img src={roomimage} className="rounded-t-2xl w-full h-64 object-cover" alt="listing_image" />
+                )}
                 <div className="p-4">
                     <div className="bg-gray-50 border border-amber-100 rounded-lg p-8 mb-3">
                         <p className='mb-2' ><strong>Landlord Name:</strong> {listing.landlordName}</p>
+                        <p className='mb-2'><strong>House Number:</strong> {listing.houseNumber}</p>
                         <p className='mb-2'><strong>Colony:</strong> {listing.colony}</p>
                         <p className='mb-2'><strong>City:</strong> {listing.city}</p>
                         <p className='mb-2'><strong>Rooms:</strong> {listing.numberOfRooms}</p>

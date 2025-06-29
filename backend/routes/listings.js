@@ -238,6 +238,19 @@ router.get('/pg', async (req, res) => {
   }
 });
 
+// Get single PG listing by ID
+router.get('/pg/:id', async (req, res) => {
+  try {
+    const listing = await PGListing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    res.json(listing);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching PG listing', error: err.message });
+  }
+});
+
 // Validation rules for PG listing update
 const pgListingUpdateValidationRules = [
   body('landlordName').optional().notEmpty().withMessage('Landlord name is required'),

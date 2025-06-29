@@ -14,8 +14,8 @@ function MyListings() {
     };
 
     // Navigate to the Renter route
-    const handleButtonClick = (id) => {
-        navigate(`/MyLanlordListingView/${id}`); // Navigate to the listing details route
+    const handleButtonClick = (listing) => {
+        navigate(`/RoomDetail/${listing._id}`); // Navigate to StudentListingFullPage with listing ID param
     };
 
     useEffect(() => {
@@ -85,7 +85,7 @@ function MyListings() {
                                 <button 
                                     type="button" 
                                     className="btn btn-warning px-5 py-2 mt-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300" 
-                                    onClick={() => handleButtonClick(listing._id)}
+                                    onClick={() => handleButtonClick(listing)}
                                 >
                                     Explore
                                 </button> 

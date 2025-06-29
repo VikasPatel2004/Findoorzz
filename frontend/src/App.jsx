@@ -67,7 +67,7 @@ function App() {
               <StudentSavedListings />
             </PrivateRoute>
           } />
-          <Route path="/RoomDetail" element={
+          <Route path="/RoomDetail/:id" element={
             <PrivateRoute>
               <StudentListingDetailPage />
             </PrivateRoute>

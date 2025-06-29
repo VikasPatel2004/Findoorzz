@@ -46,7 +46,7 @@ function LandlordListingForm() {
     try {
       const token = localStorage.getItem('token');
       const data = new FormData();
-            navigate('/');
+            navigate('/landlord');
 
 
       // Append text fields
