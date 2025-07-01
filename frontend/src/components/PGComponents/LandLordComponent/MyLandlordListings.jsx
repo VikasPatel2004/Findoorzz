@@ -19,19 +19,21 @@ function MyListings() {
     };
 
     useEffect(() => {
-        async function fetchListings() {
-            try {
-                setLoading(true);
-                const listings = await listingService.getPGListings();
-                setLandlordListings(listings);
-            } catch (err) {
-                setError('Failed to fetch listings');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
+    async function fetchListings() {
+        try {
+            setLoading(true);
+            // Get token from localStorage or context (adjust as per your auth implementation)
+            const token = localStorage.getItem('token');
+            const listings = await listingService.getPGListings(token);
+            setLandlordListings(listings);
+        } catch (err) {
+            setError('Failed to fetch listings');
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-        fetchListings();
+    }
+    fetchListings();
     }, []);
 
     if (loading) {

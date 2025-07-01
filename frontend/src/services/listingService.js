@@ -2,14 +2,22 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-async function getFlatListings({ page = 1, limit = 10, city, furnishingStatus, minRent, maxRent } = {}) {
+async function getFlatListings({ page = 1, limit = 10, city, furnishingStatus, minRent, maxRent } = {}, token) {
   const params = { page, limit, city, furnishingStatus, minRent, maxRent };
-  const response = await axios.get(`${API_BASE_URL}/listings/flat`, { params });
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const response = await axios.get(`${API_BASE_URL}/listings/flat`, { params, headers });
   return response.data;
 }
 
-async function getPGListings() {
-  const response = await axios.get(`${API_BASE_URL}/listings/pg`);
+async function getPGListings(token) {
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const response = await axios.get(`${API_BASE_URL}/listings/pg`, { headers });
   return response.data;
 }
 

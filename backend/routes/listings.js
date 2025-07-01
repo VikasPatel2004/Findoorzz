@@ -7,7 +7,22 @@ const { body, validationResult } = require('express-validator');
 const upload = require('../middleware/multer');
 const cloudinary = require('../config/cloudinary');
 
+
 const router = express.Router();
+
+// Get single flat listing by ID
+router.get('/flat/:id', async (req, res) => {
+  try {
+    const listing = await FlatListing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+    res.json(listing);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching flat listing', error: err.message });
+  }
+});
+
 
 // Validation rules for flat listing
 const flatListingValidationRules = [
@@ -75,12 +90,12 @@ router.post('/flat', authenticateToken, upload.fields([
   }
 });
 
-// Get all flat listings with pagination and filtering
-router.get('/flat', async (req, res) => {
+// Get all flat listings with pagination and filtering, only for authenticated user (owner)
+router.get('/flat', authenticateToken, async (req, res) => {
   try {
     const { page = 1, limit = 10, city, furnishingStatus, minRent, maxRent } = req.query;
 
-    const filter = {};
+    const filter = { owner: req.user.userId };
     if (city) filter.city = city;
     if (furnishingStatus) filter.furnishingStatus = furnishingStatus;
     if (minRent || maxRent) {
@@ -227,10 +242,11 @@ router.post('/pg', authenticateToken, upload.fields([
   }
 });
 
-// Get all PG listings
-router.get('/pg', async (req, res) => {
+// Get all PG listings, only for authenticated user (owner)
+router.get('/pg', authenticateToken, async (req, res) => {
   try {
-    const listings = await PGListing.find();
+    const filter = { owner: req.user.userId };
+    const listings = await PGListing.find(filter);
     res.json(listings);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching PG listings', error: err.message });
