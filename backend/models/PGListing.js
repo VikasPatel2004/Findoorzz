@@ -14,7 +14,7 @@ const pgListingSchema = new mongoose.Schema({
   },
   wifi: { type: Boolean, default: false },
   airConditioning: { type: Boolean, default: false },
-  rentAmount: { type: String, required: true, min: 0 },
+  rentAmount: { type: Number, required: true, min: 0 },
   independent: { type: Boolean, default: false },
   propertyImages: [{ type: String }], // store image URLs or paths
   description: { type: String, required: true },

@@ -21,6 +21,11 @@ async function getPGListings(token) {
   return response.data;
 }
 
+async function getAllPGListings() {
+  const response = await axios.get(`${API_BASE_URL}/listings/pg/list-all`);
+  return response.data;
+}
+
 async function getListingById(type, id) {
   const response = await axios.get(`${API_BASE_URL}/listings/${type}/${id}`);
   return response.data;
@@ -58,6 +63,7 @@ async function deleteListing(type, id, token) {
 export default {
   getFlatListings,
   getPGListings,
+  getAllPGListings,
   getListingById,
   createListing,
   updateListing,

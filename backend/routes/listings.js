@@ -253,6 +253,15 @@ router.get('/pg', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/pg/list-all', async (req, res) => {
+  try {
+    const listings = await PGListing.find({});
+    res.json(listings);
+  } catch (err) {
+    console.error('Error in /pg/list-all route:', err.stack || err);
+    res.status(500).json({ message: 'Error fetching all PG listings', error: err.message });
+  }
+});
 // Get single PG listing by ID
 router.get('/pg/:id', async (req, res) => {
   try {
@@ -336,5 +345,8 @@ router.delete('/pg/:id', authenticateToken, checkListingOwnership, async (req, r
     res.status(500).json({ message: 'Error deleting PG listing', error: err.message });
   }
 });
+
+
+
 
 module.exports = router;

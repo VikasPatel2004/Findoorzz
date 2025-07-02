@@ -1,25 +1,43 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SearchFilter = () => {
+const SearchFilter = ({
+    city,
+    colony,
+    rentAmount,
+    numberOfRooms,
+    amenities,
+    onFilterChange,
+    onAmenitiesChange,
+    onSearch,
+}) => {
     const navigate = useNavigate();
-    const [city, setCity] = useState('');
-    const [locality, setLocality] = useState('');
-    const [priceRange, setPriceRange] = useState([5000]); // Only end range
-    const [roomType, setRoomType] = useState('');
 
     const handleCityChange = (e) => {
-        setCity(e.target.value);
-        setLocality(''); // Reset locality when city changes
+        onFilterChange('city', e.target.value);
+        onFilterChange('colony', ''); // Reset colony when city changes
     };
 
-    const handleLocalityChange = (e) => {
-        setLocality(e.target.value);
+    const handleColonyChange = (e) => {
+        onFilterChange('colony', e.target.value);
+    };
+
+    const handleRentAmountChange = (e) => {
+        onFilterChange('rentAmount', [Number(e.target.value)]);
+    };
+
+    const handleNumberOfRoomsChange = (e) => {
+        onFilterChange('numberOfRooms', e.target.value);
+    };
+
+    const handleAmenityChange = (e) => {
+        const { name, checked } = e.target;
+        onAmenitiesChange(name, checked);
     };
 
     // Navigate to the Saved Listings route
     const handleSavedListingsClick = () => {
-        navigate('/StudentSavedRooms'); // Navigate to the Saved Listings route
+        navigate('/StudentSavedRooms');
     };
 
     const localities = {
@@ -58,7 +76,7 @@ const SearchFilter = () => {
                 {/* Locality Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">Locality</label>
-                    <select value={locality} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!city}>
+                    <select value={colony} onChange={handleColonyChange} className="border rounded-md p-1 w-full" disabled={!city}>
                         <option value="">Select Locality</option>
                         {city && localities[city].map((loc, index) => (
                             <option key={index} value={loc}>{loc}</option>
@@ -71,8 +89,8 @@ const SearchFilter = () => {
                     <label className="block mb-1">Price Range</label>
                     <input
                         type="number"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([Number(e.target.value)])} // Only end range
+                        value={rentAmount[0]}
+                        onChange={handleRentAmountChange}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Price"
                     />
@@ -80,13 +98,14 @@ const SearchFilter = () => {
 
                 {/* Room Type Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Room Type</label>
-                    <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="border rounded-md p-1 w-full">
-                        <option value="">Select Room Type</option>
-                        <option value="Single Room">Single Room</option>
-                        <option value="Shared Room">Shared Room</option>
-                        <option value="PG">PG</option>
-                    </select>
+                <label className="block mb-1">Number of Rooms</label>
+                <select value={numberOfRooms} onChange={handleNumberOfRoomsChange} className="border rounded-md p-1 w-full">
+                    <option value="">Select Number of Rooms</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4+">4+</option>
+                </select>
                 </div>
 
                 {/* Amenities Filter */}
@@ -94,16 +113,31 @@ const SearchFilter = () => {
                     <h3 className="text-lg font-semibold mb-2">Amenities</h3>
                     <div className="flex justify-center flex-wrap">
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> Wi-Fi
+                            <input
+                                type="checkbox"
+                                className="mr-2"
+                                name="wifi"
+                                checked={amenities.wifi}
+                                onChange={handleAmenityChange}
+                            /> Wi-Fi
                         </label>
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> AC
+                            <input
+                                type="checkbox"
+                                className="mr-2"
+                                name="ac"
+                                checked={amenities.ac}
+                                onChange={handleAmenityChange}
+                            /> AC
                         </label>
                     </div>
                 </div>
             </div>
             <div className="flex justify-center mt-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                    onClick={onSearch}
+                >
                     Search
                 </button>
             </div>
