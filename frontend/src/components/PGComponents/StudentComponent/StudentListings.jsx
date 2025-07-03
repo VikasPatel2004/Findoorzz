@@ -61,14 +61,22 @@ function StudentListings({ filters, searchTrigger }) {
 
             let filtered = listings;
 
-            // Filter by city
+            // Filter by city with normalization
             if (filters.city) {
-                filtered = filtered.filter(listing => listing.city === filters.city);
+                const cityFilter = filters.city.trim().toLowerCase();
+                filtered = filtered.filter(listing => listing.city && listing.city.trim().toLowerCase() === cityFilter);
             }
 
-            // Filter by colony only if city matches
+            // Filter by colony only if city matches, with robust normalization
             if (filters.colony) {
-                filtered = filtered.filter(listing => listing.colony === filters.colony);
+                const normalizeString = (str) => str.normalize('NFKD').replace(/\s+/g, '').toLowerCase();
+                const colonyFilter = normalizeString(filters.colony);
+                filtered = filtered.filter(listing => {
+                    if (!listing.colony) return false;
+                    const listingColony = normalizeString(listing.colony);
+                    console.log(`Comparing listing colony "${listingColony}" with filter "${colonyFilter}"`);
+                    return listingColony === colonyFilter;
+                });
             }
 
             // Filter by rentAmount (number)
@@ -100,7 +108,11 @@ function StudentListings({ filters, searchTrigger }) {
                 }
             }
 
-            setFilteredListings(filtered);
+        setFilteredListings(filtered);
+
+        // Debug logs
+        console.log('Filters applied:', filters);
+        console.log('Filtered listings count:', filtered.length);
         };
 
         applyFilters();
