@@ -10,6 +10,7 @@ function StudentListings({ filters, searchTrigger }) {
     const [filteredListings, setFilteredListings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [savedListingIds, setSavedListingIds] = useState(new Set());
 
     // Fetch listings on mount and when searchTrigger changes
     useEffect(() => {
@@ -27,6 +28,13 @@ function StudentListings({ filters, searchTrigger }) {
                 } else {
                     setListings([]);
                     setError('Unexpected data format received from server');
+                }
+
+                // Fetch saved listings to mark saved state
+                if (token) {
+                    const savedListings = await listingService.getSavedListings(token);
+                    const savedIds = new Set(savedListings.map(listing => listing._id));
+                    setSavedListingIds(savedIds);
                 }
             } catch (error) {
                 if (error.response && error.response.data) {
@@ -108,11 +116,11 @@ function StudentListings({ filters, searchTrigger }) {
                 }
             }
 
-        setFilteredListings(filtered);
+            setFilteredListings(filtered);
 
-        // Debug logs
-        console.log('Filters applied:', filters);
-        console.log('Filtered listings count:', filtered.length);
+            // Debug logs
+            console.log('Filters applied:', filters);
+            console.log('Filtered listings count:', filtered.length);
         };
 
         applyFilters();
@@ -120,6 +128,30 @@ function StudentListings({ filters, searchTrigger }) {
 
     const handleExploreClick = (id) => {
         navigate(`/RoomDetail/${id}`);
+    };
+
+    const handleSaveToggle = async (listingId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to save listings.');
+            return;
+        }
+        try {
+            if (savedListingIds.has(listingId)) {
+                await listingService.unsaveListing(listingId, token);
+                setSavedListingIds(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(listingId);
+                    return newSet;
+                });
+            } else {
+                await listingService.saveListing(listingId, token);
+                setSavedListingIds(prev => new Set(prev).add(listingId));
+            }
+        } catch (error) {
+            console.error('Error toggling save listing:', error);
+            alert('Failed to update saved listing. Please try again.');
+        }
     };
 
     if (loading) {
@@ -138,12 +170,28 @@ function StudentListings({ filters, searchTrigger }) {
         <div className="container mx-auto text-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-4">
                 {filteredListings.map((listing) => (
-                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
+                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
                         <img 
                             src={listing.propertyImages && listing.propertyImages.length > 0 ? listing.propertyImages[0] : PGListingsPlaceholder} 
                             className="w-full h-52 object-cover" 
                             alt="listing" 
                         />
+                        <button
+                            type="button"
+                            onClick={() => handleSaveToggle(listing._id)}
+                            className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-75 hover:bg-opacity-100 transition"
+                            aria-label={savedListingIds.has(listing._id) ? 'Unsave listing' : 'Save listing'}
+                        >
+                            {savedListingIds.has(listing._id) ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24" stroke="none">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 19.364l6.364-6.364 6.364 6.364M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                            )}
+                        </button>
                         <div className="p-4 text-center">
                             <p className="text-lg font-bold mb-2">
                                 {listing.houseNumber}, {listing.colony}, {listing.city}

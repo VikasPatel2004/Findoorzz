@@ -10,36 +10,55 @@ function StudentSavedListings() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchListings = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const data = await listingService.getAllPGListings();
-                if (Array.isArray(data)) {
-                    setListings(data);
-                } else if (data && Array.isArray(data.listings)) {
-                    setListings(data.listings);
-                } else {
-                    setListings([]);
-                    setError('Unexpected data format received from server');
-                }
-            } catch (err) {
-                setError('Failed to fetch listings');
-            } finally {
+    const fetchSavedListings = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Please login to view saved listings.');
+                setListings([]);
                 setLoading(false);
+                return;
             }
-        };
-        fetchListings();
+            const data = await listingService.getSavedListings(token);
+            if (Array.isArray(data)) {
+                setListings(data);
+            } else if (data && Array.isArray(data.listings)) {
+                setListings(data.listings);
+            } else {
+                setListings([]);
+                setError('Unexpected data format received from server');
+            }
+        } catch (err) {
+            setError('Failed to fetch saved listings');
+            setListings([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSavedListings();
     }, []);
 
     const handleExploreClick = (id) => {
         navigate(`/RoomDetail/${id}`);
     };
 
-    const handleRemoveClick = (id) => {
-        console.log(`Remove listing with id: ${id}`);
-        // Implement remove logic if needed
+    const handleRemoveClick = async (id) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to remove saved listings.');
+            return;
+        }
+        try {
+            await listingService.unsaveListing(id, token);
+            setListings(prev => prev.filter(listing => listing._id !== id));
+        } catch (error) {
+            console.error('Error removing saved listing:', error);
+            alert('Failed to remove saved listing. Please try again.');
+        }
     };
 
     if (loading) {
@@ -58,7 +77,7 @@ function StudentSavedListings() {
         <div className="container mx-auto text-center pt-10">
             <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-20">
                 <h1 className='text-left py-2 text-2xl md:text-3xl'>
-                    This Are Your <span className='text-yellow-500'>Saved</span> Rooms!
+                    These Are Your <span className='text-yellow-500'>Saved</span> Rooms!
                 </h1>
             </div>
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">My Favourites</h2>

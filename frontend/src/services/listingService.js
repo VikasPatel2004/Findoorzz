@@ -60,6 +60,25 @@ async function deleteListing(type, id, token) {
   return response.data;
 }
 
+// New methods for saved listings
+async function saveListing(listingId, token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.post(`${API_BASE_URL}/listings/pg/${listingId}/save`, null, { headers });
+  return response.data;
+}
+
+async function unsaveListing(listingId, token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.delete(`${API_BASE_URL}/listings/pg/${listingId}/save`, { headers });
+  return response.data;
+}
+
+async function getSavedListings(token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.get(`${API_BASE_URL}/listings/pg/saved`, { headers });
+  return response.data;
+}
+
 export default {
   getFlatListings,
   getPGListings,
@@ -68,4 +87,7 @@ export default {
   createListing,
   updateListing,
   deleteListing,
+  saveListing,
+  unsaveListing,
+  getSavedListings,
 };

@@ -3,10 +3,10 @@ const authenticateToken = require('../middleware/authMiddleware');
 const { checkListingOwnership } = require('../middleware/ownershipMiddleware');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
+const SavedListing = require('../models/SavedListing');
 const { body, validationResult } = require('express-validator');
 const upload = require('../middleware/multer');
 const cloudinary = require('../config/cloudinary');
-
 
 const router = express.Router();
 
@@ -262,6 +262,62 @@ router.get('/pg/list-all', async (req, res) => {
     res.status(500).json({ message: 'Error fetching all PG listings', error: err.message });
   }
 });
+router.post('/pg/:id/save', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const listingId = req.params.id;
+
+    // Check if listing exists
+    const listing = await PGListing.findById(listingId);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+
+    // Check if already saved
+    const existing = await SavedListing.findOne({ user: userId, listing: listingId });
+    if (existing) {
+      return res.status(400).json({ message: 'Listing already saved' });
+    }
+
+    const savedListing = new SavedListing({ user: userId, listing: listingId });
+    await savedListing.save();
+
+    res.status(201).json({ message: 'Listing saved successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error saving listing', error: err.message });
+  }
+});
+
+// Unsave a PG listing for the logged-in user
+router.delete('/pg/:id/save', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const listingId = req.params.id;
+
+    const deleted = await SavedListing.findOneAndDelete({ user: userId, listing: listingId });
+    if (!deleted) {
+      return res.status(404).json({ message: 'Saved listing not found' });
+    }
+
+    res.json({ message: 'Listing unsaved successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error unsaving listing', error: err.message });
+  }
+});
+
+// Get all saved PG listings for the logged-in user
+router.get('/pg/saved', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const savedListings = await SavedListing.find({ user: userId }).populate('listing');
+    const listings = savedListings.map(sl => sl.listing);
+
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching saved listings', error: err.message });
+  }
+});
 // Get single PG listing by ID
 router.get('/pg/:id', async (req, res) => {
   try {
@@ -310,18 +366,18 @@ router.put('/pg/:id', authenticateToken, checkListingOwnership, upload.fields([
         propertyImages.push(uploadResult.secure_url);
       }
     }
-
+    
     // Convert number fields to numbers
     const updateData = {
       ...req.body,
       numberOfRooms: req.body.numberOfRooms ? Number(req.body.numberOfRooms) : undefined,
       rentAmount: req.body.rentAmount ? Number(req.body.rentAmount) : undefined,
     };
-
+    
     if (propertyImages.length > 0) {
       updateData.propertyImages = propertyImages;
     }
-
+    
     const listing = await PGListing.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!listing) {
       return res.status(404).json({ message: 'Listing not found' });
@@ -345,6 +401,8 @@ router.delete('/pg/:id', authenticateToken, checkListingOwnership, async (req, r
     res.status(500).json({ message: 'Error deleting PG listing', error: err.message });
   }
 });
+
+// Save a PG listing for the logged-in user
 
 
 
