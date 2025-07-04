@@ -84,6 +84,22 @@ router.delete('/flat/:id/save', authenticateToken, async (req, res) => {
   }
 });
 
+// Get saved status of a flat listing for the logged-in user
+router.get('/flat/:id/save', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const listingId = req.params.id;
+    const savedListing = await SavedListing.findOne({ user: userId, listing: listingId });
+    if (savedListing) {
+      res.json({ saved: true });
+    } else {
+      res.json({ saved: false });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching saved listing status', error: err.message });
+  }
+});
+
 // Get single flat listing by ID (generic, must be last among /flat routes)
 router.get('/flat/:id', async (req, res) => {
   try {

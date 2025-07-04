@@ -118,6 +118,13 @@ async function getSavedFlatListings(token) {
   return response.data;
 }
 
+// Get saved status of a flat listing (GET)
+async function getSavedFlatListingStatus(listingId, token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.get(`${API_BASE_URL}/listings/flat/${listingId}/save`, { headers });
+  return response.data;
+}
+
 export default {
   getFlatListings,
   getAllFlatListings,
@@ -132,5 +139,6 @@ export default {
   getSavedListings,
   saveFlatListing,
   unsaveFlatListing,
-  getSavedFlatListings
+  getSavedFlatListings,
+  getSavedFlatListingStatus
 };

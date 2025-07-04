@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { SavedListingsContext } from '../../../context/SavedListingsContext';
 import { useNavigate } from 'react-router-dom';
 import listingService from '../../../services/listingService';
 import PGListingsPlaceholder from "../../../assets/Room1.svg";
@@ -9,6 +10,8 @@ function RenterSavedListings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const { refreshFlag } = useContext(SavedListingsContext);
 
     const fetchSavedListings = async () => {
         setLoading(true);
@@ -30,7 +33,7 @@ function RenterSavedListings() {
                 setListings([]);
                 setError('Unexpected data format received from server');
             }
-        } catch (err) {
+        } catch {
             setError('Failed to fetch saved listings');
             setListings([]);
         } finally {
@@ -40,7 +43,7 @@ function RenterSavedListings() {
 
     useEffect(() => {
         fetchSavedListings();
-    }, []);
+    }, [refreshFlag]);
 
     const handleExploreClick = (id) => {
         navigate(`/RoomDetail/${id}`);
