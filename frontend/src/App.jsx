@@ -124,7 +124,7 @@ function App() {
               <BrokerAssignmentPage />
             </PrivateRoute>
           } />
-          <Route path="/FlatDetails" element={
+          <Route path="/FlatDetails/:id" element={
             <PrivateRoute>
               <RenterListingDetailPage />
             </PrivateRoute>
