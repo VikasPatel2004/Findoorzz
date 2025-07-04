@@ -90,12 +90,12 @@ router.post('/flat', authenticateToken, upload.fields([
   }
 });
 
-// Get all flat listings with pagination and filtering, only for authenticated user (owner)
-router.get('/flat', authenticateToken, async (req, res) => {
+// Get all flat listings with pagination and filtering, public access (no authentication)
+router.get('/flat', async (req, res) => {
   try {
     const { page = 1, limit = 10, city, furnishingStatus, minRent, maxRent } = req.query;
 
-    const filter = { owner: req.user.userId };
+    const filter = {};
     if (city) filter.city = city;
     if (furnishingStatus) filter.furnishingStatus = furnishingStatus;
     if (minRent || maxRent) {
@@ -104,17 +104,16 @@ router.get('/flat', authenticateToken, async (req, res) => {
       if (maxRent) filter.rentAmount.$lte = Number(maxRent);
     }
 
-    const listings = await FlatListing.find(filter)
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
+    // Remove pagination to return all listings like PG
+    const listings = await FlatListing.find(filter);
 
-    const total = await FlatListing.countDocuments(filter);
+    const total = listings.length;
 
     res.json({
       listings,
       total,
       page: Number(page),
-      pages: Math.ceil(total / limit),
+      pages: 1,
     });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching flat listings', error: err.message });
@@ -406,5 +405,63 @@ router.delete('/pg/:id', authenticateToken, checkListingOwnership, async (req, r
 
 
 
+
+// Save a flat listing for the logged-in user
+router.post('/flat/:id/save', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const listingId = req.params.id;
+
+    // Check if listing exists
+    const listing = await FlatListing.findById(listingId);
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+
+    // Check if already saved
+    const existing = await SavedListing.findOne({ user: userId, listing: listingId });
+    if (existing) {
+      return res.status(400).json({ message: 'Listing already saved' });
+    }
+
+    const savedListing = new SavedListing({ user: userId, listing: listingId });
+    await savedListing.save();
+
+    res.status(201).json({ message: 'Listing saved successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error saving listing', error: err.message });
+  }
+});
+
+// Unsave a flat listing for the logged-in user
+router.delete('/flat/:id/save', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const listingId = req.params.id;
+
+    const deleted = await SavedListing.findOneAndDelete({ user: userId, listing: listingId });
+    if (!deleted) {
+      return res.status(404).json({ message: 'Saved listing not found' });
+    }
+
+    res.json({ message: 'Listing unsaved successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error unsaving listing', error: err.message });
+  }
+});
+
+// Get all saved flat listings for the logged-in user
+router.get('/flat/saved', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const savedListings = await SavedListing.find({ user: userId }).populate('listing');
+    const listings = savedListings.map(sl => sl.listing);
+
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching saved listings', error: err.message });
+  }
+});
 
 module.exports = router;

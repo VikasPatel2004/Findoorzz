@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RenterSearchFilter from '../../../components/FlatComponents/RenterComponents/SearchFilter';
 import RenterListings from '../../../components/FlatComponents/RenterComponents/RenterListings';
 import RenterHelpSection from '../../../components/FlatComponents/RenterComponents/Help';
 
 function RenterPage() {
-    return ( 
+    const [filters, setFilters] = useState({
+        city: '',
+        locality: '',
+        priceRange: [],
+        roomType: '',
+        amenities: {
+            wifi: false,
+            ac: false,
+        },
+    });
+
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    return (
         <>
-        <RenterSearchFilter/>
-        <RenterListings/>
-        <RenterHelpSection/>
+            <RenterSearchFilter filters={filters} onFilterChange={handleFilterChange} />
+            <RenterListings filters={filters} />
+            <RenterHelpSection />
         </>
-     );
+    );
 }
 
 export default RenterPage;

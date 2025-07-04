@@ -1,20 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const RenterSearchFilter = () => {
+const RenterSearchFilter = ({ filters, onFilterChange }) => {
     const navigate = useNavigate();
-    const [city, setCity] = useState('');
-    const [locality, setLocality] = useState('');
-    const [priceRange, setPriceRange] = useState([5000]); // Only end range
-    const [roomType, setRoomType] = useState('');
 
     const handleCityChange = (e) => {
-        setCity(e.target.value);
-        setLocality(''); // Reset locality when city changes
+        onFilterChange({
+            ...filters,
+            city: e.target.value,
+            colony: '', // Reset colony when city changes
+        });
     };
 
     const handleLocalityChange = (e) => {
-        setLocality(e.target.value);
+        onFilterChange({
+            ...filters,
+            colony: e.target.value,
+        });
+    };
+
+    const handlePriceRangeChange = (e) => {
+        onFilterChange({
+            ...filters,
+            priceRange: [Number(e.target.value)],
+        });
+    };
+
+    const handleRoomTypeChange = (e) => {
+        onFilterChange({
+            ...filters,
+            roomType: e.target.value,
+        });
+    };
+
+    const handleAmenityChange = (amenity) => {
+        onFilterChange({
+            ...filters,
+            amenities: {
+                ...filters.amenities,
+                [amenity]: !filters.amenities[amenity],
+            },
+        });
     };
 
     // Navigate to the Saved Listings route
@@ -59,7 +85,7 @@ const RenterSearchFilter = () => {
                 {/* City Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">City</label>
-                    <select value={city} onChange={handleCityChange} className="border rounded-md p-1 w-full">
+                    <select value={filters.city} onChange={handleCityChange} className="border rounded-md p-1 w-full">
                         <option value="">Select City</option>
                         <option value="Gwalior">Gwalior</option>
                         <option value="Indore">Indore</option>
@@ -70,9 +96,9 @@ const RenterSearchFilter = () => {
                 {/* Locality Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">Locality</label>
-                    <select value={locality} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!city}>
+                    <select value={filters.locality} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!filters.city}>
                         <option value="">Select Locality</option>
-                        {city && localities[city].map((loc, index) => (
+                        {filters.city && localities[filters.city].map((loc, index) => (
                             <option key={index} value={loc}>{loc}</option>
                         ))}
                     </select>
@@ -83,8 +109,8 @@ const RenterSearchFilter = () => {
                     <label className="block mb-1">Price Range</label>
                     <input
                         type="number"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([Number(e.target.value)])} // Only end range
+                        value={filters.priceRange[0]}
+                        onChange={handlePriceRangeChange}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Price"
                     />
@@ -92,12 +118,13 @@ const RenterSearchFilter = () => {
 
                 {/* Room Type Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Room Type</label>
-                    <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="border rounded-md p-1 w-full">
-                        <option value="">Select Room Type</option>
-                        <option value="Single Room">Single Room</option>
-                        <option value="Shared Room">Shared Room</option>
-                        <option value="PG">PG</option>
+                    <label className="block mb-1">No. of Rooms</label>
+                    <select value={filters.numberOfRooms} onChange={handleRoomTypeChange} className="border rounded-md p-1 w-full">
+                        <option value="">Select No. of Rooms</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4+">4+</option>
                     </select>
                 </div>
 
@@ -106,19 +133,17 @@ const RenterSearchFilter = () => {
                     <h3 className="text-lg font-semibold mb-2">Amenities</h3>
                     <div className="flex justify-center flex-wrap">
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> Wi-Fi
+                            <input type="checkbox" className="mr-2" checked={filters.amenities.wifi} onChange={() => handleAmenityChange('wifi')} /> Wi-Fi
                         </label>
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> AC
+                            <input type="checkbox" className="mr-2" checked={filters.amenities.ac} onChange={() => handleAmenityChange('ac')} /> AC
                         </label>
-                        <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" /> Food Included
-                        </label>
+                        {/* Removed Food Included amenity as per request */}
                     </div>
                 </div>
             </div>
             <div className="flex justify-center mt-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300" onClick={() => onFilterChange(filters)}>
                     Search
                 </button>
             </div>
@@ -128,3 +153,4 @@ const RenterSearchFilter = () => {
 };
 
 export default RenterSearchFilter;
+

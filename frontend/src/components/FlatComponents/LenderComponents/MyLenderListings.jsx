@@ -24,7 +24,7 @@ function MyListings() {
             setLoading(true);
             // Get token from localStorage or context (adjust as per your auth implementation)
             const token = localStorage.getItem('token');
-            const listings = await listingService.getFlatListings({}, token);
+            const listings = await listingService.getFlatListings(token);
             setLenderListings(listings.listings || listings);
         } catch (err) {
             setError('Failed to fetch listings');

@@ -54,10 +54,10 @@ function LenderListingForm() {
       data.append('city', formData.city);
       data.append('numberOfRooms', Number(formData.numberOfRooms));
       data.append('furnishingStatus', formData.furnishingStatus);
-      data.append('wifi', formData.wifi ? 'true' : 'false');
-      data.append('airConditioning', formData.airConditioning ? 'true' : 'false');
+      data.append('wifi', formData.wifi ? true : false);
+      data.append('airConditioning', formData.airConditioning ? true : false);
       data.append('rentAmount', Number(formData.rentAmount));
-      data.append('independent', formData.independent ? 'true' : 'false');
+      data.append('independent', formData.independent ? true : false);
       data.append('description', formData.description);
 
       if (formData.propertyImages && formData.propertyImages.length > 0) {

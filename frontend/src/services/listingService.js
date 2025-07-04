@@ -2,13 +2,12 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-async function getFlatListings({ page = 1, limit = 10, city, furnishingStatus, minRent, maxRent } = {}, token) {
-  const params = { page, limit, city, furnishingStatus, minRent, maxRent };
+async function getFlatListings(token, query = '') {
   const headers = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  const response = await axios.get(`${API_BASE_URL}/listings/flat`, { params, headers });
+  const response = await axios.get(`${API_BASE_URL}/listings/flat${query}`, { headers });
   return response.data;
 }
 
@@ -60,7 +59,7 @@ async function deleteListing(type, id, token) {
   return response.data;
 }
 
-// New methods for saved listings
+/* New methods for saved listings for PG */
 async function saveListing(listingId, token) {
   const headers = { Authorization: `Bearer ${token}` };
   const response = await axios.post(`${API_BASE_URL}/listings/pg/${listingId}/save`, null, { headers });
