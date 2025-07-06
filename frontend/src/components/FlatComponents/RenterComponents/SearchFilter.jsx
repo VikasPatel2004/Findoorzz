@@ -29,7 +29,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
     const handleRoomTypeChange = (e) => {
         onFilterChange({
             ...filters,
-            roomType: e.target.value,
+            numberOfRooms: e.target.value,
         });
     };
 
@@ -96,7 +96,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                 {/* Locality Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">Locality</label>
-                    <select value={filters.locality} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!filters.city}>
+                    <select value={filters.colony} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!filters.city}>
                         <option value="">Select Locality</option>
                         {filters.city && localities[filters.city].map((loc, index) => (
                             <option key={index} value={loc}>{loc}</option>
@@ -109,7 +109,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                     <label className="block mb-1">Price Range</label>
                     <input
                         type="number"
-                        value={filters.priceRange[0]}
+                        value={filters.priceRange && filters.priceRange.length > 0 ? filters.priceRange[0] : ''}
                         onChange={handlePriceRangeChange}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Price"
@@ -133,10 +133,10 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                     <h3 className="text-lg font-semibold mb-2">Amenities</h3>
                     <div className="flex justify-center flex-wrap">
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" checked={filters.amenities.wifi} onChange={() => handleAmenityChange('wifi')} /> Wi-Fi
+                            <input type="checkbox" className="mr-2" checked={filters.amenities && filters.amenities.wifi ? true : false} onChange={() => handleAmenityChange('wifi')} /> Wi-Fi
                         </label>
                         <label className="flex items-center mr-4">
-                            <input type="checkbox" className="mr-2" checked={filters.amenities.ac} onChange={() => handleAmenityChange('ac')} /> AC
+                            <input type="checkbox" className="mr-2" checked={filters.amenities && filters.amenities.ac ? true : false} onChange={() => handleAmenityChange('ac')} /> AC
                         </label>
                         {/* Removed Food Included amenity as per request */}
                     </div>

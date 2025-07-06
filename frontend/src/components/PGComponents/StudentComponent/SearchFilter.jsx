@@ -65,7 +65,7 @@ const SearchFilter = ({
                 {/* City Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">City</label>
-                    <select value={city} onChange={handleCityChange} className="border rounded-md p-1 w-full">
+                    <select value={city || ''} onChange={handleCityChange} className="border rounded-md p-1 w-full">
                         <option value="">Select City</option>
                         <option value="Gwalior">Gwalior</option>
                         <option value="Indore">Indore</option>
@@ -76,9 +76,9 @@ const SearchFilter = ({
                 {/* Locality Filter */}
                 <div className=" p-2 rounded-md text-center">
                     <label className="block mb-1">Locality</label>
-                    <select value={colony} onChange={handleColonyChange} className="border rounded-md p-1 w-full" disabled={!city}>
+                    <select value={colony || ''} onChange={handleColonyChange} className="border rounded-md p-1 w-full" disabled={!city}>
                         <option value="">Select Locality</option>
-                        {city && localities[city].map((loc, index) => (
+                        {city && localities[city] && localities[city].map((loc, index) => (
                             <option key={index} value={loc}>{loc}</option>
                         ))}
                     </select>
@@ -89,7 +89,7 @@ const SearchFilter = ({
                     <label className="block mb-1">Price Range</label>
                     <input
                         type="number"
-                        value={rentAmount[0]}
+                        value={rentAmount && rentAmount.length > 0 ? rentAmount[0] : ''}
                         onChange={handleRentAmountChange}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Price"
@@ -99,7 +99,7 @@ const SearchFilter = ({
                 {/* Room Type Filter */}
                 <div className=" p-2 rounded-md text-center">
                 <label className="block mb-1">Number of Rooms</label>
-                <select value={numberOfRooms} onChange={handleNumberOfRoomsChange} className="border rounded-md p-1 w-full">
+                <select value={numberOfRooms || ''} onChange={handleNumberOfRoomsChange} className="border rounded-md p-1 w-full">
                     <option value="">Select Number of Rooms</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -117,7 +117,7 @@ const SearchFilter = ({
                                 type="checkbox"
                                 className="mr-2"
                                 name="wifi"
-                                checked={amenities.wifi}
+                                checked={amenities && amenities.wifi ? true : false}
                                 onChange={handleAmenityChange}
                             /> Wi-Fi
                         </label>
@@ -126,7 +126,7 @@ const SearchFilter = ({
                                 type="checkbox"
                                 className="mr-2"
                                 name="ac"
-                                checked={amenities.ac}
+                                checked={amenities && amenities.ac ? true : false}
                                 onChange={handleAmenityChange}
                             /> AC
                         </label>

@@ -12,32 +12,38 @@ const router = express.Router();
 
 /* ---------------------- FLAT LISTINGS ---------------------- */
 
-// Get all flat listings (with optional filters)
-router.get('/flat', async (req, res) => {
+// Get all flat listings (no filters, all) - PUBLIC ROUTE
+router.get('/flat/list-all', async (req, res) => {
   try {
-    const { city, furnishingStatus, minRent, maxRent } = req.query;
-    const filter = {};
-    if (city) filter.city = city;
-    if (furnishingStatus) filter.furnishingStatus = furnishingStatus;
-    if (minRent || maxRent) {
-      filter.rentAmount = {};
-      if (minRent) filter.rentAmount.$gte = Number(minRent);
-      if (maxRent) filter.rentAmount.$lte = Number(maxRent);
-    }
-    const listings = await FlatListing.find(filter);
-    res.json({ listings });
+    console.log('Fetching all flat listings...');
+    const listings = await FlatListing.find({});
+    console.log(`Found ${listings.length} flat listings`);
+    res.json(listings);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching flat listings', error: err.message });
+    console.error('Error fetching flat listings:', err);
+    res.status(500).json({ message: 'Error fetching all Flat listings', error: err.message });
   }
 });
 
-// Get all flat listings (no filters, all)
-router.get('/flat/list-all', async (req, res) => {
+// Get user's own flat listings (for any user who has created flat listings)
+router.get('/flat/my-created', authenticateToken, async (req, res) => {
   try {
-    const listings = await FlatListing.find({});
+    const filter = { owner: req.user.userId };
+    const listings = await FlatListing.find(filter);
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching all Flat listings', error: err.message });
+    res.status(500).json({ message: 'Error fetching your created flat listings', error: err.message });
+  }
+});
+
+// Get flat listings for authenticated user (lender) - only their own listings
+router.get('/flat/my-listings', authenticateToken, async (req, res) => {
+  try {
+    const filter = { owner: req.user.userId };
+    const listings = await FlatListing.find(filter);
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching your flat listings', error: err.message });
   }
 });
 
@@ -51,6 +57,66 @@ router.get('/flat/saved', authenticateToken, async (req, res) => {
     res.json(listings);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching saved listings', error: err.message });
+  }
+});
+
+// Get all flat listings (with optional filters) - for renters to see all listings
+router.get('/flat', async (req, res) => {
+  try {
+    const { city, colony, minRent, maxRent, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
+    const filter = {};
+    
+    // City filter
+    if (city) {
+      filter.city = { $regex: city.trim(), $options: 'i' };
+    }
+    
+    // Colony filter
+    if (colony) {
+      filter.colony = { $regex: colony.trim(), $options: 'i' };
+    }
+    
+    // Price range filter
+    if (minRent || maxRent) {
+      filter.rentAmount = {};
+      if (minRent) filter.rentAmount.$gte = Number(minRent);
+      if (maxRent) filter.rentAmount.$lte = Number(maxRent);
+    }
+    
+    // Number of rooms filter
+    if (numberOfRooms) {
+      if (numberOfRooms === '4+') {
+        filter.numberOfRooms = { $gte: 4 };
+      } else {
+        filter.numberOfRooms = Number(numberOfRooms);
+      }
+    }
+    
+    // Furnishing status filter
+    if (furnishingStatus) {
+      filter.furnishingStatus = furnishingStatus;
+    }
+    
+    // Amenities filters - only apply when explicitly set to true
+    if (wifi === 'true' || wifi === true) {
+      filter.wifi = true;
+    }
+    
+    if (airConditioning === 'true' || airConditioning === true) {
+      filter.airConditioning = true;
+    }
+    
+    if (independent === 'true' || independent === true) {
+      filter.independent = true;
+    }
+    
+    console.log('Applied filters:', filter);
+    const listings = await FlatListing.find(filter);
+    console.log(`Found ${listings.length} listings matching filters`);
+    res.json(listings);
+  } catch (err) {
+    console.error('Error fetching flat listings:', err);
+    res.status(500).json({ message: 'Error fetching flat listings', error: err.message });
   }
 });
 
@@ -212,24 +278,180 @@ router.get('/flat/:id', async (req, res) => {
 
 /* ---------------------- PG LISTINGS ---------------------- */
 
-// Get all PG listings for authenticated user (owner)
-router.get('/pg', authenticateToken, async (req, res) => {
+// Get all PG listings (for students, public) - all listings from all landlords
+router.get('/pg/list-all', async (req, res) => {
+  try {
+    console.log('Fetching all PG listings...');
+    const listings = await PGListing.find({});
+    console.log(`Found ${listings.length} PG listings`);
+    res.json(listings);
+  } catch (err) {
+    console.error('Error fetching PG listings:', err);
+    res.status(500).json({ message: 'Error fetching all PG listings', error: err.message });
+  }
+});
+
+// Get all PG listings for students (including their own and others)
+router.get('/pg/student-listings', authenticateToken, async (req, res) => {
+  try {
+    console.log('Fetching all PG listings for student...');
+    const userId = req.user.userId;
+    
+    // Get all listings
+    const allListings = await PGListing.find({});
+    
+    // Mark which listings belong to the current user
+    const listingsWithOwnership = allListings.map(listing => {
+      const listingObj = listing.toObject();
+      listingObj.isOwnedByUser = listing.owner.toString() === userId;
+      return listingObj;
+    });
+    
+    console.log(`Found ${listingsWithOwnership.length} PG listings for student`);
+    res.json(listingsWithOwnership);
+  } catch (err) {
+    console.error('Error fetching PG listings for student:', err);
+    res.status(500).json({ message: 'Error fetching PG listings for student', error: err.message });
+  }
+});
+
+// Get filtered PG listings (for students, public) - all listings with filters
+router.get('/pg/filtered', async (req, res) => {
+  try {
+    const { city, colony, minRent, maxRent, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
+    const filter = {};
+    
+    // City filter
+    if (city) {
+      filter.city = { $regex: city.trim(), $options: 'i' };
+    }
+    
+    // Colony filter
+    if (colony) {
+      filter.colony = { $regex: colony.trim(), $options: 'i' };
+    }
+    
+    // Price range filter
+    if (minRent || maxRent) {
+      filter.rentAmount = {};
+      if (minRent) filter.rentAmount.$gte = minRent; // Keep as string for PG listings
+      if (maxRent) filter.rentAmount.$lte = maxRent; // Keep as string for PG listings
+    }
+    
+    // Number of rooms filter
+    if (numberOfRooms) {
+      if (numberOfRooms === '4+') {
+        filter.numberOfRooms = { $gte: '4' };
+      } else {
+        filter.numberOfRooms = numberOfRooms; // Keep as string for PG listings
+      }
+    }
+    
+    // Furnishing status filter
+    if (furnishingStatus) {
+      filter.furnishingStatus = furnishingStatus;
+    }
+    
+    // Amenities filters - only apply when explicitly set to true
+    if (wifi === 'true' || wifi === true) {
+      filter.wifi = true;
+    }
+    
+    if (airConditioning === 'true' || airConditioning === true) {
+      filter.airConditioning = true;
+    }
+    
+    if (independent === 'true' || independent === true) {
+      filter.independent = true;
+    }
+    
+    console.log('Applied PG filters:', filter);
+    const listings = await PGListing.find(filter);
+    console.log(`Found ${listings.length} PG listings matching filters`);
+    res.json(listings);
+  } catch (err) {
+    console.error('Error fetching PG listings:', err);
+    res.status(500).json({ message: 'Error fetching PG listings', error: err.message });
+  }
+});
+
+// Get filtered PG listings for students (including their own and others)
+router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
+  try {
+    const { city, colony, minRent, maxRent, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
+    const userId = req.user.userId;
+    const filter = {};
+    
+    // City filter
+    if (city) {
+      filter.city = { $regex: city.trim(), $options: 'i' };
+    }
+    
+    // Colony filter
+    if (colony) {
+      filter.colony = { $regex: colony.trim(), $options: 'i' };
+    }
+    
+    // Price range filter
+    if (minRent || maxRent) {
+      filter.rentAmount = {};
+      if (minRent) filter.rentAmount.$gte = Number(minRent);
+      if (maxRent) filter.rentAmount.$lte = Number(maxRent);
+    }
+    
+    // Number of rooms filter
+    if (numberOfRooms) {
+      if (numberOfRooms === '4+') {
+        filter.numberOfRooms = { $gte: '4' };
+      } else {
+        filter.numberOfRooms = numberOfRooms; // Keep as string for PG listings
+      }
+    }
+    
+    // Furnishing status filter
+    if (furnishingStatus) {
+      filter.furnishingStatus = furnishingStatus;
+    }
+    
+    // Amenities filters - only apply when explicitly set to true
+    if (wifi === 'true' || wifi === true) {
+      filter.wifi = true;
+    }
+    
+    if (airConditioning === 'true' || airConditioning === true) {
+      filter.airConditioning = true;
+    }
+    
+    if (independent === 'true' || independent === true) {
+      filter.independent = true;
+    }
+    
+    console.log('Applied PG student filters:', filter);
+    const listings = await PGListing.find(filter);
+    
+    // Mark which listings belong to the current user
+    const listingsWithOwnership = listings.map(listing => {
+      const listingObj = listing.toObject();
+      listingObj.isOwnedByUser = listing.owner.toString() === userId;
+      return listingObj;
+    });
+    
+    console.log(`Found ${listingsWithOwnership.length} PG listings matching filters for student`);
+    res.json(listingsWithOwnership);
+  } catch (err) {
+    console.error('Error fetching filtered PG listings for student:', err);
+    res.status(500).json({ message: 'Error fetching filtered PG listings for student', error: err.message });
+  }
+});
+
+// Get user's own PG listings (for any user who has created PG listings)
+router.get('/pg/my-created', authenticateToken, async (req, res) => {
   try {
     const filter = { owner: req.user.userId };
     const listings = await PGListing.find(filter);
     res.json(listings);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching PG listings', error: err.message });
-  }
-});
-
-// Get all PG listings (for students, public)
-router.get('/pg/list-all', async (req, res) => {
-  try {
-    const listings = await PGListing.find({});
-    res.json(listings);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching all PG listings', error: err.message });
+    res.status(500).json({ message: 'Error fetching your created PG listings', error: err.message });
   }
 });
 
@@ -243,6 +465,17 @@ router.get('/pg/saved', authenticateToken, async (req, res) => {
     res.json(listings);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching saved listings', error: err.message });
+  }
+});
+
+// Get all PG listings for authenticated user (landlord) - only their own listings
+router.get('/pg', authenticateToken, async (req, res) => {
+  try {
+    const filter = { owner: req.user.userId };
+    const listings = await PGListing.find(filter);
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching PG listings', error: err.message });
   }
 });
 

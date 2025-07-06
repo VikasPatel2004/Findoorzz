@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authService from '../services/authService';
+import { AuthContext } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+    
     try {
-      const data = await authService.login(email, password);
-      localStorage.setItem('token', data.token);
-      // Redirect to dashboard or home page after login
-      navigate('/');
+      const result = await login(email, password);
+      if (result.success) {
+        // Redirect to dashboard or home page after login
+        navigate('/');
+      } else {
+        setError(result.message || 'Login failed. Please try again.');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError('Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,9 +64,10 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-400 text-black font-semibold py-2 rounded hover:bg-yellow-500 transition"
+            disabled={loading}
+            className="w-full bg-yellow-400 text-black font-semibold py-2 rounded hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">

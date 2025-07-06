@@ -6,9 +6,9 @@ import RenterHelpSection from '../../../components/FlatComponents/RenterComponen
 function RenterPage() {
     const [filters, setFilters] = useState({
         city: '',
-        locality: '',
+        colony: '',
         priceRange: [],
-        roomType: '',
+        numberOfRooms: '',
         amenities: {
             wifi: false,
             ac: false,

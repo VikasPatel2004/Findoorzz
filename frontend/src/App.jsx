@@ -23,6 +23,9 @@ import StudentSavedListings from './pages/PG/Student/StudentSavedListings';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import RenterDashboard from './pages/RenterDashboard';
+import UserProfile from './pages/Profile/UserProfile';
+import EditProfile from './pages/Profile/EditProfile';
+import TestComponent from './components/TestComponent';
 
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -36,6 +39,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/Signup" element={<SignupPage />} />
           <Route path="/LoginPage" element={<LoginPage />} />
+          <Route path="/test" element={<TestComponent />} />
 
           <Route path="/PG" element={
             <PrivateRoute>
@@ -107,6 +111,16 @@ function App() {
           <Route path="/RenterDashboard" element={
             <PrivateRoute>
               <RenterDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <UserProfile />
+            </PrivateRoute>
+          } />
+          <Route path="/edit-profile" element={
+            <PrivateRoute>
+              <EditProfile />
             </PrivateRoute>
           } />
           <Route path="/BrokerRegistration" element={

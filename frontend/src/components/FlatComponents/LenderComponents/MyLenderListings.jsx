@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 
 function MyListings() {
     const navigate = useNavigate();
+    const { token } = useContext(AuthContext);
     const [lenderListings, setLenderListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,10 +24,8 @@ function MyListings() {
     async function fetchListings() {
         try {
             setLoading(true);
-            // Get token from localStorage or context (adjust as per your auth implementation)
-            const token = localStorage.getItem('token');
-            const listings = await listingService.getFlatListings(token);
-            setLenderListings(listings.listings || listings);
+            const listings = await listingService.getMyFlatListings(token);
+            setLenderListings(Array.isArray(listings) ? listings : []);
         } catch (err) {
             setError('Failed to fetch listings');
             console.error(err);
@@ -33,8 +33,12 @@ function MyListings() {
             setLoading(false);
         }
     }
-    fetchListings();
-    }, []);
+    if (token) {
+        fetchListings();
+    } else {
+        setLoading(false);
+    }
+    }, [token]);
 
     if (loading) {
         return <div className="text-center py-10">Loading listings...</div>;

@@ -163,7 +163,16 @@ export default function ResponsiveNavbarWithZoomInHover() {
                         className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         onClick={() => {
                           setProfileMenuOpen(false);
-                          navigate('/Profile');
+                          navigate('/profile');
+                        }}
+                      >
+                        My Profile
+                      </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          navigate('/edit-profile');
                         }}
                       >
                         Edit Profile
@@ -246,16 +255,28 @@ export default function ResponsiveNavbarWithZoomInHover() {
               Login
             </button>
           ) : (
-            <button
-              className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
-              role="menuitem"
-              onClick={() => {
-                setMenuOpen(false);
-                handleLogoutClick();
-              }}
-            >
-              Logout
-            </button>
+            <>
+              <button
+                className={`${linkClassNames} block px-4 py-3 border-b border-black`}
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/profile');
+                }}
+              >
+                My Profile
+              </button>
+              <button
+                className={`${linkClassNames} block px-4 py-3 font-semibold border border-black m-3 rounded-md text-center`}
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogoutClick();
+                }}
+              >
+                Logout
+              </button>
+            </>
           )}
         </div>
       )}

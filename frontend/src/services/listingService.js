@@ -2,6 +2,9 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('Environment variables:', import.meta.env);
+
 // Get flat listings with optional filters
 async function getFlatListings(token, query = '') {
   console.log('getFlatListings called with token:', token);
@@ -15,8 +18,15 @@ async function getFlatListings(token, query = '') {
 
 // Get all flat listings (no filters)
 async function getAllFlatListings() {
-  const response = await axios.get(`${API_BASE_URL}/listings/flat/list-all`);
-  return response.data;
+  console.log('Fetching flat listings from:', `${API_BASE_URL}/listings/flat/list-all`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/listings/flat/list-all`);
+    console.log('Flat listings response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all flat listings:', error);
+    throw error;
+  }
 }
 
 // Get PG listings for owner
@@ -31,8 +41,51 @@ async function getPGListings(token) {
 
 // Get all PG listings (for students)
 async function getAllPGListings() {
-  const response = await axios.get(`${API_BASE_URL}/listings/pg/list-all`);
+  console.log('Fetching PG listings from:', `${API_BASE_URL}/listings/pg/list-all`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/listings/pg/list-all`);
+    console.log('PG listings response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all PG listings:', error);
+    throw error;
+  }
+}
+
+// Get filtered PG listings (for students)
+async function getFilteredPGListings(query = '') {
+  const response = await axios.get(`${API_BASE_URL}/listings/pg/filtered${query}`);
   return response.data;
+}
+
+// Get all PG listings for students (including their own and others)
+async function getStudentPGListings(token) {
+  console.log('Fetching student PG listings from:', `${API_BASE_URL}/listings/pg/student-listings`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/listings/pg/student-listings`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log('Student PG listings response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching student PG listings:', error);
+    throw error;
+  }
+}
+
+// Get filtered PG listings for students (including their own and others)
+async function getFilteredStudentPGListings(query = '', token) {
+  console.log('Fetching filtered student PG listings from:', `${API_BASE_URL}/listings/pg/student-filtered${query}`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/listings/pg/student-filtered${query}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log('Filtered student PG listings response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching filtered student PG listings:', error);
+    throw error;
+  }
 }
 
 // Get listing by type and id
@@ -129,11 +182,35 @@ async function getSavedFlatListingStatus(listingId, token) {
   return response.data;
 }
 
+// Get flat listings for owner (lender)
+async function getMyFlatListings(token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.get(`${API_BASE_URL}/listings/flat/my-listings`, { headers });
+  return response.data;
+}
+
+// Get user's own created flat listings (for any user)
+async function getMyCreatedFlatListings(token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.get(`${API_BASE_URL}/listings/flat/my-created`, { headers });
+  return response.data;
+}
+
+// Get user's own created PG listings (for any user)
+async function getMyCreatedPGListings(token) {
+  const headers = { Authorization: `Bearer ${token}` };
+  const response = await axios.get(`${API_BASE_URL}/listings/pg/my-created`, { headers });
+  return response.data;
+}
+
 export default {
   getFlatListings,
   getAllFlatListings,
   getPGListings,
   getAllPGListings,
+  getFilteredPGListings,
+  getStudentPGListings,
+  getFilteredStudentPGListings,
   getListingById,
   createListing,
   updateListing,
@@ -144,5 +221,8 @@ export default {
   saveFlatListing,
   unsaveFlatListing,
   getSavedFlatListings,
-  getSavedFlatListingStatus
+  getSavedFlatListingStatus,
+  getMyFlatListings,
+  getMyCreatedFlatListings,
+  getMyCreatedPGListings
 };
