@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 
 // Get flat listings with optional filters
 async function getFlatListings(token, query = '') {
+  console.log('getFlatListings called with token:', token);
   const headers = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -99,6 +100,7 @@ async function getSavedListings(token) {
 
 // Save a flat listing (POST)
 async function saveFlatListing(listingId, token) {
+  console.log('saveFlatListing called with token:', token);
   const headers = { Authorization: `Bearer ${token}` };
   const response = await axios.post(`${API_BASE_URL}/listings/flat/${listingId}/save`, null, { headers });
   return response.data;
@@ -106,6 +108,7 @@ async function saveFlatListing(listingId, token) {
 
 // Unsave a flat listing (DELETE)
 async function unsaveFlatListing(listingId, token) {
+  console.log('unsaveFlatListing called with token:', token);
   const headers = { Authorization: `Bearer ${token}` };
   const response = await axios.delete(`${API_BASE_URL}/listings/flat/${listingId}/save`, { headers });
   return response.data;
@@ -113,6 +116,7 @@ async function unsaveFlatListing(listingId, token) {
 
 // Get all saved flat listings for user
 async function getSavedFlatListings(token) {
+  console.log('getSavedFlatListings called with token:', token);
   const headers = { Authorization: `Bearer ${token}` };
   const response = await axios.get(`${API_BASE_URL}/listings/flat/saved`, { headers });
   return response.data;

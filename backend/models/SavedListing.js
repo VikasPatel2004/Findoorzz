@@ -8,12 +8,17 @@ const savedListingSchema = new mongoose.Schema({
   },
   listing: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PGListing',
     required: true,
+    refPath: 'listingType',
+  },
+  listingType: {
+    type: String,
+    required: true,
+    enum: ['PGListing', 'FlatListing'],
   },
 }, { timestamps: true });
 
-savedListingSchema.index({ user: 1, listing: 1 }, { unique: true });
+savedListingSchema.index({ user: 1, listing: 1, listingType: 1 }, { unique: true });
 
 const SavedListing = mongoose.model('SavedListing', savedListingSchema);
 

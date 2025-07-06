@@ -83,9 +83,12 @@ export default function RenterListings({ filters }) {
                 });
                 console.log('Filtered listings:', filteredFetchedListings);
 
+                // Filter out null or invalid saved listings before merging
+                const validSavedListings = savedListings.filter(listing => listing && listing._id);
+
                 const mergedListings = [
                     ...filteredFetchedListings.filter(listing => !savedIdsSet.has(listing._id)),
-                    ...savedListings
+                    ...validSavedListings
                 ];
 
                 setListings(mergedListings);
@@ -98,14 +101,15 @@ export default function RenterListings({ filters }) {
             }
         };
         fetchListings();
-    }, [filters]);
+    }, [filters, refreshSavedListings]);
 
     const handleExploreClick = (id) => {
-        navigate(`/FlatDetails/${id}`);
+        navigate(`/FlatDetail/${id}`);
     };
 
     const handleSaveToggle = async (listingId) => {
         const token = localStorage.getItem('token');
+        console.log('Saving listing with token:', token); // Debug log
         if (!token) {
             alert('Please login to save listings.');
             return;
