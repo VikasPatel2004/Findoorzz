@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
-import roomimage from '../../../assets/Room1.svg';
 import ImageGallery from '../../ImageGallery';
 
 const StudentListingDetail = ({ listing }) => {
@@ -22,7 +21,7 @@ const StudentListingDetail = ({ listing }) => {
         if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
             try {
                 setIsDeleting(true);
-                await listingService.deleteListing('pg', listing._id, token);
+                await listingService.deleteListing(listing._id);
                 alert('Listing deleted successfully');
                 navigate('/landlord'); // Redirect to landlord page after deletion
             } catch (error) {
@@ -34,6 +33,9 @@ const StudentListingDetail = ({ listing }) => {
         }
     };
 
+    // Ensure propertyImages is always an array
+    const propertyImages = Array.isArray(listing.propertyImages) ? listing.propertyImages : [];
+
     return (
         <div className="container mx-auto flex flex-col justify-center items-center py-4 my-4">
             <div className="w-3/4 text-center mb-4">
@@ -44,8 +46,7 @@ const StudentListingDetail = ({ listing }) => {
             <div className="bg-white p-6 m-2 shadow-lg rounded-2xl w-full max-w-3xl">
                 {/* Image Gallery */}
                 <ImageGallery 
-                    images={listing.propertyImages} 
-                    defaultImage={roomimage}
+                    images={propertyImages} 
                     alt="Room Images"
                 />
                 

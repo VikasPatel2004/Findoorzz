@@ -14,7 +14,7 @@ function RenterListingDetailPage() {
         async function fetchListing() {
             try {
                 setLoading(true);
-                const data = await listingService.getListingById('flat', id);
+                const data = await listingService.getListingById(id);
                 setListingData(data);
             } catch (err) {
                 setError('Failed to fetch listing');
@@ -43,7 +43,7 @@ function RenterListingDetailPage() {
     return (
         <>
             <RenterListingDetail listing={listingData} />
-            <FlatReviewsSection />
+            <FlatReviewsSection listingId={id} />
         </>
     );
 }

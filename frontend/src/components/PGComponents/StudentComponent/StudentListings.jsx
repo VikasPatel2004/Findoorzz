@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
-import PGListingsPlaceholder from "../../../assets/Room1.svg";
 import MiniImageGallery from '../../MiniImageGallery';
 
 function StudentListings({ filters, searchTrigger }) {
@@ -85,13 +84,13 @@ function StudentListings({ filters, searchTrigger }) {
                 // Fetch saved listings to mark saved state (only if authenticated)
                 if (token) {
                     try {
-                        console.log('Fetching saved listings...');
-                        const savedListings = await listingService.getSavedListings(token);
-                        console.log('Saved listings:', savedListings);
+                        console.log('Fetching saved PG listings...');
+                        const savedListings = await listingService.getSavedPGListings();
+                        console.log('Saved PG listings:', savedListings);
                         const savedIds = new Set(savedListings.map(listing => listing._id));
                         setSavedListingIds(savedIds);
                     } catch (error) {
-                        console.warn('Failed to fetch saved listings:', error);
+                        console.warn('Failed to fetch saved PG listings:', error);
                         setSavedListingIds(new Set());
                     }
                 } else {
@@ -142,17 +141,18 @@ function StudentListings({ filters, searchTrigger }) {
         }
         
         try {
-            if (savedListingIds.has(listingId)) {
-                await listingService.unsaveListing(listingId, token);
-                setSavedListingIds(prev => {
-                    const newSet = new Set(prev);
+            await listingService.toggleSavedListing(listingId);
+            
+            // Toggle the saved state locally
+            setSavedListingIds(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(listingId)) {
                     newSet.delete(listingId);
-                    return newSet;
-                });
-            } else {
-                await listingService.saveListing(listingId, token);
-                setSavedListingIds(prev => new Set(prev).add(listingId));
-            }
+                } else {
+                    newSet.add(listingId);
+                }
+                return newSet;
+            });
         } catch (error) {
             console.error('Error toggling save listing:', error);
             alert('Failed to update saved listing. Please try again.');
@@ -179,7 +179,6 @@ function StudentListings({ filters, searchTrigger }) {
                         {/* Mini Image Gallery */}
                         <MiniImageGallery 
                             images={listing.propertyImages} 
-                            defaultImage={PGListingsPlaceholder}
                             alt="Room Images"
                             maxImages={4}
                         />

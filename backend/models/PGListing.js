@@ -21,9 +21,16 @@ const pgListingSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
-// Indexes for performance
-pgListingSchema.index({ owner: 1 });
+// Add indexes for better query performance
+pgListingSchema.index({ type: 1 });
 pgListingSchema.index({ city: 1 });
+pgListingSchema.index({ colony: 1 });
 pgListingSchema.index({ rentAmount: 1 });
+pgListingSchema.index({ gender: 1 });
+pgListingSchema.index({ owner: 1 });
+pgListingSchema.index({ createdAt: -1 });
+pgListingSchema.index({ city: 1, colony: 1 });
+pgListingSchema.index({ city: 1, rentAmount: 1 });
+pgListingSchema.index({ type: 1, city: 1, rentAmount: 1 });
 
 module.exports = mongoose.model('PGListing', pgListingSchema);

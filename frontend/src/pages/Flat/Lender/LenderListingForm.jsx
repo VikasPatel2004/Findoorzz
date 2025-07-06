@@ -20,6 +20,7 @@ function LenderListingForm() {
   });
 
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
@@ -41,12 +42,37 @@ function LenderListingForm() {
     }
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    // Validate file sizes (5MB limit per image)
+    const validFiles = files.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`Image "${file.name}" is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.`);
+        return false;
+      }
+      return true;
+    });
+    
+    setFormData(prevState => ({
+      ...prevState,
+      propertyImages: validFiles,
+    }));
+    
+    if (validFiles.length !== files.length) {
+      console.log(`Filtered out ${files.length - validFiles.length} oversized images`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      setLoading(true);
       const data = new FormData();
 
+      // Add type for Flat listing
+      data.append('type', 'Flat');
+      
       data.append('landlordName', formData.landlordName);
       data.append('contactNumber', formData.contactNumber);
       data.append('houseNumber', formData.houseNumber);
@@ -60,18 +86,27 @@ function LenderListingForm() {
       data.append('independent', formData.independent ? true : false);
       data.append('description', formData.description);
 
+      // Add images
       if (formData.propertyImages && formData.propertyImages.length > 0) {
         for (let i = 0; i < formData.propertyImages.length; i++) {
           data.append('propertyImages', formData.propertyImages[i]);
         }
       }
 
-      await listingService.createListing('flat', data, token);
+      console.log('Submitting flat listing with', formData.propertyImages.length, 'images...');
+
+      await listingService.createListing(data);
       alert('Listing created successfully');
       navigate('/lender', { state: { refresh: true } });
     } catch (error) {
       console.error('Error creating listing:', error);
-      alert('Failed to create listing');
+      if (error.code === 'ECONNABORTED') {
+        alert('Request timed out. The listing might still be created. Please check your listings.');
+      } else {
+        alert('Failed to create listing: ' + (error.response?.data?.message || error.message));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,7 +323,7 @@ function LenderListingForm() {
                 type="file"
                 multiple
                 className="mt-1 block w-full border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
-                onChange={handleChange}
+                onChange={handleImageChange}
               />
             </div>
           </div>
@@ -310,8 +345,26 @@ function LenderListingForm() {
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <button className="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300" type="submit">Submit</button>
+          <div className="flex flex-col items-center">
+            {loading && (
+              <div className="mb-4 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                <p className="mt-2 text-sm text-gray-600">
+                  {formData.propertyImages.length > 0 
+                    ? `Processing ${formData.propertyImages.length} image(s) and creating listing...` 
+                    : 'Creating listing...'
+                  }
+                </p>
+                <p className="text-xs text-gray-500 mt-1">This may take a few moments for large images</p>
+              </div>
+            )}
+            <button 
+              className="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" 
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Creating Listing...' : 'Submit'}
+            </button>
           </div>
         </form>
       </div>

@@ -3,7 +3,6 @@ import { SavedListingsContext } from '../../../context/SavedListingsContext';
 import { AuthContext } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import listingService from '../../../services/listingService';
-import PGListingsPlaceholder from "../../../assets/Room1.svg";
 import MiniImageGallery from '../../MiniImageGallery';
 
 export default function RenterListings({ filters }) {
@@ -68,7 +67,7 @@ export default function RenterListings({ filters }) {
                 let savedListings = [];
                 if (token) {
                     try {
-                        savedListings = await listingService.getSavedFlatListings(token);
+                        savedListings = await listingService.getSavedFlatListings();
                     } catch (error) {
                         savedListings = [];
                     }
@@ -105,26 +104,18 @@ export default function RenterListings({ filters }) {
             return;
         }
         try {
-            if (savedListingIds.has(listingId)) {
-                await listingService.unsaveFlatListing(listingId, token);
-                setSavedListingIds(prev => {
-                    const newSet = new Set(prev);
+            await listingService.toggleSavedListing(listingId);
+            
+            // Toggle the saved state locally
+            setSavedListingIds(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(listingId)) {
                     newSet.delete(listingId);
-                    return newSet;
-                });
-                setListings(prev => prev.filter(listing => listing._id !== listingId));
-            } else {
-                try {
-                    await listingService.saveFlatListing(listingId, token);
-                    setSavedListingIds(prev => new Set(prev).add(listingId));
-                } catch (error) {
-                    if (error.response && error.response.status === 400 && error.response.data.message === 'Listing already saved') {
-                        // Ignore this error as listing is already saved
-                    } else {
-                        alert('Failed to update saved listing. Please try again.');
-                    }
+                } else {
+                    newSet.add(listingId);
                 }
-            }
+                return newSet;
+            });
         } catch (error) {
             alert('Failed to update saved listing. Please try again.');
         }
@@ -150,7 +141,6 @@ export default function RenterListings({ filters }) {
                         {/* Mini Image Gallery */}
                         <MiniImageGallery 
                             images={listing.propertyImages} 
-                            defaultImage={PGListingsPlaceholder}
                             alt="Flat Images"
                             maxImages={4}
                         />
@@ -162,8 +152,6 @@ export default function RenterListings({ filters }) {
                                 onClick={() => handleSaveToggle(listing._id, listing.isOwnedByUser)}
                                 className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-75 hover:bg-opacity-100 transition z-10"
                                 aria-label={savedListingIds.has(listing._id) ? 'Unsave listing' : 'Save listing'}
-                                disabled={savedListingIds.has(listing._id)}
-                                title={savedListingIds.has(listing._id) ? 'Listing already saved' : 'Save listing'}
                             >
                                 {savedListingIds.has(listing._id) ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24" stroke="none">

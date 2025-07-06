@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import listingService from '../../../services/listingService';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthContext';
+import listingService from '../../../services/listingService';
 
 function LandlordListingForm() {
+  const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     landlordName: '',
     contactNumber: '',
@@ -15,65 +18,77 @@ function LandlordListingForm() {
     airConditioning: false,
     rentAmount: '',
     independent: false,
-    propertyImages: [],
-    description: '',
+    description: ''
   });
-
-  const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type, files, checked } = e.target;
-    if (type === 'checkbox') {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: checked,
-      }));
-    } else if (type === 'file') {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: files,
-      }));
-    } else {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value,
-      }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    // Validate file sizes (5MB limit per image)
+    const validFiles = files.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`Image "${file.name}" is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.`);
+        return false;
+      }
+      return true;
+    });
+    
+    setImages(validFiles);
+    
+    if (validFiles.length !== files.length) {
+      console.log(`Filtered out ${files.length - validFiles.length} oversized images`);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      const token = localStorage.getItem('token');
-      const data = new FormData();
-
-      // Append text fields with correct types
-      data.append('landlordName', formData.landlordName);
-      data.append('contactNumber', formData.contactNumber);
-      data.append('houseNumber', formData.houseNumber);
-      data.append('colony', formData.colony);
-      data.append('city', formData.city);
-      data.append('numberOfRooms', Number(formData.numberOfRooms));
-      data.append('furnishingStatus', formData.furnishingStatus);
-      data.append('wifi', formData.wifi ? 'true' : 'false');
-      data.append('airConditioning', formData.airConditioning ? 'true' : 'false');
-      data.append('rentAmount', Number(formData.rentAmount));
-      data.append('independent', formData.independent ? 'true' : 'false');
-      data.append('description', formData.description);
-
-      // Append property images (multiple)
-      if (formData.propertyImages && formData.propertyImages.length > 0) {
-        for (let i = 0; i < formData.propertyImages.length; i++) {
-          data.append('propertyImages', formData.propertyImages[i]);
+      // Create FormData for multipart/form-data submission
+      const formDataToSend = new FormData();
+      
+      // Add all form fields
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== '') {
+          formDataToSend.append(key, formData[key]);
         }
-      }
+      });
+      
+      // Add type
+      formDataToSend.append('type', 'PG');
+      
+      // Add images
+      images.forEach((image, index) => {
+        formDataToSend.append('propertyImages', image);
+      });
 
-      await listingService.createListing('pg', data, token);
+      console.log('Submitting listing with', images.length, 'images...');
+      
+      // Create listing with FormData
+      await listingService.createListing(formDataToSend);
       alert('Listing created successfully');
       navigate('/landlord');
     } catch (error) {
       console.error('Error creating listing:', error);
-      alert('Failed to create listing');
+      if (error.code === 'ECONNABORTED') {
+        alert('Request timed out. The listing might still be created. Please check your listings.');
+      } else {
+        alert('Failed to create listing: ' + (error.response?.data?.message || error.message));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -273,47 +288,85 @@ function LandlordListingForm() {
                   checked={formData.independent}
                   onChange={handleChange}
                 />
-                <label className="ml-2 text-gray-700">Is Independent Property?</label>
+                <label className="ml-2 text-gray-700">Independent Room</label>
               </div>
             </div>
           </div>
 
-          {/* Images and Media */}
-          <div className="grid grid-cols-1 md:grid-cols-2 px-12 gap-4 mb-6 bg-white p-6 rounded-md">
+          {/* Image Upload */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-12 mb-6 bg-white p-6 rounded-md">
             <div className="flex items-center">
-              <h2 className="text-2xl">Room Images:</h2>
+              <h2 className="text-2xl">Property Images:</h2>
             </div>
             <div>
-              <label htmlFor="propertyImages" className="block text-sm font-medium text-gray-700">Upload Images:</label>
-              <input
-                name="propertyImages"
-                type="file"
-                multiple
-                className="mt-1 block w-full border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
-                onChange={handleChange}
-              />
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label htmlFor="images" className="block text-sm font-medium text-gray-700">Upload Images (Multiple):</label>
+                  <input
+                    id="images"
+                    name="images"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
+                    onChange={handleImageChange}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">You can select multiple images</p>
+                  {images.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm text-green-600">Selected {images.length} image(s)</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Description */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 px-12 bg-white p-6 rounded-md">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-12 mb-6 bg-white p-6 rounded-md">
             <div className="flex items-center">
               <h2 className="text-2xl">Description:</h2>
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description:</label>
-              <textarea
-                name="description"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
-                required
-                value={formData.description}
-                onChange={handleChange}
-              ></textarea>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description:</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
+                    required
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Describe your room..."
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <button className="bg-yellow-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300" type="submit">Submit</button>
+          {/* Submit Button */}
+          <div className="flex flex-col items-center">
+            {loading && (
+              <div className="mb-4 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                <p className="mt-2 text-sm text-gray-600">
+                  {images.length > 0 
+                    ? `Processing ${images.length} image(s) and creating listing...` 
+                    : 'Creating listing...'
+                  }
+                </p>
+                <p className="text-xs text-gray-500 mt-1">This may take a few moments for large images</p>
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-yellow-500 text-white px-8 py-3 rounded-md hover:bg-yellow-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating Listing...' : 'Create Listing'}
+            </button>
           </div>
         </form>
       </div>

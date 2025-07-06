@@ -22,9 +22,8 @@ function MyListings() {
     async function fetchListings() {
         try {
             setLoading(true);
-            // Get token from localStorage or context (adjust as per your auth implementation)
-            const token = localStorage.getItem('token');
-            const listings = await listingService.getPGListings(token);
+            // Use the correct API call without token parameter
+            const listings = await listingService.getMyCreatedPGListings();
             setLandlordListings(listings);
         } catch (err) {
             setError('Failed to fetch listings');

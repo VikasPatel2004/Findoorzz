@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import reviewService from '../../services/reviewService';
 
@@ -10,8 +9,7 @@ const StarIcon = ({ filled }) => (
   </svg>
 );
 
-const FlatReviewsSection = () => {
-  const { id } = useParams();
+const FlatReviewsSection = ({ listingId }) => {
   const { user, token } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,13 +25,15 @@ const FlatReviewsSection = () => {
 
   // Fetch reviews on component mount
   useEffect(() => {
-    fetchReviews();
-  }, [id]);
+    if (listingId) {
+      fetchReviews();
+    }
+  }, [listingId]);
 
   const fetchReviews = async () => {
     try {
       setLoading(true);
-      const data = await reviewService.getReviews('flat', id);
+      const data = await reviewService.getReviews(listingId);
       setReviews(data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -46,7 +46,7 @@ const FlatReviewsSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!user || !token) {
+    if (!user) {
       alert('Please login to submit a review');
       return;
     }
@@ -59,13 +59,12 @@ const FlatReviewsSection = () => {
     try {
       setSubmitting(true);
       const reviewData = {
-        listingType: 'flat',
-        listingId: id,
+        listingId: listingId,
         rating: newReview.rating,
         comment: newReview.comment.trim()
       };
 
-      await reviewService.createReview(reviewData, token);
+      await reviewService.createReview(reviewData);
       
       // Reset form and refresh reviews
       setNewReview({ rating: 0, comment: '' });
@@ -85,7 +84,7 @@ const FlatReviewsSection = () => {
   };
 
   const handleDeleteReview = async (reviewId) => {
-    if (!user || !token) {
+    if (!user) {
       alert('Please login to delete reviews');
       return;
     }
@@ -95,7 +94,7 @@ const FlatReviewsSection = () => {
     }
 
     try {
-      await reviewService.deleteReview(reviewId, token);
+      await reviewService.deleteReview(reviewId);
       await fetchReviews();
       alert('Review deleted successfully!');
     } catch (error) {
@@ -142,7 +141,7 @@ const FlatReviewsSection = () => {
       </h3>
       
       {/* Review Form - Only show if user is logged in */}
-      {user && token && (
+      {user && (
         <div className="bg-gray-50 p-6 rounded-lg mb-8 w-full max-w-4xl">
           <h4 className="text-lg font-semibold mb-4 text-center">Write a Review</h4>
           <form onSubmit={handleSubmit} className="space-y-4">

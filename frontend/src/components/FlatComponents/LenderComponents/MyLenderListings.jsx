@@ -24,7 +24,7 @@ function MyListings() {
     async function fetchListings() {
         try {
             setLoading(true);
-            const listings = await listingService.getMyFlatListings(token);
+            const listings = await listingService.getMyCreatedFlatListings();
             setLenderListings(Array.isArray(listings) ? listings : []);
         } catch (err) {
             setError('Failed to fetch listings');

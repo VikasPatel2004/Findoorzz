@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import listingService from '../../../services/listingService';
-import PGListingsPlaceholder from "../../../assets/Room1.svg";
 
 function StudentSavedListings() {
     const navigate = useNavigate();
@@ -14,23 +13,23 @@ function StudentSavedListings() {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setError('Please login to view saved listings.');
-                setListings([]);
-                setLoading(false);
-                return;
-            }
-            const data = await listingService.getSavedListings(token);
+            console.log('Fetching saved PG listings...');
+            const data = await listingService.getSavedPGListings();
+            console.log('Received PG data:', data);
+            
             if (Array.isArray(data)) {
+                console.log('PG data is array, length:', data.length);
                 setListings(data);
             } else if (data && Array.isArray(data.listings)) {
+                console.log('PG data has listings array, length:', data.listings.length);
                 setListings(data.listings);
             } else {
+                console.log('Unexpected PG data format:', data);
                 setListings([]);
                 setError('Unexpected data format received from server');
             }
         } catch (err) {
+            console.error('Error fetching saved PG listings:', err);
             setError('Failed to fetch saved listings');
             setListings([]);
         } finally {
@@ -47,13 +46,8 @@ function StudentSavedListings() {
     };
 
     const handleRemoveClick = async (id) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('Please login to remove saved listings.');
-            return;
-        }
         try {
-            await listingService.unsaveListing(id, token);
+            await listingService.toggleSavedListing(id);
             setListings(prev => prev.filter(listing => listing._id !== id));
         } catch (error) {
             console.error('Error removing saved listing:', error);
@@ -82,40 +76,49 @@ function StudentSavedListings() {
             </div>
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">My Favourites</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
-                {listings.map((listing) => (
-                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
-                        <img 
-                            src={listing.propertyImages && listing.propertyImages.length > 0 ? listing.propertyImages[0] : PGListingsPlaceholder} 
-                            className="w-full h-52 object-cover" 
-                            alt="listing" 
-                        />
-                        <div className="p-4 text-center">
-                            <p className="text-lg font-bold">
-                                <div>{listing.houseNumber}, {listing.colony}, {listing.city}</div>
-                                <div>
-                                    &#8377;{listing.rentAmount}/month 
-                                    <span className="text-gray-500"> +18% GST</span>
+                {listings.map((listing) => {
+                    console.log('Rendering listing:', listing);
+                    return (
+                        <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
+                            {listing.propertyImages && listing.propertyImages.length > 0 ? (
+                                <img 
+                                    src={listing.propertyImages[0]} 
+                                    className="w-full h-52 object-cover" 
+                                    alt="listing" 
+                                />
+                            ) : (
+                                <div className="w-full h-52 bg-gray-200 flex items-center justify-center">
+                                    <span className="text-gray-500">No image available</span>
                                 </div>
-                            </p>
-                            <div className="flex justify-center mt-2">
-                                <button 
-                                    type="button" 
-                                    className="btn btn-warning px-5 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300 mr-2" 
-                                    onClick={() => handleExploreClick(listing._id)}
-                                >
-                                    Explore
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="btn btn-danger px-5 py-2 bg-red-400 text-white rounded-md hover:bg-red-600 transition duration-300" 
-                                    onClick={() => handleRemoveClick(listing._id)}
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        </div> 
-                    </div>
-                ))}
+                            )}
+                            <div className="p-4 text-center">
+                                <p className="text-lg font-bold">
+                                    <div>{listing.houseNumber || 'Unknown'}, {listing.colony || 'Unknown'}, {listing.city || 'Unknown'}</div>
+                                    <div>
+                                        &#8377;{listing.rentAmount || 'Unknown'}/month 
+                                        <span className="text-gray-500"> +18% GST</span>
+                                    </div>
+                                </p>
+                                <div className="flex justify-center mt-2">
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-warning px-5 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300 mr-2" 
+                                        onClick={() => handleExploreClick(listing._id)}
+                                    >
+                                        Explore
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-danger px-5 py-2 bg-red-400 text-white rounded-md hover:bg-red-600 transition duration-300" 
+                                        onClick={() => handleRemoveClick(listing._id)}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div> 
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

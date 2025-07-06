@@ -31,7 +31,7 @@ function EditPGListingForm() {
     async function fetchListing() {
       try {
         setLoading(true);
-        const listing = await listingService.getListingById('pg', id);
+        const listing = await listingService.getListingById(id);
         
         // Check if user is the owner
         if (listing.owner !== user._id) {
@@ -65,7 +65,7 @@ function EditPGListingForm() {
     if (id) {
       fetchListing();
     }
-  }, [id]);
+  }, [id, user._id]);
 
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
@@ -113,7 +113,7 @@ function EditPGListingForm() {
         }
       }
 
-      await listingService.updateListing('pg', id, data, token);
+      await listingService.updateListing(id, data);
       alert('Listing updated successfully');
       navigate(`/RoomDetail/${id}`);
     } catch (error) {

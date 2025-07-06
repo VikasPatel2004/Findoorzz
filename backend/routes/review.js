@@ -2,13 +2,14 @@ const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const Review = require('../models/Review');
 const User = require('../models/User');
+const PGListing = require('../models/PGListing');
+const FlatListing = require('../models/FlatListing');
 const { body, validationResult } = require('express-validator');
 
 const router = express.Router();
 
 // Validation rules for review creation
 const reviewValidationRules = [
-  body('listingType').notEmpty().withMessage('Listing type is required'),
   body('listingId').notEmpty().withMessage('Listing ID is required'),
   body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
   body('comment').optional().isString().withMessage('Comment must be a string'),
@@ -22,7 +23,23 @@ router.post('/', authenticateToken, reviewValidationRules, async (req, res) => {
   }
   
   try {
-    const { listingType, listingId, rating, comment } = req.body;
+    const { listingId, rating, comment } = req.body;
+    
+    // Determine listing type by checking both collections
+    let listingType = null;
+    let listing = await PGListing.findById(listingId);
+    if (listing) {
+      listingType = 'pg';
+    } else {
+      listing = await FlatListing.findById(listingId);
+      if (listing) {
+        listingType = 'flat';
+      }
+    }
+    
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
     
     // Check if user has already reviewed this listing
     const existingReview = await Review.findOne({
@@ -57,10 +74,12 @@ router.post('/', authenticateToken, reviewValidationRules, async (req, res) => {
 });
 
 // Get reviews for a listing with user information
-router.get('/:listingType/:listingId', async (req, res) => {
+router.get('/:listingId', async (req, res) => {
   try {
-    const { listingType, listingId } = req.params;
-    const reviews = await Review.find({ listingType, listingId })
+    const { listingId } = req.params;
+    
+    // Find reviews for this listing (check both PG and Flat listings)
+    const reviews = await Review.find({ listingId })
       .populate('user', 'name')
       .sort({ createdAt: -1 }); // Sort by newest first
     
@@ -68,6 +87,44 @@ router.get('/:listingType/:listingId', async (req, res) => {
   } catch (err) {
     console.error('Error fetching reviews:', err);
     res.status(500).json({ message: 'Error fetching reviews', error: err.message });
+  }
+});
+
+// Get average rating for a listing
+router.get('/:listingId/average', async (req, res) => {
+  try {
+    const { listingId } = req.params;
+    
+    const result = await Review.aggregate([
+      { $match: { listingId } },
+      { $group: { _id: null, averageRating: { $avg: '$rating' }, totalReviews: { $sum: 1 } } }
+    ]);
+    
+    if (result.length === 0) {
+      return res.json({ averageRating: 0, totalReviews: 0 });
+    }
+    
+    res.json({
+      averageRating: Math.round(result[0].averageRating * 10) / 10,
+      totalReviews: result[0].totalReviews
+    });
+  } catch (err) {
+    console.error('Error fetching average rating:', err);
+    res.status(500).json({ message: 'Error fetching average rating', error: err.message });
+  }
+});
+
+// Get user's reviews
+router.get('/user/reviews', authenticateToken, async (req, res) => {
+  try {
+    const reviews = await Review.find({ user: req.user.userId })
+      .populate('user', 'name')
+      .sort({ createdAt: -1 });
+    
+    res.json(reviews);
+  } catch (err) {
+    console.error('Error fetching user reviews:', err);
+    res.status(500).json({ message: 'Error fetching user reviews', error: err.message });
   }
 });
 

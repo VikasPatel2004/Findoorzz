@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-const MiniImageGallery = ({ images, defaultImage, alt = "Property Images", maxImages = 4 }) => {
+const MiniImageGallery = ({ images, alt = "Property Images", maxImages = 4 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Combine default image with property images
-  const allImages = defaultImage ? [defaultImage, ...(images || [])] : (images || []);
+  // Only use the provided images
+  const allImages = images || [];
   
   if (!allImages || allImages.length === 0) {
     return (

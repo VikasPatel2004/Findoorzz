@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-const ImageGallery = ({ images, defaultImage, alt = "Property Images" }) => {
+const ImageGallery = ({ images, alt = "Property Images" }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Combine default image with property images
-  const allImages = defaultImage ? [defaultImage, ...(images || [])] : (images || []);
+  // Only use the provided images
+  const allImages = images || [];
   
   if (!allImages || allImages.length === 0) {
     return (

@@ -14,7 +14,7 @@ function StudentListingDetailPage() {
         async function fetchListing() {
             try {
                 setLoading(true);
-                const data = await listingService.getListingById('pg', id);
+                const data = await listingService.getListingById(id);
                 setListingData(data);
             } catch (err) {
                 setError('Failed to fetch listing data');
@@ -44,7 +44,7 @@ function StudentListingDetailPage() {
         <>
             <StudentListingDetail listing={listingData} />
             {/* Add the ReviewsSection at the bottom */}
-            <ReviewsSection />
+            <ReviewsSection listingId={id} />
         </>
     );
 }

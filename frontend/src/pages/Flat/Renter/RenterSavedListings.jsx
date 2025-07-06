@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { SavedListingsContext } from '../../../context/SavedListingsContext';
 import { useNavigate } from 'react-router-dom';
 import listingService from '../../../services/listingService';
-import PGListingsPlaceholder from "../../../assets/Room1.svg";
 
 function RenterSavedListings() {
     const navigate = useNavigate();
@@ -17,23 +16,23 @@ function RenterSavedListings() {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setError('Please login to view saved listings.');
-                setListings([]);
-                setLoading(false);
-                return;
-            }
-            const data = await listingService.getSavedFlatListings(token);
+            console.log('Fetching saved Flat listings...');
+            const data = await listingService.getSavedFlatListings();
+            console.log('Received Flat data:', data);
+            
             if (Array.isArray(data)) {
+                console.log('Flat data is array, length:', data.length);
                 setListings(data);
             } else if (data && Array.isArray(data.listings)) {
+                console.log('Flat data has listings array, length:', data.listings.length);
                 setListings(data.listings);
             } else {
+                console.log('Unexpected Flat data format:', data);
                 setListings([]);
                 setError('Unexpected data format received from server');
             }
-        } catch {
+        } catch (err) {
+            console.error('Error fetching saved Flat listings:', err);
             setError('Failed to fetch saved listings');
             setListings([]);
         } finally {
@@ -46,17 +45,12 @@ function RenterSavedListings() {
     }, [refreshFlag]);
 
     const handleExploreClick = (id) => {
-        navigate(`/RoomDetail/${id}`);
+        navigate(`/FlatDetail/${id}`);
     };
 
     const handleRemoveClick = async (id) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('Please login to remove saved listings.');
-            return;
-        }
         try {
-            await listingService.unsaveFlatListing(id, token);
+            await listingService.toggleSavedListing(id);
             setListings(prev => prev.filter(listing => listing && listing._id !== id));
         } catch (error) {
             console.error('Error removing saved listing:', error);
@@ -90,11 +84,17 @@ function RenterSavedListings() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
                 {validListings.map((listing) => (
                     <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
-                        <img 
-                            src={listing.propertyImages && listing.propertyImages.length > 0 ? listing.propertyImages[0] : PGListingsPlaceholder} 
-                            className="w-full h-52 object-cover" 
-                            alt="listing" 
-                        />
+                        {listing.propertyImages && listing.propertyImages.length > 0 ? (
+                            <img 
+                                src={listing.propertyImages[0]} 
+                                className="w-full h-52 object-cover" 
+                                alt="listing" 
+                            />
+                        ) : (
+                            <div className="w-full h-52 bg-gray-200 flex items-center justify-center">
+                                <span className="text-gray-500">No image available</span>
+                            </div>
+                        )}
                         <div className="p-4 text-center">
                             <p className="text-lg font-bold">
                                 <div>{listing.houseNumber}, {listing.colony}, {listing.city}</div>

@@ -31,7 +31,7 @@ function EditFlatListingForm() {
     async function fetchListing() {
       try {
         setLoading(true);
-        const listing = await listingService.getListingById('flat', id);
+        const listing = await listingService.getListingById(id);
         
         // Check if user is the owner
         if (listing.owner !== user._id) {
@@ -113,7 +113,7 @@ function EditFlatListingForm() {
         }
       }
 
-      await listingService.updateListing('flat', id, data, token);
+      await listingService.updateListing(id, data);
       alert('Listing updated successfully');
       navigate(`/FlatDetail/${id}`);
     } catch (error) {

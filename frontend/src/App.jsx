@@ -30,134 +30,141 @@ import EditProfile from './pages/Profile/EditProfile';
 import TestComponent from './components/TestComponent';
 
 import { AuthProvider } from './context/AuthContext';
+import { SavedListingsProvider } from './context/SavedListingsContext';
 import PrivateRoute from './components/PrivateRoute';
+import PerformanceMonitor from './components/PerformanceMonitor';
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/Signup" element={<SignupPage />} />
-          <Route path="/LoginPage" element={<LoginPage />} />
-          <Route path="/test" element={<TestComponent />} />
+      <SavedListingsProvider>
+        <div className="App">
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/Signup" element={<SignupPage />} />
+              <Route path="/LoginPage" element={<LoginPage />} />
+              <Route path="/test" element={<TestComponent />} />
 
-          <Route path="/PG" element={
-            <PrivateRoute>
-              <PgPage />
-            </PrivateRoute>
-          } />
-          <Route path="/Flat" element={
-            <PrivateRoute>
-              <FlatPage />
-            </PrivateRoute>
-          } />
-          <Route path="/Landlord" element={
-            <PrivateRoute>
-              <LandlordPage />
-            </PrivateRoute>
-          } />
-          <Route path="/LandlordForm" element={
-            <PrivateRoute>
-              <LandlordListingForm />
-            </PrivateRoute>
-          } />
-          <Route path="/edit-pg-listing/:id" element={
-            <PrivateRoute>
-              <EditPGListingForm />
-            </PrivateRoute>
-          } />
-          <Route path="/edit-flat-listing/:id" element={
-            <PrivateRoute>
-              <EditFlatListingForm />
-            </PrivateRoute>
-          } />
-          <Route path="/Student" element={
-            <PrivateRoute>
-              <StudentPage />
-            </PrivateRoute>
-          } />
-          <Route path="/StudentSavedRooms" element={
-            <PrivateRoute>
-              <StudentSavedListings />
-            </PrivateRoute>
-          } />
-          <Route path="/RoomDetail/:id" element={
-            <PrivateRoute>
-              <StudentListingDetailPage />
-            </PrivateRoute>
-          } />
-          <Route path="/Lender" element={
-            <PrivateRoute>
-              <LenderPage />
-            </PrivateRoute>
-          } />
-          <Route path="/dashboard" element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/LenderForm" element={
-            <PrivateRoute>
-              <LenderListingForm />
-            </PrivateRoute>
-          } />
-          <Route path="/Renter" element={
-            <PrivateRoute>
-              <RenterPage />
-            </PrivateRoute>
-          } />
-          <Route path="/RenterSavedFlats" element={
-            <PrivateRoute>
-              <RenterSavedListings />
-            </PrivateRoute>
-          } />
+              <Route path="/PG" element={
+                <PrivateRoute>
+                  <PgPage />
+                </PrivateRoute>
+              } />
+              <Route path="/Flat" element={
+                <PrivateRoute>
+                  <FlatPage />
+                </PrivateRoute>
+              } />
+              <Route path="/Landlord" element={
+                <PrivateRoute>
+                  <LandlordPage />
+                </PrivateRoute>
+              } />
+              <Route path="/LandlordForm" element={
+                <PrivateRoute>
+                  <LandlordListingForm />
+                </PrivateRoute>
+              } />
+              <Route path="/edit-pg-listing/:id" element={
+                <PrivateRoute>
+                  <EditPGListingForm />
+                </PrivateRoute>
+              } />
+              <Route path="/edit-flat-listing/:id" element={
+                <PrivateRoute>
+                  <EditFlatListingForm />
+                </PrivateRoute>
+              } />
+              <Route path="/Student" element={
+                <PrivateRoute>
+                  <StudentPage />
+                </PrivateRoute>
+              } />
+              <Route path="/StudentSavedRooms" element={
+                <PrivateRoute>
+                  <StudentSavedListings />
+                </PrivateRoute>
+              } />
+              <Route path="/RoomDetail/:id" element={
+                <PrivateRoute>
+                  <StudentListingDetailPage />
+                </PrivateRoute>
+              } />
+              <Route path="/Lender" element={
+                <PrivateRoute>
+                  <LenderPage />
+                </PrivateRoute>
+              } />
+              <Route path="/dashboard" element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/LenderForm" element={
+                <PrivateRoute>
+                  <LenderListingForm />
+                </PrivateRoute>
+              } />
+              <Route path="/Renter" element={
+                <PrivateRoute>
+                  <RenterPage />
+                </PrivateRoute>
+              } />
+              <Route path="/RenterSavedFlats" element={
+                <PrivateRoute>
+                  <RenterSavedListings />
+                </PrivateRoute>
+              } />
 
-           <Route path="/FlatDetail/:id" element={
-            <PrivateRoute>
-              <RenterListingDetailPage />
-            </PrivateRoute>
-          } />
+               <Route path="/FlatDetail/:id" element={
+                <PrivateRoute>
+                  <RenterListingDetailPage />
+                </PrivateRoute>
+              } />
 
-          <Route path="/RenterDashboard" element={
-            <PrivateRoute>
-              <RenterDashboard />
-            </PrivateRoute>
-          } />
-          <Route path="/profile" element={
-            <PrivateRoute>
-              <UserProfile />
-            </PrivateRoute>
-          } />
-          <Route path="/edit-profile" element={
-            <PrivateRoute>
-              <EditProfile />
-            </PrivateRoute>
-          } />
-          <Route path="/BrokerRegistration" element={
-            <PrivateRoute>
-              <BrokerRegistrationPage />
-            </PrivateRoute>
-          } />
-          <Route path="/BrokerDashboard" element={
-            <PrivateRoute>
-              <BrokerDashboardPage />
-            </PrivateRoute>
-          } />
-          <Route path="/BrokerAssignment" element={
-            <PrivateRoute>
-              <BrokerAssignmentPage />
-            </PrivateRoute>
-          } />
-          <Route path="/FlatDetails/:id" element={
-            <PrivateRoute>
-              <RenterListingDetailPage />
-            </PrivateRoute>
-          } />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+              <Route path="/RenterDashboard" element={
+                <PrivateRoute>
+                  <RenterDashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              } />
+              <Route path="/edit-profile" element={
+                <PrivateRoute>
+                  <EditProfile />
+                </PrivateRoute>
+              } />
+              <Route path="/BrokerRegistration" element={
+                <PrivateRoute>
+                  <BrokerRegistrationPage />
+                </PrivateRoute>
+              } />
+              <Route path="/BrokerDashboard" element={
+                <PrivateRoute>
+                  <BrokerDashboardPage />
+                </PrivateRoute>
+              } />
+              <Route path="/BrokerAssignment" element={
+                <PrivateRoute>
+                  <BrokerAssignmentPage />
+                </PrivateRoute>
+              } />
+              <Route path="/FlatDetails/:id" element={
+                <PrivateRoute>
+                  <RenterListingDetailPage />
+                </PrivateRoute>
+              } />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+          {import.meta.env.DEV && <PerformanceMonitor />}
+        </div>
+      </SavedListingsProvider>
     </AuthProvider>
   );
 }

@@ -1,228 +1,156 @@
-import axios from 'axios';
+import { apiService } from './apiService';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 console.log('API_BASE_URL:', API_BASE_URL);
 console.log('Environment variables:', import.meta.env);
 
-// Get flat listings with optional filters
-async function getFlatListings(token, query = '') {
-  console.log('getFlatListings called with token:', token);
-  const headers = {};
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  const response = await axios.get(`${API_BASE_URL}/listings/flat${query}`, { headers });
-  return response.data;
-}
+export const listingService = {
+  // Get all listings with caching
+  getAllListings: (filters = {}) => 
+    apiService.get('/listings', filters, true),
+  
+  // Get PG listings with caching
+  getPGListings: (filters = {}) => 
+    apiService.get('/listings/pg', filters, true),
+  
+  // Get Flat listings with caching
+  getFlatListings: (filters = {}) => 
+    apiService.get('/listings/flat', filters, true),
+  
+  // Get single listing (no cache for real-time data)
+  getListingById: (id) => 
+    apiService.get(`/listings/${id}`, {}, false),
+  
+  // Get user's listings
+  getUserListings: () => 
+    apiService.get('/listings/user', {}, false),
+  
+  // Create new listing - handle both FormData and regular data
+  createListing: (listingData) => {
+    // Check if listingData is FormData (for file uploads)
+    if (listingData instanceof FormData) {
+      return apiService.upload('/listings', listingData);
+    } else {
+      return apiService.post('/listings', listingData);
+    }
+  },
+  
+  // Update listing
+  updateListing: (id, listingData) => {
+    // Check if listingData is FormData (for file uploads)
+    if (listingData instanceof FormData) {
+      return apiService.upload(`/listings/${id}`, listingData, null, 'put');
+    } else {
+      return apiService.put(`/listings/${id}`, listingData);
+    }
+  },
+  
+  // Delete listing
+  deleteListing: (id) => 
+    apiService.delete(`/listings/${id}`),
+  
+  // Upload listing images
+  uploadImages: (formData, onProgress) => 
+    apiService.upload('/listings/upload-images', formData, onProgress),
+  
+  // Search listings
+  searchListings: (query, filters = {}) => 
+    apiService.get('/listings/search', { query, ...filters }, true),
+  
+  // Get saved listings
+  getSavedListings: () => 
+    apiService.get('/listings/saved', {}, false),
+  
+  // Get saved PG listings only (for students)
+  getSavedPGListings: () => 
+    apiService.get('/listings/saved/pg', {}, false),
+  
+  // Get saved Flat listings only (for renters)
+  getSavedFlatListings: () => 
+    apiService.get('/listings/saved/flat', {}, false),
+  
+  // Save/unsave listing
+  toggleSavedListing: (listingId) => 
+    apiService.post(`/listings/${listingId}/save`),
+  
+  // Clear cache when needed
+  clearCache: () => {
+    apiService.clearCacheEntry('/listings');
+    apiService.clearCacheEntry('/listings/pg');
+    apiService.clearCacheEntry('/listings/flat');
+  },
 
-// Get all flat listings (no filters)
-async function getAllFlatListings() {
-  console.log('Fetching flat listings from:', `${API_BASE_URL}/listings/flat/list-all`);
-  try {
-    const response = await axios.get(`${API_BASE_URL}/listings/flat/list-all`);
-    console.log('Flat listings response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching all flat listings:', error);
-    throw error;
-  }
-}
+  // Legacy methods for backward compatibility
+  getAllFlatListings: async () => {
+    try {
+      const response = await apiService.get('/listings/flat/list-all', {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching flat listings:', error);
+      throw error;
+    }
+  },
 
-// Get PG listings for owner
-async function getPGListings(token) {
-  const headers = {};
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  const response = await axios.get(`${API_BASE_URL}/listings/pg`, { headers });
-  return response.data;
-}
+  getAllPGListings: async () => {
+    try {
+      const response = await apiService.get('/listings/pg/list-all', {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching PG listings:', error);
+      throw error;
+    }
+  },
 
-// Get all PG listings (for students)
-async function getAllPGListings() {
-  console.log('Fetching PG listings from:', `${API_BASE_URL}/listings/pg/list-all`);
-  try {
-    const response = await axios.get(`${API_BASE_URL}/listings/pg/list-all`);
-    console.log('PG listings response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching all PG listings:', error);
-    throw error;
-  }
-}
+  getFilteredPGListings: async (query = '') => {
+    try {
+      const response = await apiService.get(`/listings/pg/filtered${query}`, {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching filtered PG listings:', error);
+      throw error;
+    }
+  },
 
-// Get filtered PG listings (for students)
-async function getFilteredPGListings(query = '') {
-  const response = await axios.get(`${API_BASE_URL}/listings/pg/filtered${query}`);
-  return response.data;
-}
+  getStudentPGListings: async (token) => {
+    try {
+      const response = await apiService.get('/listings/pg/student-listings', {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching student PG listings:', error);
+      throw error;
+    }
+  },
 
-// Get all PG listings for students (including their own and others)
-async function getStudentPGListings(token) {
-  console.log('Fetching student PG listings from:', `${API_BASE_URL}/listings/pg/student-listings`);
-  try {
-    const response = await axios.get(`${API_BASE_URL}/listings/pg/student-listings`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log('Student PG listings response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching student PG listings:', error);
-    throw error;
-  }
-}
+  getFilteredStudentPGListings: async (query = '', token) => {
+    try {
+      const response = await apiService.get(`/listings/pg/student-filtered${query}`, {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching filtered student PG listings:', error);
+      throw error;
+    }
+  },
 
-// Get filtered PG listings for students (including their own and others)
-async function getFilteredStudentPGListings(query = '', token) {
-  console.log('Fetching filtered student PG listings from:', `${API_BASE_URL}/listings/pg/student-filtered${query}`);
-  try {
-    const response = await axios.get(`${API_BASE_URL}/listings/pg/student-filtered${query}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log('Filtered student PG listings response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching filtered student PG listings:', error);
-    throw error;
-  }
-}
+  getMyCreatedFlatListings: async (token) => {
+    try {
+      const response = await apiService.get('/listings/flat/my-created', {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching my created flat listings:', error);
+      throw error;
+    }
+  },
 
-// Get listing by type and id
-async function getListingById(type, id) {
-  const response = await axios.get(`${API_BASE_URL}/listings/${type}/${id}`);
-  return response.data;
-}
-
-// Create a new listing
-async function createListing(type, listingData, token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  if (listingData instanceof FormData) {
-    headers['Content-Type'] = 'multipart/form-data';
-  }
-  const response = await axios.post(`${API_BASE_URL}/listings/${type}`, listingData, {
-    headers
-  });
-  return response.data;
-}
-
-// Update a listing
-async function updateListing(type, id, listingData, token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  if (listingData instanceof FormData) {
-    headers['Content-Type'] = 'multipart/form-data';
-  }
-  const response = await axios.put(`${API_BASE_URL}/listings/${type}/${id}`, listingData, {
-    headers
-  });
-  return response.data;
-}
-
-// Delete a listing
-async function deleteListing(type, id, token) {
-  const response = await axios.delete(`${API_BASE_URL}/listings/${type}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-}
-
-/* ----------- Saved Listings for PG ----------- */
-
-// Save a PG listing (POST)
-async function saveListing(listingId, token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.post(`${API_BASE_URL}/listings/pg/${listingId}/save`, null, { headers });
-  return response.data;
-}
-
-// Unsave a PG listing (DELETE)
-async function unsaveListing(listingId, token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.delete(`${API_BASE_URL}/listings/pg/${listingId}/save`, { headers });
-  return response.data;
-}
-
-// Get all saved PG listings for user
-async function getSavedListings(token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/pg/saved`, { headers });
-  return response.data;
-}
-
-/* ----------- Saved Listings for Flat (Renter) ----------- */
-
-// Save a flat listing (POST)
-async function saveFlatListing(listingId, token) {
-  console.log('saveFlatListing called with token:', token);
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.post(`${API_BASE_URL}/listings/flat/${listingId}/save`, null, { headers });
-  return response.data;
-}
-
-// Unsave a flat listing (DELETE)
-async function unsaveFlatListing(listingId, token) {
-  console.log('unsaveFlatListing called with token:', token);
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.delete(`${API_BASE_URL}/listings/flat/${listingId}/save`, { headers });
-  return response.data;
-}
-
-// Get all saved flat listings for user
-async function getSavedFlatListings(token) {
-  console.log('getSavedFlatListings called with token:', token);
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/flat/saved`, { headers });
-  return response.data;
-}
-
-// Get saved status of a flat listing (GET)
-async function getSavedFlatListingStatus(listingId, token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/flat/${listingId}/save`, { headers });
-  return response.data;
-}
-
-// Get flat listings for owner (lender)
-async function getMyFlatListings(token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/flat/my-listings`, { headers });
-  return response.data;
-}
-
-// Get user's own created flat listings (for any user)
-async function getMyCreatedFlatListings(token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/flat/my-created`, { headers });
-  return response.data;
-}
-
-// Get user's own created PG listings (for any user)
-async function getMyCreatedPGListings(token) {
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await axios.get(`${API_BASE_URL}/listings/pg/my-created`, { headers });
-  return response.data;
-}
-
-export default {
-  getFlatListings,
-  getAllFlatListings,
-  getPGListings,
-  getAllPGListings,
-  getFilteredPGListings,
-  getStudentPGListings,
-  getFilteredStudentPGListings,
-  getListingById,
-  createListing,
-  updateListing,
-  deleteListing,
-  saveListing,
-  unsaveListing,
-  getSavedListings,
-  saveFlatListing,
-  unsaveFlatListing,
-  getSavedFlatListings,
-  getSavedFlatListingStatus,
-  getMyFlatListings,
-  getMyCreatedFlatListings,
-  getMyCreatedPGListings
+  getMyCreatedPGListings: async (token) => {
+    try {
+      const response = await apiService.get('/listings/pg/my-created', {}, false);
+      return response;
+    } catch (error) {
+      console.error('Error fetching my created PG listings:', error);
+      throw error;
+    }
+  },
 };
+
+export default listingService;

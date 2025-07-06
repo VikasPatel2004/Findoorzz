@@ -21,9 +21,16 @@ const flatListingSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
-// Indexes for performance
-flatListingSchema.index({ owner: 1 });
+// Add indexes for better query performance
+flatListingSchema.index({ type: 1 });
 flatListingSchema.index({ city: 1 });
+flatListingSchema.index({ colony: 1 });
 flatListingSchema.index({ rentAmount: 1 });
+flatListingSchema.index({ bedrooms: 1 });
+flatListingSchema.index({ owner: 1 });
+flatListingSchema.index({ createdAt: -1 });
+flatListingSchema.index({ city: 1, colony: 1 });
+flatListingSchema.index({ city: 1, rentAmount: 1 });
+flatListingSchema.index({ type: 1, city: 1, rentAmount: 1 });
 
 module.exports = mongoose.model('FlatListing', flatListingSchema);
