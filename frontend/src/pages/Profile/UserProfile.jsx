@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import listingService from '../../services/listingService';
 import { useNavigate } from 'react-router-dom';
+import ProfileAvatar from '../../components/ProfileAvatar';
 
 const UserProfile = () => {
   const { user, token } = useContext(AuthContext);
@@ -141,9 +142,12 @@ const UserProfile = () => {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-              <p className="text-gray-600 mt-2">Manage your account and listings</p>
+            <div className="flex items-center space-x-4">
+              <ProfileAvatar user={user} size="xl" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
+                <p className="text-gray-600 mt-2">Manage your account and listings</p>
+              </div>
             </div>
             <button
               onClick={handleEditProfile}

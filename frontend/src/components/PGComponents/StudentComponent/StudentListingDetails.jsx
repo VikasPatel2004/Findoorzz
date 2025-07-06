@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
-import roomimage from '../../../assets/Room1.svg'; // Ensure this path is correct for your project structure   
+import roomimage from '../../../assets/Room1.svg';
+import ImageGallery from '../../ImageGallery';
 
 const StudentListingDetail = ({ listing }) => {
     const { user, token } = useContext(AuthContext);
@@ -41,11 +42,13 @@ const StudentListingDetail = ({ listing }) => {
                 </h3>
             </div>
             <div className="bg-white p-6 m-2 shadow-lg rounded-2xl w-full max-w-3xl">
-                {listing.propertyImages && listing.propertyImages.length > 0 ? (
-                    <img src={listing.propertyImages[0]} className="rounded-t-2xl w-full h-64 object-cover" alt="listing_image" />
-                ) : (
-                    <img src={roomimage} className="rounded-t-2xl w-full h-64 object-cover" alt="listing_image" />
-                )}
+                {/* Image Gallery */}
+                <ImageGallery 
+                    images={listing.propertyImages} 
+                    defaultImage={roomimage}
+                    alt="Room Images"
+                />
+                
                 <div className="p-4">
                     <div className="bg-gray-50 border border-amber-100 rounded-lg p-8 mb-3">
                         <p className='mb-2' ><strong>Landlord Name:</strong> {listing.landlordName}</p>
@@ -62,14 +65,6 @@ const StudentListingDetail = ({ listing }) => {
                         <p className='mb-2'><strong>Restrictions:</strong> {listing.independent ? "Independent" : "Some Restrictions"}</p>
                         <p className='mb-2'><strong>Description:</strong> {listing.description}</p>
                     </div>
-
-                    {/* Images Box
-                    <h6 className="text-lg mb-2 font-semibold">Images</h6>
-                    <div className="grid grid-cols-2 gap-2 mb-3">
-                        {listing.propertyImages && Array.from(listing.propertyImages).map((image, index) => (
-                            <img key={index} src={URL.createObjectURL(image)} alt={`Room Image ${index + 1}`} className="w-full h-32 object-cover rounded-md" />
-                        ))}
-                    </div> */}
 
                     {/* Owner Actions - Only show if user is the owner */}
                     {isOwner && (

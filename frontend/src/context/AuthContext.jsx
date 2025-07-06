@@ -56,8 +56,21 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  const updateUserProfile = async (profileData, token) => {
+    try {
+      const response = await authService.updateUserProfile(profileData, token);
+      // Update the user state with the new profile data
+      if (response.user) {
+        setUser(response.user);
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

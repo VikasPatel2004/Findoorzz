@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authenticateToken = require('../middleware/authMiddleware');
 const { body, validationResult } = require('express-validator');
+const upload = require('../middleware/multer');
+const cloudinary = require('../config/cloudinary');
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -48,7 +50,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, profilePicture: user.profilePicture } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -70,20 +72,59 @@ router.get('/profile', authenticateToken, async (req, res) => {
 });
 
 // Update user profile
-router.put('/profile', authenticateToken, async (req, res) => {
+router.put('/profile', authenticateToken, upload.single('profilePicture'), async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    
     const { name, email, password } = req.body;
     if (name) user.name = name;
     if (email) user.email = email;
     if (password) {
       await user.setPassword(password);
     }
+
+    // Handle profile picture upload
+    if (req.file) {
+      try {
+        // Upload to Cloudinary
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { 
+              resource_type: 'auto',
+              folder: 'profile-pictures',
+              transformation: [
+                { width: 400, height: 400, crop: 'fill' },
+                { quality: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+
+        user.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        console.error('Error uploading profile picture:', uploadError);
+        return res.status(500).json({ message: 'Error uploading profile picture' });
+      }
+    }
+
     await user.save();
-    res.json({ message: 'Profile updated successfully' });
+    res.json({ 
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

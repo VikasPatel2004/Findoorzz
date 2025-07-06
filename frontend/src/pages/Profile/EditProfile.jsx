@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/authService';
+import ProfileAvatar from '../../components/ProfileAvatar';
 
 const EditProfile = () => {
-  const { user, token, logout } = useContext(AuthContext);
+  const { user, token, logout, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -13,6 +14,8 @@ const EditProfile = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -23,6 +26,7 @@ const EditProfile = () => {
         name: user.name || '',
         email: user.email || ''
       }));
+      setPreviewUrl(user.profilePicture);
     }
   }, [user]);
 
@@ -32,6 +36,16 @@ const EditProfile = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -60,17 +74,20 @@ const EditProfile = () => {
       }
 
       // Prepare update data
-      const updateData = {
-        name: formData.name,
-        email: formData.email
-      };
+      const updateData = new FormData();
+      updateData.append('name', formData.name);
+      updateData.append('email', formData.email);
 
       if (formData.newPassword) {
-        updateData.currentPassword = formData.currentPassword;
-        updateData.newPassword = formData.newPassword;
+        updateData.append('currentPassword', formData.currentPassword);
+        updateData.append('newPassword', formData.newPassword);
       }
 
-      await authService.updateUserProfile(updateData, token);
+      if (profilePicture) {
+        updateData.append('profilePicture', profilePicture);
+      }
+
+      const response = await updateUserProfile(updateData, token);
       
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
       
@@ -81,6 +98,9 @@ const EditProfile = () => {
         newPassword: '',
         confirmPassword: ''
       }));
+
+      // Clear profile picture state
+      setProfilePicture(null);
 
       // Optionally refresh user data or redirect
       setTimeout(() => {
@@ -134,6 +154,44 @@ const EditProfile = () => {
                 {message.text}
               </div>
             )}
+
+            {/* Profile Picture */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-800 border-b border-gray-200 pb-2">
+                Profile Picture
+              </h3>
+              
+              <div className="flex items-center space-x-6">
+                <div className="flex-shrink-0">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt="Profile preview"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                    />
+                  ) : (
+                    <ProfileAvatar user={user} size="2xl" />
+                  )}
+                </div>
+                
+                <div className="flex-1">
+                  <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload New Photo
+                  </label>
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    name="profilePicture"
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    JPG, PNG, GIF up to 10MB. If no photo is uploaded, your initials will be displayed.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* Basic Information */}
             <div className="space-y-4">
@@ -206,7 +264,7 @@ const EditProfile = () => {
                   value={formData.newPassword}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter new password (min 6 characters)"
+                  placeholder="Enter new password"
                 />
               </div>
 
@@ -226,29 +284,21 @@ const EditProfile = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-6 border-t border-gray-200">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Updating...
-                  </div>
-                ) : (
-                  'Update Profile'
-                )}
-              </button>
-              
+            {/* Submit Buttons */}
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Updating...' : 'Update Profile'}
               </button>
             </div>
           </form>

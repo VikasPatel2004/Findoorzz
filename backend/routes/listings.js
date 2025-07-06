@@ -364,19 +364,22 @@ router.get('/pg/filtered', async (req, res) => {
     
     // City filter
     if (city) {
-      filter.city = { $regex: city.trim(), $options: 'i' };
+      // Normalize spaces: replace multiple spaces with \\s+ and trim
+      const cityPattern = city.trim().replace(/\s+/g, '\\s+');
+      filter.city = { $regex: cityPattern, $options: 'i' };
     }
     
     // Colony filter
     if (colony) {
-      filter.colony = { $regex: colony.trim(), $options: 'i' };
+      const colonyPattern = colony.trim().replace(/\s+/g, '\\s+');
+      filter.colony = { $regex: colonyPattern, $options: 'i' };
     }
     
     // Price range filter
     if (minRent || maxRent) {
       filter.rentAmount = {};
-      if (minRent) filter.rentAmount.$gte = minRent; // Keep as string for PG listings
-      if (maxRent) filter.rentAmount.$lte = maxRent; // Keep as string for PG listings
+      if (minRent) filter.rentAmount.$gte = minRent.toString(); // Convert to string for PG listings
+      if (maxRent) filter.rentAmount.$lte = maxRent.toString(); // Convert to string for PG listings
     }
     
     // Number of rooms filter
@@ -425,19 +428,22 @@ router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
     
     // City filter
     if (city) {
-      filter.city = { $regex: city.trim(), $options: 'i' };
+      // Normalize spaces: replace multiple spaces with \\s+ and trim
+      const cityPattern = city.trim().replace(/\s+/g, '\\s+');
+      filter.city = { $regex: cityPattern, $options: 'i' };
     }
     
     // Colony filter
     if (colony) {
-      filter.colony = { $regex: colony.trim(), $options: 'i' };
+      const colonyPattern = colony.trim().replace(/\s+/g, '\\s+');
+      filter.colony = { $regex: colonyPattern, $options: 'i' };
     }
     
     // Price range filter
     if (minRent || maxRent) {
       filter.rentAmount = {};
-      if (minRent) filter.rentAmount.$gte = Number(minRent);
-      if (maxRent) filter.rentAmount.$lte = Number(maxRent);
+      if (minRent) filter.rentAmount.$gte = minRent.toString(); // Convert to string for PG listings
+      if (maxRent) filter.rentAmount.$lte = maxRent.toString(); // Convert to string for PG listings
     }
     
     // Number of rooms filter

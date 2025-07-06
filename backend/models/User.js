@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     match: [emailRegex, 'Please fill a valid email address'] 
   },
   passwordHash: { type: String, required: true },
+  profilePicture: { type: String }, // URL to the profile picture
 }, { timestamps: true });
 
 // Method to set password hash

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import logo from '../assets/logo.png';
-import defaultProfile from '../assets/lender.svg';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import ProfileAvatar from './ProfileAvatar';
 
 export default function ResponsiveNavbarWithZoomInHover() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -151,11 +151,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
                     className="flex items-center cursor-pointer select-none"
                     onClick={() => setProfileMenuOpen(prev => !prev)}
                   >
-                    <img
-                      src={user.profilePicture || defaultProfile}
-                      alt="Profile"
-                      className="h-8 w-8 rounded-full border border-gray-300"
-                    />
+                    <ProfileAvatar user={user} size="sm" />
                   </div>
                   {profileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50 profile-dropdown">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 import PGListingsPlaceholder from "../../../assets/Room1.svg";
+import MiniImageGallery from '../../MiniImageGallery';
 
 function StudentListings({ filters, searchTrigger }) {
     const navigate = useNavigate();
@@ -175,17 +176,20 @@ function StudentListings({ filters, searchTrigger }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-4">
                 {listings.map((listing) => (
                     <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
-                        <img 
-                            src={listing.propertyImages && listing.propertyImages.length > 0 ? listing.propertyImages[0] : PGListingsPlaceholder} 
-                            className="w-full h-52 object-cover" 
-                            alt="listing" 
+                        {/* Mini Image Gallery */}
+                        <MiniImageGallery 
+                            images={listing.propertyImages} 
+                            defaultImage={PGListingsPlaceholder}
+                            alt="Room Images"
+                            maxImages={4}
                         />
+                        
                         {/* Only show save button for listings not owned by the user */}
                         {!listing.isOwnedByUser && (
                             <button
                                 type="button"
                                 onClick={() => handleSaveToggle(listing._id)}
-                                className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-75 hover:bg-opacity-100 transition"
+                                className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-75 hover:bg-opacity-100 transition z-10"
                                 aria-label={savedListingIds.has(listing._id) ? 'Unsave listing' : 'Save listing'}
                             >
                                 {savedListingIds.has(listing._id) ? (
