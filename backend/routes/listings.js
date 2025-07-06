@@ -235,19 +235,60 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
 });
 
 // Update a flat listing
-router.put('/flat/:id', authenticateToken, checkListingOwnership, async (req, res) => {
+router.put('/flat/:id', authenticateToken, checkListingOwnership, upload.array('propertyImages', 10), async (req, res) => {
   try {
     const listing = await FlatListing.findById(req.params.id);
     if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
+    // Prepare update data
+    const updateData = { ...req.body };
+
+    // Handle image uploads if new images are provided
+    if (req.files && req.files.length > 0) {
+      const imageUploadPromises = req.files.map(file => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { resource_type: 'auto' },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          stream.end(file.buffer);
+        });
+      });
+      const newImages = await Promise.all(imageUploadPromises);
+      updateData.propertyImages = newImages;
+    }
+
+    // Convert boolean strings to actual booleans
+    if (updateData.wifi !== undefined) {
+      updateData.wifi = updateData.wifi === 'true' || updateData.wifi === true;
+    }
+    if (updateData.airConditioning !== undefined) {
+      updateData.airConditioning = updateData.airConditioning === 'true' || updateData.airConditioning === true;
+    }
+    if (updateData.independent !== undefined) {
+      updateData.independent = updateData.independent === 'true' || updateData.independent === true;
+    }
+
+    // Convert numeric fields
+    if (updateData.numberOfRooms !== undefined) {
+      updateData.numberOfRooms = Number(updateData.numberOfRooms);
+    }
+    if (updateData.rentAmount !== undefined) {
+      updateData.rentAmount = Number(updateData.rentAmount);
+    }
+
     const updatedListing = await FlatListing.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
 
     res.json(updatedListing);
   } catch (err) {
+    console.error('Error updating flat listing:', err);
     res.status(500).json({ message: 'Error updating flat listing', error: err.message });
   }
 });
@@ -594,19 +635,60 @@ router.post('/pg', authenticateToken, upload.array('propertyImages', 10), async 
 });
 
 // Update a PG listing
-router.put('/pg/:id', authenticateToken, checkListingOwnership, async (req, res) => {
+router.put('/pg/:id', authenticateToken, checkListingOwnership, upload.array('propertyImages', 10), async (req, res) => {
   try {
     const listing = await PGListing.findById(req.params.id);
     if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
+    // Prepare update data
+    const updateData = { ...req.body };
+
+    // Handle image uploads if new images are provided
+    if (req.files && req.files.length > 0) {
+      const imageUploadPromises = req.files.map(file => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { resource_type: 'auto' },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          stream.end(file.buffer);
+        });
+      });
+      const newImages = await Promise.all(imageUploadPromises);
+      updateData.propertyImages = newImages;
+    }
+
+    // Convert boolean strings to actual booleans
+    if (updateData.wifi !== undefined) {
+      updateData.wifi = updateData.wifi === 'true' || updateData.wifi === true;
+    }
+    if (updateData.airConditioning !== undefined) {
+      updateData.airConditioning = updateData.airConditioning === 'true' || updateData.airConditioning === true;
+    }
+    if (updateData.independent !== undefined) {
+      updateData.independent = updateData.independent === 'true' || updateData.independent === true;
+    }
+
+    // Convert numeric fields
+    if (updateData.numberOfRooms !== undefined) {
+      updateData.numberOfRooms = Number(updateData.numberOfRooms);
+    }
+    if (updateData.rentAmount !== undefined) {
+      updateData.rentAmount = Number(updateData.rentAmount);
+    }
+
     const updatedListing = await PGListing.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
 
     res.json(updatedListing);
   } catch (err) {
+    console.error('Error updating PG listing:', err);
     res.status(500).json({ message: 'Error updating PG listing', error: err.message });
   }
 });

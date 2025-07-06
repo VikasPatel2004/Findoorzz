@@ -11,6 +11,8 @@ import StudentPage from './pages/PG/Student/StudentPage';
 import LenderPage from './pages/Flat/Lender/LenderPage';
 import RenterPage from './pages/Flat/Renter/RenterPage';
 import LandlordListingForm from './pages/PG/Landlord/LandlordListingForm';
+import EditPGListingForm from './pages/PG/Landlord/EditPGListingForm';
+import EditFlatListingForm from './pages/Flat/Lender/EditFlatListingForm';
 import LenderListingForm from './pages/Flat/Lender/LenderListingForm';
 import StudentListingDetailPage from './pages/PG/Student/StudentListingFullPage';
 import RenterListingDetailPage from './pages/Flat/Renter/RenterListingDetailPage';
@@ -59,6 +61,16 @@ function App() {
           <Route path="/LandlordForm" element={
             <PrivateRoute>
               <LandlordListingForm />
+            </PrivateRoute>
+          } />
+          <Route path="/edit-pg-listing/:id" element={
+            <PrivateRoute>
+              <EditPGListingForm />
+            </PrivateRoute>
+          } />
+          <Route path="/edit-flat-listing/:id" element={
+            <PrivateRoute>
+              <EditFlatListingForm />
             </PrivateRoute>
           } />
           <Route path="/Student" element={
