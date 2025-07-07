@@ -18,8 +18,8 @@ app.use(helmet({
 app.use(compression()); // Enable gzip compression
 app.use(cors({
   origin: [
-    'https://findoorz-lyart.vercel.app/', // <-- replace with your actual frontend Vercel URL if different
-    'http://localhost:5173'
+    'http://localhost:5173' // for local frontend development
+    // Add your frontend Vercel URL here after deployment
   ],
   credentials: true
 }));
