@@ -18,7 +18,7 @@ app.use(helmet({
 app.use(compression()); // Enable gzip compression
 app.use(cors({
   origin: [
-    'https://findoorz-frontend.vercel.app', // <-- replace with your actual frontend Vercel URL if different
+    'https://findoorz-lyart.vercel.app/', // <-- replace with your actual frontend Vercel URL if different
     'http://localhost:5173'
   ],
   credentials: true
