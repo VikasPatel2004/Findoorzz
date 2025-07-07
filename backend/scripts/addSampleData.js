@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
 const User = require('../models/User');
-require('dotenv').config();
+const Notification = require('../models/Notification');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 async function addSampleData() {
   try {

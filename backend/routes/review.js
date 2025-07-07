@@ -4,6 +4,7 @@ const Review = require('../models/Review');
 const User = require('../models/User');
 const PGListing = require('../models/PGListing');
 const FlatListing = require('../models/FlatListing');
+const Notification = require('../models/Notification');
 const { body, validationResult } = require('express-validator');
 
 const router = express.Router();
@@ -62,6 +63,30 @@ router.post('/', authenticateToken, reviewValidationRules, async (req, res) => {
     
     const review = new Review(reviewData);
     await review.save();
+
+    // Notification logic
+    let ownerId;
+    let type;
+    if (listingType === 'pg') {
+      const pg = await PGListing.findById(listingId);
+      if (pg) {
+        ownerId = pg.owner;
+        type = 'Landlord';
+      }
+    } else if (listingType === 'flat') {
+      const flat = await FlatListing.findById(listingId);
+      if (flat) {
+        ownerId = flat.owner;
+        type = 'Lender';
+      }
+    }
+    if (ownerId && type) {
+      await Notification.create({
+        user: ownerId,
+        message: `New review posted for your ${listingType.toUpperCase()} listing!`,
+        type: type
+      });
+    }
     
     // Populate user information
     await review.populate('user', 'name');

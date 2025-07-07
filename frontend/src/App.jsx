@@ -29,11 +29,11 @@ import UserProfile from './pages/Profile/UserProfile';
 import EditProfile from './pages/Profile/EditProfile';
 import TestComponent from './components/TestComponent';
 import LenderDashboardPage from './pages/Flat/Lender/LenderDashboardPage';
+import NotificationCenter from './pages/Notifications/NotificationCenter';
 
 import { AuthProvider } from './context/AuthContext';
 import { SavedListingsProvider } from './context/SavedListingsContext';
 import PrivateRoute from './components/PrivateRoute';
-import PerformanceMonitor from './components/PerformanceMonitor';
 
 function App() {
   return (
@@ -165,10 +165,14 @@ function App() {
                   <LenderDashboardPage />
                 </PrivateRoute>
               } />
+              <Route path="/notifications" element={
+                <PrivateRoute>
+                  <NotificationCenter />
+                </PrivateRoute>
+              } />
             </Routes>
             <Footer />
           </BrowserRouter>
-          {import.meta.env.DEV && <PerformanceMonitor />}
         </div>
       </SavedListingsProvider>
     </AuthProvider>

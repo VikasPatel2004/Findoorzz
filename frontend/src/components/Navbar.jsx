@@ -86,7 +86,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
     "text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none flex items-center gap-2 group relative overflow-hidden";
 
   // Animated nav link for logged-in users
-  const AnimatedNavLink = ({ href, icon: Icon, children, ariaLabel }) => (
+  const AnimatedNavLink = ({ href, children, ariaLabel }) => (
     <a
       href={href}
       className={linkClassNames + " border border-gray-200 rounded-full"}
@@ -94,9 +94,8 @@ export default function ResponsiveNavbarWithZoomInHover() {
     >
       {/* Animated background fill */}
       <span className="absolute inset-0 bg-amber-200 scale-y-0 origin-bottom transition-transform duration-700 ease-in-out group-hover:scale-y-100 pointer-events-none z-0" />
-      {/* Icon and text */}
+      {/* Text */}
       <span className="relative z-10 flex items-center gap-2">
-        <Icon className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />
         {children}
       </span>
     </a>
@@ -121,9 +120,9 @@ export default function ResponsiveNavbarWithZoomInHover() {
           <div className="hidden md:flex items-center space-x-6">
             {user ? (
               <>
-                <AnimatedNavLink href="/" icon={FiHome} ariaLabel="Home page">Home</AnimatedNavLink>
-                <AnimatedNavLink href="/pg" icon={PiBedBold} ariaLabel="PG section">PG</AnimatedNavLink>
-                <AnimatedNavLink href="/flat" icon={MdOutlineApartment} ariaLabel="Flat section">Flat</AnimatedNavLink>
+                <AnimatedNavLink href="/" ariaLabel="Home page"><FiHome className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />Home</AnimatedNavLink>
+                <AnimatedNavLink href="/pg" ariaLabel="PG section"><PiBedBold className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />PG</AnimatedNavLink>
+                <AnimatedNavLink href="/flat" ariaLabel="Flat section"><MdOutlineApartment className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />Flat</AnimatedNavLink>
               </>
             ) : (
               <>
@@ -168,13 +167,14 @@ export default function ResponsiveNavbarWithZoomInHover() {
               <>
                 {/* Notification Button */}
                 <button
-                  className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden mr-4 flex items-center justify-center`}
+                  className={`relative group ${linkClassNames} font-semibold border border-gray-300 bg-amber-50 rounded-full overflow-hidden mr-4 flex items-center justify-center`}
                   aria-label="Notifications"
                   onClick={() => {
-                    navigate('/Notifications');
+                    navigate('/notifications');
                   }}
                 >
                   <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  
                 </button>
 
                 {/* Profile Section with dropdown */}

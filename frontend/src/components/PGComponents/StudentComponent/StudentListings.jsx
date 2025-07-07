@@ -182,7 +182,6 @@ function StudentListings({ filters, searchTrigger }) {
                             alt="Room Images"
                             maxImages={4}
                         />
-                        
                         {/* Only show save button for listings not owned by the user */}
                         {!listing.isOwnedByUser && (
                             <button
@@ -203,7 +202,6 @@ function StudentListings({ filters, searchTrigger }) {
                             </button>
                         )}
                         <div className="p-4 text-center">
-                            {/* Ownership badge */}
                             {listing.isOwnedByUser && (
                                 <div className="mb-2">
                                     <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
@@ -211,35 +209,26 @@ function StudentListings({ filters, searchTrigger }) {
                                     </span>
                                 </div>
                             )}
-                            
                             <p className="text-lg font-bold mb-2">
                                 {listing.houseNumber}, {listing.colony}, {listing.city}
                             </p>
                             <p className="mb-1">Rent: &#8377;{listing.rentAmount}/month</p>
                             <p className="mb-1">Furnishing: {listing.furnishingStatus}</p>
-                            <p className="mb-1">Wi-Fi: {listing.wifi ? 'Available' : 'Not Available'}</p>
-                            <p className="mb-1">Independent: {listing.independent ? 'Yes' : 'No'}</p>
-                            
-                            {/* Different actions based on ownership */}
-                            <div className="flex gap-2 mt-2">
-                                <button 
-                                    type="button" 
-                                    className="flex-1 bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 transition duration-300" 
-                                    onClick={() => handleExploreClick(listing._id)}
-                                >
-                                    {listing.isOwnedByUser ? 'View' : 'Explore'}
-                                </button>
-                                
-                                {listing.isOwnedByUser && (
-                                    <button 
-                                        type="button" 
-                                        className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300" 
-                                        onClick={() => handleEditClick(listing._id)}
-                                    >
-                                        Edit
-                                    </button>
-                                )}
+                            <div className="flex flex-wrap gap-2 justify-center mb-1">
+                                <span className="inline-block bg-amber-100 font-semibold px-3 py-1 rounded-full border border-gray-200">
+                                    Wi-Fi: {listing.wifi ? 'Available' : 'Not Available'}
+                                </span>
+                                <span className="inline-block bg-amber-100 font-semibold px-3 py-1 rounded-full border border-gray-200">
+                                    Independent: {listing.independent ? 'Yes' : 'No'}
+                                </span>
                             </div>
+                            <button 
+                                type="button" 
+                                className="btn btn-warning px-5 py-2 mt-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300" 
+                                onClick={() => handleExploreClick(listing._id)}
+                            >
+                                Explore
+                            </button> 
                         </div> 
                     </div>
                 ))}

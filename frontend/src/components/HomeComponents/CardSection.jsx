@@ -30,9 +30,9 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                     animate={isCard1Visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <div className="flex flex-col lg:flex-row min-h-[200px]">
+                    <div className="flex flex-col lg:flex-row min-h-[120px]">
                         {/* Image Side */}
-                        <div className="w-full lg:w-1/2 flex justify-center items-center p-8 lg:p-12 bg-gradient-to-br from--100 via-blue-50 to-indigo-100 relative overflow-hidden">
+                        <div className="w-full lg:w-1/2 flex justify-center items-center p-6 sm:p-8 md:p-8 lg:p-6 bg-gradient-to-br relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-indigo-400/10"></div>
                             <img
                                 src={PGcard}
@@ -41,7 +41,7 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                             />
                         </div>
                         {/* Text Side */}
-                        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center text-center p-8 lg:p-12 bg-white relative">
+                        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center text-center p-6 sm:p-8 md:p-8 lg:p-6 bg-white relative">
                             <div className="max-w-md">
                                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-8 text-gray-800">
                                    " Find Your <span className="text-yellow-500 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">PG</span> Fast And <span className="text-yellow-500 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Fuse</span> Free! "
@@ -67,9 +67,9 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                     animate={isCard2Visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <div className="flex flex-col lg:flex-row min-h-[200px]">
+                    <div className="flex flex-col lg:flex-row min-h-[120px]">
                         {/* Image Side */}
-                        <div className="w-full lg:w-1/2 flex justify-center items-center p-8 lg:p-12 bg-gradient-to-br from-green-100 via-emerald-50 to-teal-100 relative overflow-hidden">
+                        <div className="w-full lg:w-1/2 flex justify-center items-center p-6 sm:p-8 md:p-8 lg:p-6 bg-gradient-to-br relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-teal-400/10"></div>
                             <img
                                 src={Flatcard}
@@ -78,14 +78,14 @@ const CardSection = ({ isCard1Visible, isCard2Visible }) => {
                             />
                         </div>
                         {/* Text Side */}
-                        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center text-center p-8 lg:p-12 bg-white relative">
+                        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center text-center p-6 sm:p-8 md:p-8 lg:p-6 bg-white relative">
                             <div className="max-w-md">
                                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-8 text-gray-800">
                                    " Find Flat, <span className="text-yellow-500 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Roomates</span>, Family <span className="text-yellow-500 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Make</span> Memories! "
                                 </h1>
                                
                                 <button
- className="bg-gradient-to-r bg-amber-100 font-bold py-4 px-10 rounded-full hover:from-yellow-200 hover:to-yellow-200 transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                    className="bg-gradient-to-r bg-amber-100 font-bold py-4 px-10 rounded-full hover:from-yellow-200 hover:to-yellow-200 transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                                     onClick={handleFlatButtonClick}
                                 >
                                     Explore Now

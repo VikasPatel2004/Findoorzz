@@ -99,6 +99,15 @@ function StudentSavedListings() {
                                         <span className="text-gray-500"> +18% GST</span>
                                     </div>
                                 </p>
+                                <p className="mb-1">Furnishing: {listing.furnishingStatus}</p>
+                                <div className="flex flex-wrap gap-2 justify-center mb-1">
+                                    <span className="inline-block bg-amber-100 font-semibold px-3 py-1 rounded-full border border-gray-200">
+                                        Wi-Fi: {listing.wifi ? 'Available' : 'Not Available'}
+                                    </span>
+                                    <span className="inline-block bg-amber-100 font-semibold px-3 py-1 rounded-full border border-gray-200">
+                                        Independent: {listing.independent ? 'Yes' : 'No'}
+                                    </span>
+                                </div>
                                 <div className="flex justify-center mt-2">
                                     <button 
                                         type="button" 

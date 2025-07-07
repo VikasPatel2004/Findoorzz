@@ -1,6 +1,9 @@
 const express = require('express');
 const authenticateToken = require('../middleware/authMiddleware');
 const Booking = require('../models/Booking');
+const FlatListing = require('../models/FlatListing');
+const PGListing = require('../models/PGListing');
+const Notification = require('../models/Notification');
 
 const router = express.Router();
 
@@ -29,6 +32,31 @@ router.post('/', authenticateToken, async (req, res) => {
     const bookingData = { listingType, listingId, bookingStartDate, bookingEndDate, user: userId };
     const booking = new Booking(bookingData);
     await booking.save();
+
+    // Notification logic
+    let ownerId;
+    let type;
+    if (listingType === 'Flat') {
+      const flat = await FlatListing.findById(listingId);
+      if (flat) {
+        ownerId = flat.owner;
+        type = 'Lender';
+      }
+    } else if (listingType === 'PG') {
+      const pg = await PGListing.findById(listingId);
+      if (pg) {
+        ownerId = pg.owner;
+        type = 'Landlord';
+      }
+    }
+    if (ownerId && type) {
+      await Notification.create({
+        user: ownerId,
+        message: `New booking for your ${listingType} listing!`,
+        type: type
+      });
+    }
+
     res.status(201).json(booking);
   } catch (err) {
     res.status(500).json({ message: 'Error creating booking', error: err.message });
