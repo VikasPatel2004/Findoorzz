@@ -15,6 +15,11 @@ function MyListings() {
         navigate('/lenderform'); // Navigate to the Lender Form route
     };
 
+    // Navigate to the Lender Dashboard
+    const handleDashboardClick = () => {
+        navigate('/LenderDashboard'); // Route for the new Lender Dashboard
+    };
+
     // Navigate to the Renter route
     const handleButtonClick = (listing) => {
         navigate(`/FlatDetail/${listing._id}`); // Navigate to FlatDetail with listing ID param
@@ -54,13 +59,22 @@ function MyListings() {
                 <h1 className='text-left py-2 text-2xl md:text-3xl'>
                     List your <span className='text-yellow-500'>flat</span>, here!
                 </h1>
-                <button 
-                    type="button" 
-                    className="btn px-5 py-2 mt-4 md:mt-0 bg-red-400 text-white rounded-md hover:bg-red-500 transition duration-300" 
-                    onClick={handleNewClick}
-                >
-                    Add Your Flat +
-                </button>
+                <div className="flex gap-3 mt-4 md:mt-0">
+                    <button 
+                        type="button" 
+                        className="btn px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" 
+                        onClick={handleDashboardClick}
+                    >
+                        Dashboard
+                    </button>
+                    <button 
+                        type="button" 
+                        className="btn px-5 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 transition duration-300" 
+                        onClick={handleNewClick}
+                    >
+                        Add Your Flat +
+                    </button>
+                </div>
             </div>
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">My Listings</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">

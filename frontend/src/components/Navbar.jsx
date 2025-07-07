@@ -3,6 +3,9 @@ import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileAvatar from './ProfileAvatar';
+import { FiHome, FiBell } from 'react-icons/fi';
+import { MdOutlineApartment } from 'react-icons/md';
+import { PiBedBold } from 'react-icons/pi';
 
 export default function ResponsiveNavbarWithZoomInHover() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -79,8 +82,25 @@ export default function ResponsiveNavbarWithZoomInHover() {
   }, [lastScrollY]);
 
   // Common classes for nav links and login/logout with zoom in hover effect
-  const linkClassNames = 
-    "text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none";
+  const linkClassNames =
+    "text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none flex items-center gap-2 group relative overflow-hidden";
+
+  // Animated nav link for logged-in users
+  const AnimatedNavLink = ({ href, icon: Icon, children, ariaLabel }) => (
+    <a
+      href={href}
+      className={linkClassNames + " border border-gray-200 rounded-full"}
+      aria-label={ariaLabel}
+    >
+      {/* Animated background fill */}
+      <span className="absolute inset-0 bg-amber-200 scale-y-0 origin-bottom transition-transform duration-700 ease-in-out group-hover:scale-y-100 pointer-events-none z-0" />
+      {/* Icon and text */}
+      <span className="relative z-10 flex items-center gap-2">
+        <Icon className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />
+        {children}
+      </span>
+    </a>
+  );
 
   return (
     <nav className={`bg-white sticky top-0 z-50 transition-opacity transition-transform duration-300 ${scrollingUp ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}>
@@ -99,27 +119,40 @@ export default function ResponsiveNavbarWithZoomInHover() {
 
           {/* Right side navigation for Home, Flat, PG, and Login/Logout sections */}
           <div className="hidden md:flex items-center space-x-6">
-            <a
-              href="/"
-              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
-              aria-label="Home page"
-            >
-              Home
-            </a>
-            <a
-              href="/pg"
-              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
-              aria-label="PG section"
-            >
-              PG
-            </a>
-            <a
-              href="/flat"
-              className={`${linkClassNames} hover:text-yellow-600 hover:scale-110 transition-transform duration-300 ease-in-out`}
-              aria-label="Flat section"
-            >
-              Flat
-            </a>
+            {user ? (
+              <>
+                <AnimatedNavLink href="/" icon={FiHome} ariaLabel="Home page">Home</AnimatedNavLink>
+                <AnimatedNavLink href="/pg" icon={PiBedBold} ariaLabel="PG section">PG</AnimatedNavLink>
+                <AnimatedNavLink href="/flat" icon={MdOutlineApartment} ariaLabel="Flat section">Flat</AnimatedNavLink>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/"
+                  className={linkClassNames + " hover:text-yellow-600"}
+                  aria-label="Home page"
+                >
+                  <FiHome className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  Home
+                </a>
+                <a
+                  href="/pg"
+                  className={linkClassNames + " hover:text-yellow-600"}
+                  aria-label="PG section"
+                >
+                  <PiBedBold className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  PG
+                </a>
+                <a
+                  href="/flat"
+                  className={linkClassNames + " hover:text-yellow-600"}
+                  aria-label="Flat section"
+                >
+                  <MdOutlineApartment className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  Flat
+                </a>
+              </>
+            )}
             {!user ? (
               <button
                 className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden`}
@@ -133,7 +166,6 @@ export default function ResponsiveNavbarWithZoomInHover() {
               </button>
             ) : (
               <>
-
                 {/* Notification Button */}
                 <button
                   className={`relative group ${linkClassNames} font-semibold border border-gray-300 rounded-full overflow-hidden mr-4 flex items-center justify-center`}
@@ -142,7 +174,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
                     navigate('/Notifications');
                   }}
                 >
-                  <span className="text-white text-xl relative z-10">🔔</span>
+                  <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
                 </button>
 
                 {/* Profile Section with dropdown */}

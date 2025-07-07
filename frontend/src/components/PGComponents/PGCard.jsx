@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import landlordVideo from '../../assets/landlord.mp4';
 import studentVideo from '../../assets/Student.mp4';
 
 export default function PGcard() {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Stop observing once visible
+          observer.disconnect();
         }
       },
-      { threshold: 0.1 } // Trigger when 10% of the card is visible
+      { threshold: 0.1 }
     );
 
     if (cardRef.current) {
@@ -30,14 +30,12 @@ export default function PGcard() {
     };
   }, []);
 
-  // Handle click for landlord button
   const handleLandlordClick = () => {
-    navigate('/landlord'); // Replace with the actual path to the landlord page
+    navigate('/landlord');
   };
 
-  // Handle click for student button
   const handleStudentClick = () => {
-    navigate('/student'); // Replace with the actual path to the student page
+    navigate('/student');
   };
 
   return (
@@ -52,7 +50,7 @@ export default function PGcard() {
         >
           <div className="mb-1 ">
             <video
-              className="mx-auto h-70 w-70 object-cover rounded-full" // Changed to rounded-full for circular video
+              className="mx-auto h-70 w-70 object-cover rounded-full"
               src={landlordVideo}
               autoPlay
               loop
@@ -63,8 +61,8 @@ export default function PGcard() {
           </div>
           <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Landlord</h3>
           <button 
-            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" 
-            onClick={handleLandlordClick} // Add onClick handler
+            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition"
+            onClick={handleLandlordClick}
           >
             Explore
           </button>
@@ -76,7 +74,7 @@ export default function PGcard() {
         >
           <div className="mb-1">
             <video
-              className="mx-auto h-70 w-70 object-cover rounded-full" // Changed to rounded-full for circular video
+              className="mx-auto h-70 w-70 object-cover rounded-full"
               src={studentVideo}
               autoPlay
               loop
@@ -87,8 +85,8 @@ export default function PGcard() {
           </div>
           <h3 className="text-stone-500 font-extrabold mb-4 text-3xl">Student</h3>
           <button 
-            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition" 
-            onClick={handleStudentClick} // Add onClick handler
+            className="px-8 py-3 bg-amber-200 text-black font-semibold rounded-md hover:bg-amber-100 transition"
+            onClick={handleStudentClick}
           >
             Explore
           </button>

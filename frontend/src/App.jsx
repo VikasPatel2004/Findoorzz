@@ -28,6 +28,7 @@ import RenterDashboard from './pages/RenterDashboard';
 import UserProfile from './pages/Profile/UserProfile';
 import EditProfile from './pages/Profile/EditProfile';
 import TestComponent from './components/TestComponent';
+import LenderDashboardPage from './pages/Flat/Lender/LenderDashboardPage';
 
 import { AuthProvider } from './context/AuthContext';
 import { SavedListingsProvider } from './context/SavedListingsContext';
@@ -157,6 +158,11 @@ function App() {
               <Route path="/FlatDetails/:id" element={
                 <PrivateRoute>
                   <RenterListingDetailPage />
+                </PrivateRoute>
+              } />
+              <Route path="/LenderDashboard" element={
+                <PrivateRoute>
+                  <LenderDashboardPage />
                 </PrivateRoute>
               } />
             </Routes>

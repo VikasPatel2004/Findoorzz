@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const compression = require('compression');
 const helmet = require('helmet');
+const path = require('path');
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ const bookingRoutes = require('./routes/bookings');
 const paymentRoutes = require('./routes/payment');
 const reviewRoutes = require('./routes/review');
 const notificationRoutes = require('./routes/notification');
+const userRoutes = require('./routes/user');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
@@ -49,10 +51,19 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/user', userRoutes);
+
+// Serve static files from the frontend build (adjust path if needed)
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Serve index.html for all non-API, non-static routes (client-side routing support)
+app.get(/^\/((?!api).)*$/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 // Error handling middleware
