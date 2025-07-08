@@ -18,6 +18,7 @@ app.use(helmet({
 app.use(compression()); // Enable gzip compression
 app.use(cors({
   origin: [
+    'https://findoorz-3fbn.onrender.com', // Render frontend
     'http://localhost:3000' // local React dev
     // 'http://localhost:5173' // Vite dev (removed)
     // 'https://findoorz.vercel.app' // production frontend (removed)
