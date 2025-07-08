@@ -56,10 +56,10 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/user', userRoutes);
 
 // Serve static files from the frontend build (adjust path if needed)
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
-});
+// app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+// });
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
