@@ -9,7 +9,8 @@
     "build:prod": "vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "analyze": "vite build --mode production && npx vite-bundle-analyzer dist"
+    "analyze": "vite build --mode production && npx vite-bundle-analyzer dist",
+    "start": "serve -s dist"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -36,6 +37,7 @@
     "globals": "^16.0.0",
     "terser": "^5.43.1",
     "vite": "^6.3.5",
-    "vite-bundle-analyzer": "^1.0.0"
+    "vite-bundle-analyzer": "^1.0.0",
+    "serve": "^14.2.0"
   }
 }
