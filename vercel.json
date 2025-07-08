@@ -10,7 +10,7 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist",
-        "buildCommand": "npm run build:prod"
+        "buildCommand": "cd frontend && npm install && npm run build:prod"
       }
     }
   ],
@@ -31,5 +31,10 @@
       "src": "/(.*)",
       "dest": "frontend/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "backend/index.js": {
+      "maxDuration": 30
+    }
+  }
 } 

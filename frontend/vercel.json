@@ -36,5 +36,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "**/*.js": {
+      "maxDuration": 30
+    }
+  }
 } 
