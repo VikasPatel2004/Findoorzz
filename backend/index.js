@@ -16,11 +16,13 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 app.use(compression()); // Enable gzip compression
+// CORS configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
+  'https://findoorz-3fbn.onrender.com', // Render frontend
+  'http://localhost:3000' // local React dev
+];
 app.use(cors({
-  origin: [
-    'https://findoorz-3fbn.onrender.com', // Render frontend
-    'http://localhost:3000' // local React dev
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
 
