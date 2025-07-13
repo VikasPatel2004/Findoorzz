@@ -4,6 +4,7 @@ const { checkListingOwnership } = require('../middleware/ownershipMiddleware');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
 const SavedListing = require('../models/SavedListing');
+const Notification = require('../models/Notification');
 const { body, validationResult } = require('express-validator');
 const upload = require('../middleware/multer');
 const cloudinary = require('../config/cloudinary');
@@ -235,6 +236,14 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
     });
 
     await newListing.save();
+
+    // Create notification for the listing owner
+    await Notification.create({
+      user: req.user.userId,
+      message: `Your flat listing "${landlordName} - ${houseNumber}" has been created successfully!`,
+      type: 'Lender',
+      relatedListing: newListing._id
+    });
 
     res.status(201).json(newListing);
   } catch (err) {
@@ -712,6 +721,14 @@ router.post('/pg', authenticateToken, upload.array('propertyImages', 10), async 
 
     await newListing.save();
 
+    // Create notification for the listing owner
+    await Notification.create({
+      user: req.user.userId,
+      message: `Your PG listing "${landlordName} - ${houseNumber}" has been created successfully!`,
+      type: 'Landlord',
+      relatedListing: newListing._id
+    });
+
     res.status(201).json(newListing);
   } catch (err) {
     console.error('Error creating PG listing:', err);
@@ -1173,22 +1190,27 @@ router.get('/saved', authenticateToken, async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('Backend: Fetching listing with ID:', id);
     
     // Try to find in PG listings first
     let listing = await PGListing.findById(id);
+    console.log('Backend: PG listing found:', listing ? 'Yes' : 'No');
     
     // If not found in PG, try Flat listings
     if (!listing) {
       listing = await FlatListing.findById(id);
+      console.log('Backend: Flat listing found:', listing ? 'Yes' : 'No');
     }
     
     if (!listing) {
+      console.log('Backend: No listing found with ID:', id);
       return res.status(404).json({ message: 'Listing not found' });
     }
     
+    console.log('Backend: Sending listing data:', listing._id, listing.houseNumber);
     res.json(listing);
   } catch (err) {
-    console.error('Error fetching listing:', err);
+    console.error('Backend: Error fetching listing:', err);
     res.status(500).json({ message: 'Error fetching listing', error: err.message });
   }
 });

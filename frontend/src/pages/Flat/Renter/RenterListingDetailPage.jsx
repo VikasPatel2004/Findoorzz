@@ -14,11 +14,13 @@ function RenterListingDetailPage() {
         async function fetchListing() {
             try {
                 setLoading(true);
+                console.log('Fetching listing with ID:', id);
                 const data = await listingService.getListingById(id);
+                console.log('Listing data received:', data);
                 setListingData(data);
             } catch (err) {
-                setError('Failed to fetch listing');
-                console.error(err);
+                console.error('Error fetching listing:', err);
+                setError('Failed to fetch listing: ' + (err.response?.data?.message || err.message));
             } finally {
                 setLoading(false);
             }

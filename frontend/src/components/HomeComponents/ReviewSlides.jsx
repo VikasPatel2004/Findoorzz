@@ -3,6 +3,7 @@ import reviewImage from '../../assets/Review.svg'; // Placeholder for review ima
 
 const ReviewSlider = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
     const images = [
         { src: reviewImage },
         { src: reviewImage },
@@ -12,20 +13,33 @@ const ReviewSlider = () => {
         { src: reviewImage },
     ];
 
+    // Check screen size on mount and resize
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === images.length - 3 ? 0 : prevIndex + 1
-            );
+            setCurrentIndex((prevIndex) => {
+                const maxIndex = isMobile ? images.length - 1 : images.length - 3;
+                return prevIndex === maxIndex ? 0 : prevIndex + 1;
+            });
         }, 2000); // Change image every 2 seconds
 
         return () => clearInterval(interval);
-    }, [images.length]);
+    }, [images.length, isMobile]);
 
     return (
         <div className="overflow-hidden relative text-center pt-5">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                Some Reviews
+                Reviews
             </h1>
             <h1 className="text-1xl pb-6">
                 " Just Some Motivation For Our Hardwork "
@@ -33,11 +47,13 @@ const ReviewSlider = () => {
             <div
                 className="flex transition-transform duration-700"
                 style={{
-                    transform: `translateX(-${(currentIndex * 100) / 3}%)`,
+                    transform: isMobile 
+                        ? `translateX(-${currentIndex * 100}%)` 
+                        : `translateX(-${(currentIndex * 100) / 3}%)`,
                 }}
             >
                 {images.map((image, index) => (
-                    <div key={index} className="flex-shrink-0 w-1/3 p-1">
+                    <div key={index} className="flex-shrink-0 w-full md:w-1/3 p-1">
                         <div className="bg-white rounded-lg"> {/* Removed shadow */}
                             <img
                                 className="w-full h-80 rounded-lg object-cover" // Increased height

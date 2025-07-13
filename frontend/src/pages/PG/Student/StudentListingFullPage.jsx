@@ -14,11 +14,13 @@ function StudentListingDetailPage() {
         async function fetchListing() {
             try {
                 setLoading(true);
+                console.log('Fetching PG listing with ID:', id);
                 const data = await listingService.getListingById(id);
+                console.log('PG listing data received:', data);
                 setListingData(data);
             } catch (err) {
-                setError('Failed to fetch listing data');
-                console.error(err);
+                console.error('Error fetching PG listing:', err);
+                setError('Failed to fetch listing data: ' + (err.response?.data?.message || err.message));
             } finally {
                 setLoading(false);
             }

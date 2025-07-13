@@ -6,15 +6,17 @@ import ProfileAvatar from './ProfileAvatar';
 import { FiHome, FiBell } from 'react-icons/fi';
 import { MdOutlineApartment } from 'react-icons/md';
 import { PiBedBold } from 'react-icons/pi';
+import notificationService from '../services/notificationService';
 
 export default function ResponsiveNavbarWithZoomInHover() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollingUp, setScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, token } = useContext(AuthContext);
 
   // Close menu if screen resized larger than mobile breakpoint
   useEffect(() => {
@@ -80,6 +82,26 @@ export default function ResponsiveNavbarWithZoomInHover() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  // Fetch unread notifications count
+  useEffect(() => {
+    if (user && token) {
+      const fetchNotifications = async () => {
+        try {
+          const notifications = await notificationService.getNotifications(token);
+          const unreadCount = notifications.filter(notification => !notification.read).length;
+          setUnreadNotifications(unreadCount);
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
+        }
+      };
+      
+      fetchNotifications();
+      // Refresh notifications every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, token]);
 
   // Common classes for nav links and login/logout with zoom in hover effect
   const linkClassNames =
@@ -167,14 +189,18 @@ export default function ResponsiveNavbarWithZoomInHover() {
               <>
                 {/* Notification Button */}
                 <button
-                  className={`relative group ${linkClassNames} font-semibold border border-gray-300 bg-amber-50 rounded-full overflow-hidden mr-4 flex items-center justify-center`}
+                  className={`relative group ${linkClassNames} font-semibold mr-4 flex items-center justify-center`}
                   aria-label="Notifications"
                   onClick={() => {
                     navigate('/notifications');
                   }}
                 >
                   <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
-                  
+                  {unreadNotifications > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </span>
+                  )}
                 </button>
 
                 {/* Profile Section with dropdown */}

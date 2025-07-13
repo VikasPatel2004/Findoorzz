@@ -32,7 +32,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('AuthContext: Attempting login for:', email);
       const data = await authService.login(email, password);
+      console.log('AuthContext: Login response:', data);
+      
       if (data.token) {
         localStorage.setItem('token', data.token);
         setToken(data.token);
@@ -42,10 +45,11 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: false, message: 'Login failed' };
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('AuthContext: Login error:', error);
+      console.error('AuthContext: Error response:', error.response?.data);
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Login failed. Please try again.' 
+        message: error.response?.data?.message || error.response?.data?.errors || 'Login failed. Please try again.' 
       };
     }
   };

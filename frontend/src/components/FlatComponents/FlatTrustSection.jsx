@@ -68,6 +68,38 @@ export default function FlatTrustSection() {
             </div>
           ))}
         </div>
+        
+        {/* Legal Links Section */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Legal Information</h3>
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <a 
+              href="/privacy" 
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a 
+              href="/terms" 
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a 
+              href="/refund-policy" 
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Refund Policy
+            </a>
+            <a 
+              href="/cancellation-policy" 
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Cancellation Policy
+            </a>
+
+          </div>
+        </div>
       </div>
     </section>
   );

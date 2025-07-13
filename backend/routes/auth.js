@@ -12,50 +12,126 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 // Register new user
 router.post('/register',
   [
-    body('name').notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('name')
+      .notEmpty().withMessage('Username is required')
+      .isLength({ min: 3 }).withMessage('Username must be at least 3 characters long')
+      .isLength({ max: 20 }).withMessage('Username must be less than 20 characters')
+      .matches(/^[a-zA-Z0-9_]+$/).withMessage('Username can only contain letters, numbers, and underscores'),
+    body('email')
+      .isEmail().withMessage('Please enter a valid email address')
+      .normalizeEmail(),
+    body('password')
+      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
+      .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
+      .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
+      .matches(/\d/).withMessage('Password must contain at least one number')
+      .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character (!@#$%^&*)'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      const formattedErrors = {};
+      errors.array().forEach(error => {
+        if (!formattedErrors[error.path]) {
+          formattedErrors[error.path] = [];
+        }
+        formattedErrors[error.path].push(error.msg);
+      });
+      return res.status(400).json({ errors: formattedErrors });
     }
     try {
       const { name, email, password } = req.body;
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(409).json({ message: 'Email already registered' });
+      
+      // Check for existing user by email
+      const existingUserByEmail = await User.findOne({ email });
+      if (existingUserByEmail) {
+        return res.status(409).json({ 
+          errors: { email: ['This email is already registered'] }
+        });
       }
+      
+      // Check for existing user by username
+      const existingUserByName = await User.findOne({ name });
+      if (existingUserByName) {
+        return res.status(409).json({ 
+          errors: { name: ['This username is already taken'] }
+        });
+      }
+      
       const user = new User({ name, email });
       await user.setPassword(password);
       await user.save();
       res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server error' });
+      console.error('Registration error:', err);
+      res.status(500).json({ message: 'Server error during registration' });
     }
   }
 );
 
 // Login user
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+router.post('/login', 
+  [
+    body('email')
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Please enter a valid email address')
+      .normalizeEmail(),
+    body('password')
+      .notEmpty().withMessage('Password is required'),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const formattedErrors = {};
+      errors.array().forEach(error => {
+        if (!formattedErrors[error.path]) {
+          formattedErrors[error.path] = [];
+        }
+        formattedErrors[error.path].push(error.msg);
+      });
+      return res.status(400).json({ errors: formattedErrors });
     }
-    const user = await User.findOne({ email });
-    if (!user || !(await user.validatePassword(password))) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    
+    try {
+      const { email, password } = req.body;
+      console.log('Login attempt for email:', email);
+      
+      const user = await User.findOne({ email });
+      console.log('User found:', user ? 'Yes' : 'No');
+      
+      if (!user) {
+        console.log('No user found with email:', email);
+        return res.status(401).json({ 
+          errors: { email: ['No account found with this email address'] }
+        });
+      }
+      
+      const isValidPassword = await user.validatePassword(password);
+      console.log('Password validation result:', isValidPassword);
+      
+      if (!isValidPassword) {
+        console.log('Invalid password for user:', email);
+        return res.status(401).json({ 
+          errors: { password: ['Incorrect password'] }
+        });
+      }
+      
+      const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      res.json({ 
+        token, 
+        user: { 
+          id: user._id, 
+          name: user.name, 
+          email: user.email, 
+          profilePicture: user.profilePicture 
+        } 
+      });
+    } catch (err) {
+      console.error('Login error:', err);
+      res.status(500).json({ message: 'Server error during login' });
     }
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, profilePicture: user.profilePicture } });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
   }
-});
+);
 
 // Get user profile
 router.get('/profile', authenticateToken, async (req, res) => {

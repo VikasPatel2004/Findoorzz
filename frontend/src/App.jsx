@@ -31,6 +31,17 @@ import TestComponent from './components/TestComponent';
 import LenderDashboardPage from './pages/Flat/Lender/LenderDashboardPage';
 import NotificationCenter from './pages/Notifications/NotificationCenter';
 
+// Payment Management Pages
+import PaymentForm from './pages/PaymentManagement/PaymentForm';
+import PaymentHistory from './pages/PaymentManagement/PaymentHistory';
+
+// Legal Pages
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsOfService from './pages/Legal/TermsOfService';
+import RefundPolicy from './pages/Legal/RefundPolicy';
+import CancellationPolicy from './pages/Legal/CancellationPolicy';
+// import BusinessInfo from './pages/Legal/BusinessInfo';
+
 import { AuthProvider } from './context/AuthContext';
 import { SavedListingsProvider } from './context/SavedListingsContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -40,22 +51,31 @@ function App() {
     <AuthProvider>
       <SavedListingsProvider>
         <div className="App">
-          <BrowserRouter>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
             <Navbar />
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/Signup" element={<SignupPage />} />
               <Route path="/LoginPage" element={<LoginPage />} />
               <Route path="/test" element={<TestComponent />} />
 
+              {/* Legal Pages (Public) */}
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+              {/* <Route path="/business-info" element={<BusinessInfo />} /> */}
+
+              {/* PG Routes */}
               <Route path="/PG" element={
                 <PrivateRoute>
                   <PgPage />
-                </PrivateRoute>
-              } />
-              <Route path="/Flat" element={
-                <PrivateRoute>
-                  <FlatPage />
                 </PrivateRoute>
               } />
               <Route path="/Landlord" element={
@@ -73,11 +93,6 @@ function App() {
                   <EditPGListingForm />
                 </PrivateRoute>
               } />
-              <Route path="/edit-flat-listing/:id" element={
-                <PrivateRoute>
-                  <EditFlatListingForm />
-                </PrivateRoute>
-              } />
               <Route path="/Student" element={
                 <PrivateRoute>
                   <StudentPage />
@@ -93,19 +108,26 @@ function App() {
                   <StudentListingDetailPage />
                 </PrivateRoute>
               } />
+
+              {/* Flat Routes */}
+              <Route path="/Flat" element={
+                <PrivateRoute>
+                  <FlatPage />
+                </PrivateRoute>
+              } />
               <Route path="/Lender" element={
                 <PrivateRoute>
                   <LenderPage />
                 </PrivateRoute>
               } />
-              <Route path="/dashboard" element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              } />
               <Route path="/LenderForm" element={
                 <PrivateRoute>
                   <LenderListingForm />
+                </PrivateRoute>
+              } />
+              <Route path="/edit-flat-listing/:id" element={
+                <PrivateRoute>
+                  <EditFlatListingForm />
                 </PrivateRoute>
               } />
               <Route path="/Renter" element={
@@ -118,28 +140,18 @@ function App() {
                   <RenterSavedListings />
                 </PrivateRoute>
               } />
-
-               <Route path="/FlatDetail/:id" element={
+              <Route path="/FlatDetail/:id" element={
+                <PrivateRoute>
+                  <RenterListingDetailPage />
+                </PrivateRoute>
+              } />
+              <Route path="/FlatDetails/:id" element={
                 <PrivateRoute>
                   <RenterListingDetailPage />
                 </PrivateRoute>
               } />
 
-              <Route path="/RenterDashboard" element={
-                <PrivateRoute>
-                  <RenterDashboard />
-                </PrivateRoute>
-              } />
-              <Route path="/profile" element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              } />
-              <Route path="/edit-profile" element={
-                <PrivateRoute>
-                  <EditProfile />
-                </PrivateRoute>
-              } />
+              {/* Broker Routes */}
               <Route path="/BrokerRegistration" element={
                 <PrivateRoute>
                   <BrokerRegistrationPage />
@@ -155,9 +167,16 @@ function App() {
                   <BrokerAssignmentPage />
                 </PrivateRoute>
               } />
-              <Route path="/FlatDetails/:id" element={
+
+              {/* Dashboard Routes */}
+              <Route path="/dashboard" element={
                 <PrivateRoute>
-                  <RenterListingDetailPage />
+                  <Dashboard />
+                </PrivateRoute>
+              } />
+              <Route path="/RenterDashboard" element={
+                <PrivateRoute>
+                  <RenterDashboard />
                 </PrivateRoute>
               } />
               <Route path="/LenderDashboard" element={
@@ -165,6 +184,32 @@ function App() {
                   <LenderDashboardPage />
                 </PrivateRoute>
               } />
+
+              {/* Profile Routes */}
+              <Route path="/profile" element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              } />
+              <Route path="/edit-profile" element={
+                <PrivateRoute>
+                  <EditProfile />
+                </PrivateRoute>
+              } />
+
+              {/* Payment Routes */}
+              <Route path="/payment/:bookingId" element={
+                <PrivateRoute>
+                  <PaymentForm />
+                </PrivateRoute>
+              } />
+              <Route path="/payment-history" element={
+                <PrivateRoute>
+                  <PaymentHistory />
+                </PrivateRoute>
+              } />
+
+              {/* Notification Routes */}
               <Route path="/notifications" element={
                 <PrivateRoute>
                   <NotificationCenter />

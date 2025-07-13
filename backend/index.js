@@ -19,7 +19,8 @@ app.use(compression()); // Enable gzip compression
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
   'https://findoorz-3fbn.onrender.com', // Render frontend
-  'http://localhost:3000' // local React dev
+  'http://localhost:3000', // local React dev
+  'http://localhost:5000'
 ];
 app.use(cors({
   origin: allowedOrigins,
@@ -44,6 +45,7 @@ const authRoutes = require('./routes/auth');
 const listingRoutes = require('./routes/listings');
 const bookingRoutes = require('./routes/bookings');
 const paymentRoutes = require('./routes/payment');
+const razorpayRoutes = require('./routes/razorpay');
 const reviewRoutes = require('./routes/review');
 const notificationRoutes = require('./routes/notification');
 const userRoutes = require('./routes/user');
@@ -52,6 +54,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/razorpay', razorpayRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/user', userRoutes);
