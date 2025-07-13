@@ -30,10 +30,10 @@ function StudentListings({ filters, searchTrigger }) {
                     const params = new URLSearchParams();
                     if (filters.city && filters.city.trim()) params.append('city', filters.city.trim());
                     if (filters.colony && filters.colony.trim()) params.append('colony', filters.colony.trim());
-                    if (filters.rentAmount && filters.rentAmount.length > 0 && filters.rentAmount[0] > 0) {
-                        params.append('maxRent', filters.rentAmount[0]);
+                    if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
+                        params.append('maxRent', String(filters.rent[0]));
                     }
-                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('numberOfRooms', filters.numberOfRooms);
+                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('numberOfRooms', String(filters.numberOfRooms));
                     if (filters.amenities) {
                         // Only add wifi filter if it's explicitly checked (true)
                         if (filters.amenities.wifi === true) params.append('wifi', 'true');
@@ -42,6 +42,8 @@ function StudentListings({ filters, searchTrigger }) {
                     }
                     query = params.toString() ? '?' + params.toString() : '';
                 }
+                console.log('Colony filter value:', filters.colony);
+                console.log('Query string:', query);
                 
                 console.log('Fetching PG listings with query:', query);
                 
@@ -96,18 +98,8 @@ function StudentListings({ filters, searchTrigger }) {
                 } else {
                     setSavedListingIds(new Set());
                 }
-            } catch (error) {
-                console.error('Full error object:', error);
-                if (error.response && error.response.data) {
-                    console.error('Error fetching listings:', error.response.data);
-                    setError(`Failed to fetch listings: ${error.response.data.message || 'Unknown error'}`);
-                } else if (error.message) {
-                    console.error('Error fetching listings:', error.message);
-                    setError(`Failed to fetch listings: ${error.message}`);
-                } else {
-                    console.error('Error fetching listings:', error);
-                    setError('Failed to fetch listings');
-                }
+            } catch (e) {
+                setError('Failed to fetch listings');
                 setListings([]);
                 setSavedListingIds(new Set());
             } finally {

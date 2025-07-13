@@ -155,7 +155,7 @@ const RenterListingDetail = ({ listing }) => {
                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-4 pt-3">
                             <button 
                                 type="button" 
-                                className="bg-blue-500 text-white font-semibold px-5 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                                className="bg-blue-400 text-white font-semibold px-5 py-2 rounded-md hover:bg-blue-600 transition duration-300"
                                 onClick={handleEdit}
                                 disabled={isEditing}
                             >
@@ -163,7 +163,7 @@ const RenterListingDetail = ({ listing }) => {
                             </button>
                             <button 
                                 type="button" 
-                                className="bg-red-500 text-white font-semibold px-5 py-2 rounded-md hover:bg-red-600 transition duration-300"
+                                className="bg-red-400 text-white font-semibold px-5 py-2 rounded-md hover:bg-red-600 transition duration-300"
                                 onClick={handleDelete}
                                 disabled={isDeleting}
                             >

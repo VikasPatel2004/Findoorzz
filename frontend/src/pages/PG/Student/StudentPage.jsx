@@ -8,7 +8,7 @@ function StudentPage() {
     const [filters, setFilters] = useState({
         city: '',
         colony: '',
-        rentAmount: [],
+        rent: [],
         numberOfRooms: '',
         amenities: {
             wifi: false,
@@ -46,7 +46,7 @@ function StudentPage() {
             <SearchFilter
                 city={filters.city}
                 colony={filters.colony}
-                rentAmount={filters.rentAmount}
+                rent={filters.rent}
                 numberOfRooms={filters.numberOfRooms}
                 amenities={filters.amenities}
                 onFilterChange={handleFilterChange}

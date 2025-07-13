@@ -26,17 +26,18 @@ export default function RenterListings({ filters }) {
                     const params = new URLSearchParams();
                     if (filters.city && filters.city.trim()) params.append('city', filters.city.trim());
                     if (filters.colony && filters.colony.trim()) params.append('colony', filters.colony.trim());
-                    if (filters.priceRange && filters.priceRange.length > 0 && filters.priceRange[0] > 0) {
-                        params.append('maxRent', filters.priceRange[0]);
+                    if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
+                        params.append('maxPrice', String(filters.rent[0]));
                     }
-                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('numberOfRooms', filters.numberOfRooms);
+                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('bedrooms', String(filters.numberOfRooms));
                     if (filters.amenities) {
                         if (filters.amenities.wifi === true) params.append('wifi', 'true');
                         if (filters.amenities.ac === true) params.append('airConditioning', 'true');
                     }
                     query = params.toString() ? '?' + params.toString() : '';
                 }
-
+                console.log('Colony filter value:', filters.colony);
+                console.log('Query string:', query);
                 // Fetch all listings
                 let data;
                 if (query) {
@@ -68,14 +69,14 @@ export default function RenterListings({ filters }) {
                 if (token) {
                     try {
                         savedListings = await listingService.getSavedFlatListings();
-                    } catch (error) {
+                    } catch (e) {
                         savedListings = [];
                     }
                 }
                 const savedIdsSet = new Set(savedListings.map(listing => listing._id));
                 setListings(mergedListings);
                 setSavedListingIds(savedIdsSet);
-            } catch (error) {
+            } catch (e) {
                 setError('Failed to fetch listings');
                 setListings([]);
                 setSavedListingIds(new Set());
@@ -90,9 +91,6 @@ export default function RenterListings({ filters }) {
         navigate(`/FlatDetail/${id}`);
     };
 
-    const handleEditClick = (id) => {
-        navigate(`/LenderForm?edit=${id}`);
-    };
 
     const handleSaveToggle = async (listingId, isOwnedByUser) => {
         if (!token) {

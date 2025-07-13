@@ -64,19 +64,19 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
 </h1>
 
               <div className="button">
+                <button
+                    type="button"
+                    className="btn px-5 py-2 mt-4 md:mt-0 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300 mr-4"
+                    onClick={() => navigate('/RenterDashboard')}
+                >
+                    Dashboard
+                </button>
                   <button 
                     type="button" 
                     className="btn px-5 py-2 mt-4 md:mt-0 bg-blue-400 text-white rounded-md hover:bg-blue-500 transition duration-300" 
                     onClick={handleSavedListingsClick}
                 >
                     Saved Listings
-                </button>
-                <button
-                    type="button"
-                    className="btn px-5 py-2 mt-4 md:mt-0 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300 ml-4"
-                    onClick={() => navigate('/RenterDashboard')}
-                >
-                    Dashboard
                 </button>
               </div>
             </div>
@@ -93,26 +93,26 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                     </select>
                 </div>
 
-                {/* Locality Filter */}
+                {/* Colony Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Locality</label>
+                    <label className="block mb-1">Colony</label>
                     <select value={filters.colony} onChange={handleLocalityChange} className="border rounded-md p-1 w-full" disabled={!filters.city}>
-                        <option value="">Select Locality</option>
-                        {filters.city && localities[filters.city].map((loc, index) => (
-                            <option key={index} value={loc}>{loc}</option>
+                        <option value="">Select Colony</option>
+                        {filters.city && localities[filters.city].map((col, index) => (
+                            <option key={index} value={col}>{col}</option>
                         ))}
                     </select>
                 </div>
 
-                {/* Price Range Filter */}
+                {/* Rent Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Price Range</label>
+                    <label className="block mb-1">Rent</label>
                     <input
                         type="number"
                         value={filters.priceRange && filters.priceRange.length > 0 ? filters.priceRange[0] : ''}
                         onChange={handlePriceRangeChange}
                         className="border rounded-md p-1 w-full"
-                        placeholder="Max Price"
+                        placeholder="Max Rent"
                     />
                 </div>
 

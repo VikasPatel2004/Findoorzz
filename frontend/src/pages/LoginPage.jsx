@@ -80,6 +80,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-start justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col-reverse md:flex-row-reverse items-center justify-center gap-8 w-full max-w-4xl">
+        {/* Logo Box */}
         {/* Avatar Box */}
         <div className="flex items-center justify-center p-0 md:p-0 w-full max-w-xs md:max-w-sm">
           <img src={Avatar} alt="FinDoorz Avatar" className="w-full h-auto max-w-md object-contain" />
@@ -87,7 +88,7 @@ export default function LoginPage() {
         {/* Form Box */}
         <div className="flex items-center justify-center bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12 w-full max-w-md">
           <div className="w-full">
-            <h2 className="mb-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mb-6 text-center text-3xl font-extrabold text-amber-400">
               Sign in 
             </h2>
             <form className="space-y-6" onSubmit={handleLogin}>

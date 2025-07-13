@@ -73,26 +73,26 @@ const SearchFilter = ({
                     </select>
                 </div>
 
-                {/* Locality Filter */}
+                {/* Colony Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Locality</label>
+                    <label className="block mb-1">Colony</label>
                     <select value={colony || ''} onChange={handleColonyChange} className="border rounded-md p-1 w-full" disabled={!city}>
-                        <option value="">Select Locality</option>
-                        {city && localities[city] && localities[city].map((loc, index) => (
-                            <option key={index} value={loc}>{loc}</option>
+                        <option value="">Select Colony</option>
+                        {city && localities[city] && localities[city].map((col, index) => (
+                            <option key={index} value={col}>{col}</option>
                         ))}
                     </select>
                 </div>
 
-                {/* Price Range Filter */}
+                {/* Rent Filter */}
                 <div className=" p-2 rounded-md text-center">
-                    <label className="block mb-1">Price Range</label>
+                    <label className="block mb-1">Rent</label>
                     <input
                         type="number"
                         value={rentAmount && rentAmount.length > 0 ? rentAmount[0] : ''}
                         onChange={handleRentAmountChange}
                         className="border rounded-md p-1 w-full"
-                        placeholder="Max Price"
+                        placeholder="Max Rent"
                     />
                 </div>
 

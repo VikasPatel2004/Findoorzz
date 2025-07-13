@@ -62,7 +62,7 @@ function MyListings() {
                 <div className="flex gap-3 mt-4 md:mt-0">
                     <button 
                         type="button" 
-                        className="btn px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" 
+                        className="btn px-5 py-2 bg-blue-400 text-white rounded-md hover:bg-blue-600 transition duration-300" 
                         onClick={handleDashboardClick}
                     >
                         Dashboard

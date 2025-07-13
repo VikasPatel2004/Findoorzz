@@ -7,7 +7,7 @@ function RenterPage() {
     const [filters, setFilters] = useState({
         city: '',
         colony: '',
-        priceRange: [],
+        rent: [],
         numberOfRooms: '',
         amenities: {
             wifi: false,
