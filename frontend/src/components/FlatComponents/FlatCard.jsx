@@ -66,7 +66,7 @@ export default function FlatCard() {
           </div>
           <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Lender</h3>
           <button 
-            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            className="px-10 py-4 bg-yellow-200 text-black font-bold rounded-full hover:bg-yellow-300 transition shadow-md hover:shadow-lg"
             onClick={handleLenderClick}
           >
             Explore
@@ -87,7 +87,7 @@ export default function FlatCard() {
           </div>
           <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Renter</h3>
           <button 
-            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            className="px-10 py-4 bg-yellow-200 text-black font-bold rounded-full hover:bg-yellow-300 transition shadow-md hover:shadow-lg"
             onClick={handleRenterClick}
           >
             Explore
@@ -108,7 +108,7 @@ export default function FlatCard() {
           </div>
           <h3 className="text-yellow-700 font-extrabold mb-6 text-4xl drop-shadow-md">Broker</h3>
           <button 
-            className="px-10 py-4 bg-yellow-300 text-black font-bold rounded-full hover:bg-yellow-500 transition shadow-md hover:shadow-lg"
+            className="px-10 py-4 bg-yellow-200 text-black font-bold rounded-full hover:bg-yellow-300 transition shadow-md hover:shadow-lg"
             onClick={handleBrokerClick}
           >
             Explore

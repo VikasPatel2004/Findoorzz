@@ -3,7 +3,7 @@ import logo from '../assets/logo.png';
 
 function Footer() {
     return (
-        <footer className="bg-[#faf6ec] text-[#333] py-10 mt-8">
+        <footer className="bg-[#faf6ec] text-[#333] py-10 mt-16">
             <div className="container mx-auto px-8 md:px-16"> {/* Adjusted padding for larger screens */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="mb-6 md:mb-0">

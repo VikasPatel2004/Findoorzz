@@ -138,6 +138,41 @@ export default function ResponsiveNavbarWithZoomInHover() {
             </a>
           </div>
 
+          {/* Mobile: Notification bell left of hamburger */}
+          <div className="flex items-center md:hidden">
+            {user && (
+              <button
+                className="relative group text-black px-2 py-2 flex items-center mr-2"
+                aria-label="Notifications"
+                onClick={() => {
+                  navigate('/notifications');
+                }}
+              >
+                <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                {unreadNotifications > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                )}
+              </button>
+            )}
+            {/* Mobile hamburger menu */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              className="md:hidden inline-flex items-center justify-center p-2 rounded-md border border-black text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            >
+              <span className="sr-only">Open main menu</span>
+              <div className="flex flex-col space-y-1">
+                <span className={`block w-6 h-0.5 bg-black`} />
+                <span className={`block w-6 h-0.5 bg-black`} />
+                <span className={`block w-6 h-0.5 bg-black`} />
+              </div>
+            </button>
+          </div>
+
           {/* Right side navigation for Home, Flat, PG, and Login/Logout sections */}
           <div className="hidden md:flex items-center space-x-6">
             {user ? (
@@ -145,6 +180,21 @@ export default function ResponsiveNavbarWithZoomInHover() {
                 <AnimatedNavLink href="/" ariaLabel="Home page"><FiHome className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />Home</AnimatedNavLink>
                 <AnimatedNavLink href="/pg" ariaLabel="PG section"><PiBedBold className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />PG</AnimatedNavLink>
                 <AnimatedNavLink href="/flat" ariaLabel="Flat section"><MdOutlineApartment className=" text-black group-hover:text-yellow-400 transition-colors duration-300" />Flat</AnimatedNavLink>
+                {/* Notification Button (laptop only) */}
+                <button
+                  className={`relative group text-black px-3 py-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110 select-none flex items-center gap-2 group mr-6`}
+                  aria-label="Notifications"
+                  onClick={() => {
+                    navigate('/notifications');
+                  }}
+                >
+                  <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  {unreadNotifications > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </span>
+                  )}
+                </button>
               </>
             ) : (
               <>
@@ -187,22 +237,6 @@ export default function ResponsiveNavbarWithZoomInHover() {
               </button>
             ) : (
               <>
-                {/* Notification Button */}
-                <button
-                  className={`relative group ${linkClassNames} font-semibold mr-4 flex items-center justify-center`}
-                  aria-label="Notifications"
-                  onClick={() => {
-                    navigate('/notifications');
-                  }}
-                >
-                  <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
-                  {unreadNotifications > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
-                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                    </span>
-                  )}
-                </button>
-
                 {/* Profile Section with dropdown */}
                 <div className="relative profile-section" >
                   <div
@@ -212,9 +246,9 @@ export default function ResponsiveNavbarWithZoomInHover() {
                     <ProfileAvatar user={user} size="sm" />
                   </div>
                   {profileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50 profile-dropdown">
+                    <div className="absolute right-0 mt-2 w-52 bg-white border border-amber-100 rounded-xl shadow-lg z-50 profile-dropdown">
                       <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 rounded-t-xl hover:bg-cyan-50 hover:text-cyan-500 text-gray-700 transition-colors"
                         onClick={() => {
                           setProfileMenuOpen(false);
                           navigate('/profile');
@@ -223,7 +257,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
                         My Profile
                       </button>
                       <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 hover:bg-cyan-50 hover:text-cyan-500 text-gray-700 transition-colors"
                         onClick={() => {
                           setProfileMenuOpen(false);
                           navigate('/edit-profile');
@@ -232,7 +266,7 @@ export default function ResponsiveNavbarWithZoomInHover() {
                         Edit Profile
                       </button>
                       <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 rounded-b-xl hover:bg-red-50 hover:text-red-500 text-red-400 transition-colors"
                         onClick={() => {
                           setProfileMenuOpen(false);
                           handleLogoutClick();
@@ -246,22 +280,6 @@ export default function ResponsiveNavbarWithZoomInHover() {
               </>
             )}
           </div>
-
-          {/* Mobile hamburger menu */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md border border-black text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-          >
-            <span className="sr-only">Open main menu</span>
-            <div className="flex flex-col space-y-1">
-              <span className={`block w-6 h-0.5 bg-black`} />
-              <span className={`block w-6 h-0.5 bg-black`} />
-              <span className={`block w-6 h-0.5 bg-black`} />
-            </div>
-          </button>
         </div>
       </div>
 

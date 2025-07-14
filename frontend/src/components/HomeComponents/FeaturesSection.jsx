@@ -66,7 +66,7 @@ const FeatureSection = () => {
   };
 
   return (
-    <section id="feature-section" ref={sectionRef} className="max-w-6xl mx-auto px-4 py-12 bg-white">
+    <section id="feature-section" ref={sectionRef} className="max-w-md w-full mx-auto px-2 py-12 bg-white rounded-lg shadow md:max-w-6xl md:bg-transparent md:shadow-none md:p-0 md:rounded-none md:mx-auto md:px-4 md:py-12">
       {/* Centered Heading */}
       <motion.h2 
         className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-12"
@@ -80,12 +80,12 @@ const FeatureSection = () => {
       </motion.h2>
 
       <motion.div 
-        className="flex flex-col md:flex-row items-center gap-8"
+        className="flex flex-col-reverse md:flex-row items-center gap-8"
         initial="hidden"
         animate={isVisible ? "visible" : "hidden"}
         variants={containerVariants}
       >
-        {/* Features List on Left */}
+        {/* Features List on Left (on mobile, below image) */}
         <motion.div 
           className="w-full md:w-1/2 space-y-4"
           variants={featureVariants}
@@ -94,7 +94,7 @@ const FeatureSection = () => {
             {features.map((feature, index) => (
               <motion.div 
                 key={index} 
-                className="flex flex-col md:flex-row md:items-start gap-4 p-4 border rounded-lg shadow-md bg-white" // Added background color for card effect
+                className="flex flex-col md:flex-row md:items-start gap-4 p-4 border rounded-lg shadow-md bg-white"
                 custom={index}
                 variants={featureVariants}
               >
@@ -112,9 +112,9 @@ const FeatureSection = () => {
           </div>
         </motion.div>
 
-        {/* Image on Right */}
+        {/* Image on Right (on mobile, above features) */}
         <motion.div 
-          className="w-full md:w-1/2 flex justify-center"
+          className="w-full md:w-1/2 flex justify-center mb-6 md:mb-0"
           variants={featureVariants}
         >
           <img 

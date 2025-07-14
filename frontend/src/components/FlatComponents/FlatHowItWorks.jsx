@@ -30,22 +30,22 @@ export default function FlatHowItWorks() {
 
   const steps = [
     {
-      icon: <FaListAlt className="text-yellow-500 w-14 h-14 mb-6 " />,
+      icon: <FaListAlt className="text-orange-300 w-14 h-14 mb-6 " />,
       title: 'List the Flat',
       description: 'Lenders add their flat listings with images and detailed amenities.',
     },
     {
-      icon: <FaSearch className="text-yellow-500 w-14 h-14 mb-6 " />,
+      icon: <FaSearch className="text-orange-300 w-14 h-14 mb-6 " />,
       title: 'Search & Book',
       description: 'Renters browse available flats, apply filters, and book their preferred flat.',
     },
     {
-      icon: <FaHandshake className="text-yellow-500 w-14 h-14 mb-6 " />,
+      icon: <FaHandshake className="text-orange-300 w-14 h-14 mb-6 " />,
       title: 'Broker Assigned',
       description: 'A trusted broker is assigned to coordinate viewings and facilitate communication.',
     },
     {
-      icon: <FaMoneyBillWave className="text-yellow-500 w-14 h-14 mb-6 " />,
+      icon: <FaMoneyBillWave className="text-orange-300 w-14 h-14 mb-6 " />,
       title: 'Secure Payment',
       description: 'Payments are processed securely and split transparently between lender, broker, and Findoorz.',
     },

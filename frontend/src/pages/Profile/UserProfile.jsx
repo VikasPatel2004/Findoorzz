@@ -73,51 +73,49 @@ const UserProfile = () => {
   };
 
   const ListingCard = ({ listing, type }) => (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+    <div className="bg-white rounded-xl border border-gray-100 p-6 mb-4">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="text-lg font-semibold ">
             {listing.houseNumber}, {listing.colony}
           </h3>
-          <p className="text-gray-600">{listing.city}</p>
+          <p className="text-gray-500">{listing.city}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-blue-600">₹{listing.rentAmount}</p>
+          <p className="text-2xl font-bold text-amber-600">₹{listing.rentAmount}</p>
           <p className="text-sm text-gray-500">{listing.furnishingStatus}</p>
         </div>
       </div>
-      
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
         <div>
-          <span className="font-medium">Rooms:</span> {listing.numberOfRooms}
+          <span className="font-medium text-cyan-700">Rooms:</span> {listing.numberOfRooms}
         </div>
         <div>
-          <span className="font-medium">Contact:</span> {listing.contactNumber}
+          <span className="font-medium text-cyan-700">Contact:</span> {listing.contactNumber}
         </div>
         <div>
-          <span className="font-medium">WiFi:</span> {listing.wifi ? 'Yes' : 'No'}
+          <span className="font-medium text-cyan-700">WiFi:</span> {listing.wifi ? 'Yes' : 'No'}
         </div>
         <div>
-          <span className="font-medium">AC:</span> {listing.airConditioning ? 'Yes' : 'No'}
+          <span className="font-medium text-cyan-700">AC:</span> {listing.airConditioning ? 'Yes' : 'No'}
         </div>
       </div>
-
       <div className="flex gap-2">
         <button
           onClick={() => handleViewListing(type, listing._id)}
-          className="flex-1 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+          className="flex-1 bg-yellow-50 py-2 px-4 rounded-lg border border-amber-100 hover:bg-yellow-50 hover:text-yellow-600 transition-colors"
         >
           View
         </button>
         <button
           onClick={() => handleEditListing(type, listing._id)}
-          className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
+          className="flex-1 bg-yellow-50  py-2 px-4 rounded-lg border border-amber-100 hover:bg-amber-50 hover:text-amber-600 transition-colors"
         >
           Edit
         </button>
         <button
           onClick={() => handleDeleteListing(type, listing._id)}
-          className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors"
+          className="flex-1 bg-red-200  py-2 px-4 rounded-lg border border-red-100 hover:bg-red-50 hover:text-red-600 transition-colors"
         >
           Delete
         </button>
@@ -137,21 +135,21 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen  py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-xl border border-amber-100 shadow p-6 mb-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <ProfileAvatar user={user} size="xl" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-                <p className="text-gray-600 mt-2">Manage your account and listings</p>
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <p className="text-gray-500 mt-2">Manage your account and listings</p>
               </div>
             </div>
             <button
               onClick={handleEditProfile}
-              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              className="bg-cyan-50 px-6 py-2 rounded-lg border border-amber-100 hover:bg-yellow-50 hover:text-yellow-600 transition-colors"
             >
               Edit Profile
             </button>
@@ -159,35 +157,35 @@ const UserProfile = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-md mb-8">
-          <div className="border-b border-gray-200">
+        <div className="bg-white rounded-xl border border-amber-100 shadow mb-8">
+          <div className="border-b border-amber-100">
             <nav className="flex space-x-8 px-6">
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'profile'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-amber-400 text-amber-600 bg-yellow-50'
+                    : 'border-transparent text-gray-500 hover:text-amber-500 hover:bg-cyan-50'
                 }`}
               >
                 Profile Information
               </button>
               <button
                 onClick={() => setActiveTab('flat-listings')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'flat-listings'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-amber-400 text-amber-600 bg-yellow-50'
+                    : 'border-transparent text-gray-500 hover:text-amber-500 hover:bg-cyan-50'
                 }`}
               >
                 My Flat Listings ({myFlatListings.length})
               </button>
               <button
                 onClick={() => setActiveTab('pg-listings')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'pg-listings'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-amber-400 text-amber-600 bg-yellow-50'
+                    : 'border-transparent text-gray-500 hover:text-amber-500 hover:bg-cyan-50'
                 }`}
               >
                 My PG Listings ({myPGListings.length})
@@ -201,37 +199,36 @@ const UserProfile = () => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-amber-700 mb-2">
                       Full Name
                     </label>
-                    <p className="text-gray-900 bg-gray-50 p-3 rounded-md">
+                    <p className="text-gray-900 bg-yellow-50 p-3 rounded-md border border-amber-100">
                       {user?.name || 'Not provided'}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-amber-700 mb-2">
                       Email Address
                     </label>
-                    <p className="text-gray-900 bg-gray-50 p-3 rounded-md">
+                    <p className="text-gray-900 bg-yellow-50 p-3 rounded-md border border-amber-100">
                       {user?.email || 'Not provided'}
                     </p>
                   </div>
                 </div>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                  <h3 className="text-lg font-medium text-blue-800 mb-2">Account Summary</h3>
+                <div className="bg-cyan-50 border border-cyan-100 rounded-md p-4">
+                  <h3 className="text-lg font-medium text-cyan-800 mb-2">Account Summary</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <span className="font-medium text-blue-700">Flat Listings:</span>
-                      <span className="ml-2 text-blue-600">{myFlatListings.length}</span>
+                      <span className="font-medium text-cyan-700">Flat Listings:</span>
+                      <span className="ml-2 text-cyan-600">{myFlatListings.length}</span>
                     </div>
                     <div>
-                      <span className="font-medium text-blue-700">PG Listings:</span>
-                      <span className="ml-2 text-blue-600">{myPGListings.length}</span>
+                      <span className="font-medium text-cyan-700">PG Listings:</span>
+                      <span className="ml-2 text-cyan-600">{myPGListings.length}</span>
                     </div>
                     <div>
-                      <span className="font-medium text-blue-700">Total Listings:</span>
-                      <span className="ml-2 text-blue-600">{myFlatListings.length + myPGListings.length}</span>
+                      <span className="font-medium text-cyan-700">Total Listings:</span>
+                      <span className="ml-2 text-cyan-600">{myFlatListings.length + myPGListings.length}</span>
                     </div>
                   </div>
                 </div>
@@ -242,23 +239,22 @@ const UserProfile = () => {
             {activeTab === 'flat-listings' && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">My Flat Listings</h2>
+                  <h2 className="text-2xl font-bold ">My Flat Listings</h2>
                   <button
                     onClick={() => navigate('/LenderForm')}
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                    className="bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 hover:bg-yellow-50 hover:text-yellow-600 transition-colors"
                   >
                     Add New Flat Listing
                   </button>
                 </div>
-                
                 {myFlatListings.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">🏠</div>
-                    <h3 className="text-xl font-medium text-gray-600 mb-2">No Flat Listings Yet</h3>
-                    <p className="text-gray-500 mb-6">You haven't created any flat listings yet.</p>
+                    <div className="text-gray-300 text-6xl mb-4">🏠</div>
+                    <h3 className="text-xl font-medium text-gray-500 mb-2">No Flat Listings Yet</h3>
+                    <p className="text-gray-400 mb-6">You haven't created any flat listings yet.</p>
                     <button
                       onClick={() => navigate('/LenderForm')}
-                      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                      className="bg-yellow-50 text-amber-600 px-6 py-2 rounded-lg border border-amber-100 hover:bg-cyan-50 hover:text-cyan-600 transition-colors"
                     >
                       Create Your First Listing
                     </button>
@@ -277,23 +273,22 @@ const UserProfile = () => {
             {activeTab === 'pg-listings' && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">My PG Listings</h2>
+                  <h2 className="text-2xl font-bold ">My PG Listings</h2>
                   <button
                     onClick={() => navigate('/LandlordForm')}
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                    className="bg-cyan-50 text-amber-600 px-4 py-2 rounded-lg border border-amber-100 hover:bg-yellow-50 hover:text-yellow-600 transition-colors"
                   >
                     Add New PG Listing
                   </button>
                 </div>
-                
                 {myPGListings.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">🏘️</div>
-                    <h3 className="text-xl font-medium text-gray-600 mb-2">No PG Listings Yet</h3>
-                    <p className="text-gray-500 mb-6">You haven't created any PG listings yet.</p>
+                    <div className="text-gray-300 text-6xl mb-4">🏘️</div>
+                    <h3 className="text-xl font-medium text-gray-500 mb-2">No PG Listings Yet</h3>
+                    <p className="text-gray-400 mb-6">You haven't created any PG listings yet.</p>
                     <button
                       onClick={() => navigate('/LandlordForm')}
-                      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                      className="bg-yellow-50 text-amber-600 px-6 py-2 rounded-lg border border-amber-100 hover:bg-cyan-50 hover:text-cyan-600 transition-colors"
                     >
                       Create Your First Listing
                     </button>

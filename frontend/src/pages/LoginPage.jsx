@@ -78,7 +78,7 @@ export default function LoginPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-start justify-center bg-white pt-12 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col-reverse md:flex-row-reverse items-center justify-center gap-8 w-full max-w-4xl">
         {/* Logo Box */}
         {/* Avatar Box */}
@@ -88,8 +88,8 @@ export default function LoginPage() {
         {/* Form Box */}
         <div className="flex items-center justify-center bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12 w-full max-w-md">
           <div className="w-full">
-            <h2 className="mb-6 text-center text-3xl font-extrabold text-amber-400">
-              Sign in 
+            <h2 className="mb-6 text-center text-3xl font-extrabold text-black">
+              Sign <span className='text-center text-3xl font-extrabold text-amber-400'>In</span>
             </h2>
             <form className="space-y-6" onSubmit={handleLogin}>
               <div className="rounded-md shadow-sm -space-y-px">

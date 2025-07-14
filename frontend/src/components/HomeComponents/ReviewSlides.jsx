@@ -37,7 +37,7 @@ const ReviewSlider = () => {
     }, [images.length, isMobile]);
 
     return (
-        <div className="overflow-hidden relative text-center pt-5">
+        <div className="overflow-hidden relative text-center py-10">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                 Reviews
             </h1>
