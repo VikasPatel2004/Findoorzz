@@ -36,7 +36,7 @@ const HowItWorksSection = ({ isVisible }) => {
   };
 
   return (
-    <section id="works-section" className="max-w-6xl mx-auto px-4 py-10 bg-white">
+    <section id="works-section" className="max-w-6xl mx-auto px-4  bg-white">
       {/* Card Container */}
       <motion.div 
         className="border rounded-lg shadow-lg p-6 bg-amber-50" // Changed background to light yellow

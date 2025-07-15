@@ -61,9 +61,10 @@ const SearchFilter = ({
                 </button>
             </div>
            <div className="search max-w-8xl p-8 "> 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Responsive filter controls: 2 rows x 2 columns on mobile, 4 columns on md+ */}
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-4">
                 {/* City Filter */}
-                <div className=" p-2 rounded-md text-center">
+                <div className="p-2 rounded-md text-center">
                     <label className="block mb-1">City</label>
                     <select value={city || ''} onChange={handleCityChange} className="border rounded-md p-1 w-full">
                         <option value="">Select City</option>
@@ -74,7 +75,7 @@ const SearchFilter = ({
                 </div>
 
                 {/* Colony Filter */}
-                <div className=" p-2 rounded-md text-center">
+                <div className="p-2 rounded-md text-center">
                     <label className="block mb-1">Colony</label>
                     <select value={colony || ''} onChange={handleColonyChange} className="border rounded-md p-1 w-full" disabled={!city}>
                         <option value="">Select Colony</option>
@@ -85,7 +86,7 @@ const SearchFilter = ({
                 </div>
 
                 {/* Rent Filter */}
-                <div className=" p-2 rounded-md text-center">
+                <div className="p-2 rounded-md text-center">
                     <label className="block mb-1">Rent</label>
                     <input
                         type="number"
@@ -97,17 +98,19 @@ const SearchFilter = ({
                 </div>
 
                 {/* Room Type Filter */}
-                <div className=" p-2 rounded-md text-center">
-                <label className="block mb-1">Number of Rooms</label>
-                <select value={numberOfRooms || ''} onChange={handleNumberOfRoomsChange} className="border rounded-md p-1 w-full">
-                    <option value="">Select Number of Rooms</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4+">4+</option>
-                </select>
+                <div className="p-2 rounded-md text-center">
+                    <label className="block mb-1">Number of Rooms</label>
+                    <select value={numberOfRooms || ''} onChange={handleNumberOfRoomsChange} className="border rounded-md p-1 w-full">
+                        <option value="">Select Number of Rooms</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4+">4+</option>
+                    </select>
                 </div>
-
+            </div>
+            {/* Amenities and Search button remain below */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                 {/* Amenities Filter */}
                 <div className="col-span-1 sm:col-span-2 md:col-span-4 bg-amber-50 p-2 rounded-md text-center">
                     <h3 className="text-lg font-semibold mb-2">Amenities</h3>

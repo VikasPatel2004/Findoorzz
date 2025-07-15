@@ -9,7 +9,7 @@ import LegalInformation from '../../assets/LegalInformation.svg';
 
 function LegalInformationSection() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div className="flex flex-col md:flex-row items-center bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
         {/* SVG Illustration */}
         <div className="w-full md:w-1/2 flex justify-center items-center bg-gradient-to-br from-amber-50 to-amber-100 p-8">

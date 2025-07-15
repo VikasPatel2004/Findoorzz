@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import StudentListings from '../../../components/PGComponents/StudentComponent/StudentListings';
 import SearchFilter from '../../../components/PGComponents/StudentComponent/SearchFilter';
 import StudentHelpSection from '../../../components/PGComponents/StudentComponent/Help';
+import { useScrollToTop } from '../../../hooks/useScrollToTop';
 
 function StudentPage() {
+    useScrollToTop();
     // Lifted filter state here
     const [filters, setFilters] = useState({
         city: '',
