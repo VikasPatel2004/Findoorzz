@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 import bookingService from '../../../services/bookingService';
@@ -9,6 +9,7 @@ import ImageGallery from '../../ImageGallery';
 const StudentListingDetail = ({ listing }) => {
     const { user, token } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
     const [isDeleting, setIsDeleting] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
@@ -80,13 +81,22 @@ const StudentListingDetail = ({ listing }) => {
                     email: user.email || '',
                     phone: user.phone || ''
                 },
-                token
+                token,
+                () => { // onModalClose
+                    clearTimeout(timeoutId);
+                    setIsBooking(false);
+                },
+                () => { // onPaymentSuccess
+                    clearTimeout(timeoutId);
+                    setIsBooking(false);
+                }
             );
             console.log('Payment result:', result);
 
             if (result.success) {
                 setHasBooked(true);
                 alert(`Booking successful! Booking fee of ₹${bookingFee} has been charged.`);
+                window.location.href = `/RoomDetail/${listing._id}?justBooked=true`;
             } else {
                 alert(result.message || 'Payment failed. Please try again.');
             }
@@ -128,6 +138,13 @@ const StudentListingDetail = ({ listing }) => {
         checkBookingStatus();
     }, [user, token, listing._id, isOwner]);
 
+    useEffect(() => {
+      const params = new URLSearchParams(location.search);
+      if (params.get('justBooked') === 'true') {
+        window.location.reload();
+      }
+    }, [location.search]);
+
     return (
         <div className="container mx-auto flex flex-col justify-center items-center py-4 my-4 px-4">
             <div className="w-full md:w-3/4 text-center mb-4">
@@ -151,7 +168,7 @@ const StudentListingDetail = ({ listing }) => {
                         )}
                         <p className='mb-2' ><strong>Landlord Name:</strong> {listing.landlordName}</p>
                         <p className='mb-2'><strong>House Number:</strong> {(hasBooked || isOwner) ? (listing.houseNumber) : (<span className="text-gray-400 italic"> Book to view </span>)}</p>
-                        <p className='mb-2'><strong>Landlord Mobile:</strong> {(hasBooked || isOwner) ? (listing.landlordMobile) : (<span className="text-gray-400 italic"> Book to view </span>)}</p>
+                        <p className='mb-2'><strong>Contact Number:</strong> {(hasBooked || isOwner) ? (listing.contactNumber) : (<span className="text-gray-400 italic"> Book to view </span>)}</p>
                         <p className='mb-2'><strong>Colony:</strong> {listing.colony}</p>
                         <p className='mb-2'><strong>City:</strong> {listing.city}</p>
                         <p className='mb-2'><strong>Rooms:</strong> {listing.numberOfRooms}</p>

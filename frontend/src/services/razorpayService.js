@@ -42,7 +42,7 @@ async function getPaymentStatus(paymentId, token) {
 }
 
 // Process payment
-async function processPayment(bookingId, amount, description, userData, token) {
+async function processPayment(bookingId, amount, description, userData, token, onModalClose, onPaymentSuccess) {
   try {
     // Create order
     const orderData = await createOrder(bookingId, amount, description, token);
@@ -70,12 +70,14 @@ async function processPayment(bookingId, amount, description, userData, token) {
             razorpaySignature: response.razorpay_signature
           }, token);
 
+          if (onPaymentSuccess) onPaymentSuccess();
           return {
             success: true,
             payment: verificationData.payment,
             message: 'Payment successful!'
           };
         } catch (error) {
+          if (onModalClose) onModalClose();
           return {
             success: false,
             message: 'Payment verification failed'
@@ -92,6 +94,7 @@ async function processPayment(bookingId, amount, description, userData, token) {
       },
       modal: {
         ondismiss: function() {
+          if (onModalClose) onModalClose();
           return {
             success: false,
             message: 'Payment cancelled'
@@ -106,6 +109,7 @@ async function processPayment(bookingId, amount, description, userData, token) {
 
     return new Promise((resolve) => {
       paymentObject.on('payment.failed', function (response) {
+        if (onModalClose) onModalClose();
         resolve({
           success: false,
           message: 'Payment failed',
