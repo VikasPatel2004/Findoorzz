@@ -30,6 +30,7 @@ import EditProfile from './pages/Profile/EditProfile';
 import TestComponent from './components/TestComponent';
 import LenderDashboardPage from './pages/Flat/Lender/LenderDashboardPage';
 import NotificationCenter from './pages/Notifications/NotificationCenter';
+import About from './components/About';
 
 // Payment Management Pages
 import PaymentForm from './pages/PaymentManagement/PaymentForm';
@@ -64,6 +65,7 @@ function App() {
               <Route path="/Signup" element={<SignupPage />} />
               <Route path="/LoginPage" element={<LoginPage />} />
               <Route path="/test" element={<TestComponent />} />
+              <Route path="/about" element={<About />} />
 
               {/* Legal Pages (Public) */}
               <Route path="/privacy" element={<PrivacyPolicy />} />

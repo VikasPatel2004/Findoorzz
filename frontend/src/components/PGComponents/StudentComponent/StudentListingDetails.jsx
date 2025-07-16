@@ -44,12 +44,15 @@ const StudentListingDetail = ({ listing }) => {
             return;
         }
 
+        let timeoutId;
         try {
             setIsBooking(true);
+            timeoutId = setTimeout(() => {
+                setIsBooking(false);
+                alert('Booking process took too long. Please try again.');
+            }, 60000); // fallback after 60s
 
-            console.log('Token being sent:', token); // Debug log
-            console.log('User data:', user); // Debug log
-
+            console.log('Starting booking process...');
             // Create booking first
             const bookingData = {
                 listingType: 'PGListing',
@@ -58,15 +61,16 @@ const StudentListingDetail = ({ listing }) => {
                 bookingEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
             };
 
-            console.log('Booking data being sent:', bookingData); // Debug log
-
+            console.log('Booking data being sent:', bookingData);
             const booking = await bookingService.createBooking(bookingData, token);
+            console.log('Booking created:', booking);
 
             // Process payment with Razorpay - Only 2% booking fee
             const bookingFee = Math.round(listing.rentAmount * 0.02); // 2% of rent amount
             const amount = bookingFee * 100; // Convert to paise
             const description = `Booking fee (2%) for ${listing.landlordName} - ${listing.houseNumber}`;
 
+            console.log('Processing payment...');
             const result = await razorpayService.processPayment(
                 booking._id,
                 amount,
@@ -78,6 +82,7 @@ const StudentListingDetail = ({ listing }) => {
                 },
                 token
             );
+            console.log('Payment result:', result);
 
             if (result.success) {
                 setHasBooked(true);
@@ -91,6 +96,7 @@ const StudentListingDetail = ({ listing }) => {
             const errorMessage = error.response?.data?.message || 'Failed to process booking. Please try again.';
             alert(errorMessage);
         } finally {
+            clearTimeout(timeoutId);
             setIsBooking(false);
         }
     };
@@ -104,11 +110,14 @@ const StudentListingDetail = ({ listing }) => {
             if (user && token && !isOwner) {
                 try {
                     const bookings = await bookingService.getUserBookings(token);
-                    const hasBookedThisListing = bookings.some(booking => 
-                        booking.listingId === listing._id && 
-                        booking.listingType === 'PGListing' && 
-                        booking.status !== 'cancelled'
-                    );
+                    const hasBookedThisListing = bookings.some(booking => {
+                        const bookingListingId = booking.listingId && booking.listingId._id ? booking.listingId._id : booking.listingId;
+                        return (
+                            bookingListingId === listing._id &&
+                            booking.listingType === 'PGListing' &&
+                            booking.status !== 'cancelled'
+                        );
+                    });
                     setHasBooked(hasBookedThisListing);
                 } catch (error) {
                     console.error('Error checking booking status:', error);
@@ -135,8 +144,14 @@ const StudentListingDetail = ({ listing }) => {
                 
                 <div className="p-2 md:p-4">
                     <div className="bg-gray-50 border border-amber-100 rounded-lg p-4 md:p-8 mb-3">
+                        {hasBooked && (
+                          <div className="text-green-600 font-semibold mb-2">
+                            Contact details unlocked!
+                          </div>
+                        )}
                         <p className='mb-2' ><strong>Landlord Name:</strong> {listing.landlordName}</p>
-                        <p className='mb-2'><strong>House Number:</strong> {listing.houseNumber}</p>
+                        <p className='mb-2'><strong>House Number:</strong> {(hasBooked || isOwner) ? (listing.houseNumber) : (<span className="text-gray-400 italic"> Book to view </span>)}</p>
+                        <p className='mb-2'><strong>Landlord Mobile:</strong> {(hasBooked || isOwner) ? (listing.landlordMobile) : (<span className="text-gray-400 italic"> Book to view </span>)}</p>
                         <p className='mb-2'><strong>Colony:</strong> {listing.colony}</p>
                         <p className='mb-2'><strong>City:</strong> {listing.city}</p>
                         <p className='mb-2'><strong>Rooms:</strong> {listing.numberOfRooms}</p>

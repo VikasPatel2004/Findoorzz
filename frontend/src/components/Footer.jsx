@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../assets/logo.png';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
 function Footer() {
     return (
@@ -26,10 +27,10 @@ function Footer() {
                         <h5 className="font-bold text-lg">Quick Links</h5>
                         <ul className="list-none p-0 mt-2">
                             <li><a href="/" className="text-[#333] hover:text-[#ffcc00] transition duration-300">Home</a></li>
-                            <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">About</a></li>
-                            <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">Services</a></li>
+                            <li><a href="/about" className="text-[#333] hover:text-[#ffcc00] transition duration-300">About</a></li>
+                            {/* <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">Services</a></li>
                             <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">Contact</a></li>
-                            <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">FAQs</a></li>
+                            <li><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300">FAQs</a></li> */}
                         </ul>
                     </div>
                     <div className="mb-6 md:mb-0">
@@ -47,10 +48,26 @@ function Footer() {
                         <p className="text-sm">Phone: 9826083283</p>
                         <h5 className="font-bold text-lg mt-4">Follow Us</h5>
                         <ul className="flex justify-start list-none p-0 mt-2">
-                            <li className="mr-3"><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300"><i className="fab fa-facebook-f"></i></a></li>
-                            <li className="mr-3"><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300"><i className="fab fa-twitter"></i></a></li>
-                            <li className="mr-3"><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300"><i className="fab fa-instagram"></i></a></li>
-                            <li className="mr-3"><a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300"><i className="fab fa-linkedin-in"></i></a></li>
+                            <li className="mr-3">
+                                <a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300 text-xl" aria-label="Facebook">
+                                    <FaFacebookF />
+                                </a>
+                            </li>
+                            <li className="mr-3">
+                                <a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300 text-xl" aria-label="Twitter">
+                                    <FaTwitter />
+                                </a>
+                            </li>
+                            <li className="mr-3">
+                                <a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300 text-xl" aria-label="Instagram">
+                                    <FaInstagram />
+                                </a>
+                            </li>
+                            <li className="mr-3">
+                                <a href="#" className="text-[#333] hover:text-[#ffcc00] transition duration-300 text-xl" aria-label="LinkedIn">
+                                    <FaLinkedinIn />
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

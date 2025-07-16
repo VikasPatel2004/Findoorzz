@@ -138,23 +138,33 @@ export default function ResponsiveNavbarWithZoomInHover() {
             </a>
           </div>
 
-          {/* Mobile: Notification bell left of hamburger */}
+          {/* Mobile: Profile avatar, Notification bell, Hamburger */}
           <div className="flex items-center md:hidden">
             {user && (
-              <button
-                className="relative group text-black px-2 py-2 flex items-center mr-2"
-                aria-label="Notifications"
-                onClick={() => {
-                  navigate('/notifications');
-                }}
-              >
-                <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
-                {unreadNotifications > 0 && (
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
-                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                  </span>
-                )}
-              </button>
+              <>
+                {/* Notification bell */}
+                <button
+                  className="relative group text-black px-2 py-2 flex items-center mr-2"
+                  aria-label="Notifications"
+                  onClick={() => {
+                    navigate('/notifications');
+                  }}
+                >
+                  <FiBell className="text-xl text-black group-hover:text-yellow-600 transition-colors duration-300" />
+                  {unreadNotifications > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </span>
+                  )}
+                </button>
+                {/* Profile avatar for mobile */}
+                <div
+                  className="flex items-center cursor-pointer select-none mr-2"
+                  onClick={() => navigate('/profile')}
+                >
+                  <ProfileAvatar user={user} size="sm" />
+                </div>
+              </>
             )}
             {/* Mobile hamburger menu */}
             <button

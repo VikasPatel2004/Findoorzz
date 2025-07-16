@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import reviewImage from '../../assets/Review.svg'; // Placeholder for review image
+import reviewImage1 from '../../assets/Review1.svg'; // Placeholder for review image
+import reviewImage2 from '../../assets/Review2.svg'; // Placeholder for review image
+import reviewImage3 from '../../assets/Review3.svg'; // Placeholder for review image
+import reviewImage4 from '../../assets/Review4.svg'; // Placeholder for review image
+import reviewImage5 from '../../assets/Review5.svg'; // Placeholder for review image
+import reviewImage6 from '../../assets/Reveiw6.svg'; // Placeholder for review image
+import reviewImage7 from '../../assets/Review7.svg'; // Placeholder for review image
+import reviewImage8 from '../../assets/Review8.svg'; // Placeholder for review image
+import reviewImage9 from '../../assets/Review9.svg'; // Placeholder for review image
+import reviewImage10 from '../../assets/Review10.svg'; // Placeholder for review image
 
 const ReviewSlider = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const images = [
-        { src: reviewImage },
-        { src: reviewImage },
-        { src: reviewImage },
-        { src: reviewImage },
-        { src: reviewImage },
-        { src: reviewImage },
+        { src: reviewImage1 },
+        { src: reviewImage2 },
+        { src: reviewImage3 },
+        { src: reviewImage4 },
+        { src: reviewImage5 },
+        { src: reviewImage6 },
+        { src: reviewImage7 },
+        { src: reviewImage8 },
+        { src: reviewImage9 },
+        { src: reviewImage10 },
     ];
 
     // Check screen size on mount and resize
