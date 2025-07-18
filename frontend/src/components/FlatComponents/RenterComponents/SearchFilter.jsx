@@ -22,7 +22,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
     const handlePriceRangeChange = (e) => {
         onFilterChange({
             ...filters,
-            priceRange: [Number(e.target.value)],
+            rent: [Number(e.target.value)],
         });
     };
 
@@ -110,7 +110,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                     <label className="block mb-1">Rent</label>
                     <input
                         type="number"
-                        value={filters.priceRange && filters.priceRange.length > 0 ? filters.priceRange[0] : ''}
+                        value={filters.rent && filters.rent.length > 0 ? filters.rent[0] : ''}
                         onChange={handlePriceRangeChange}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Rent"

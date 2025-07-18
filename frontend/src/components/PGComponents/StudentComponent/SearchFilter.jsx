@@ -23,7 +23,12 @@ const SearchFilter = ({
     };
 
     const handleRentAmountChange = (e) => {
-        onFilterChange('rentAmount', [Number(e.target.value)]);
+        const value = e.target.value;
+        if (value === '' || isNaN(Number(value))) {
+            onFilterChange('rentAmount', []);
+        } else {
+            onFilterChange('rentAmount', [Number(value)]);
+        }
     };
 
     const handleNumberOfRoomsChange = (e) => {
@@ -90,8 +95,11 @@ const SearchFilter = ({
                     <label className="block mb-1">Rent</label>
                     <input
                         type="number"
+                        min="0"
+                        step="1"
                         value={rentAmount && rentAmount.length > 0 ? rentAmount[0] : ''}
                         onChange={handleRentAmountChange}
+                        onWheel={e => e.target.blur()}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Rent"
                     />

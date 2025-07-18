@@ -65,35 +65,54 @@ router.get('/flat/saved', authenticateToken, async (req, res) => {
 router.get('/flat', async (req, res) => {
   try {
     const { city, colony, minPrice, maxPrice, bedrooms, amenities } = req.query;
-    
-    let query = { type: 'Flat' };
-    
-    // Build filter object
+    let filter = { type: 'Flat' };
+    const exprFilters = [];
+    // City filter (ignore all spaces and case, exact match)
     if (city) {
-      query.city = { $regex: city.replace(/\s+/g, '\\s*'), $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$city" }, find: " ", replacement: "" } },
+            regex: `^${city.trim().toLowerCase().replace(/\s+/g, '')}$`,
+          }
+        }
+      });
     }
+    // Colony filter (ignore all spaces and case, exact match)
     if (colony) {
-      query.colony = { $regex: colony.replace(/\s+/g, '\\s*'), $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$colony" }, find: " ", replacement: "" } },
+            regex: `^${colony.trim().toLowerCase().replace(/\s+/g, '')}$`,
+          }
+        }
+      });
     }
+    // Other filters (unchanged)
     if (minPrice || maxPrice) {
-      query.rentAmount = {};
-      if (minPrice) query.rentAmount.$gte = minPrice.toString();
-      if (maxPrice) query.rentAmount.$lte = maxPrice.toString();
+      filter.rentAmount = {};
+      if (minPrice) filter.rentAmount.$gte = Number(minPrice);
+      if (maxPrice) filter.rentAmount.$lte = Number(maxPrice);
+      filter.rentAmount.$ne = null;
     }
     if (bedrooms) {
-      query.bedrooms = parseInt(bedrooms);
+      filter.bedrooms = parseInt(bedrooms);
     }
     if (amenities) {
-      query.amenities = { $in: amenities.split(',') };
+      filter.amenities = { $in: amenities.split(',') };
     }
-
+    // Combine exprFilters with $and if needed
+    let finalFilter = filter;
+    if (exprFilters.length > 0) {
+      finalFilter = { ...filter, $and: exprFilters };
+    }
     // Use lean() for better performance
-    const listings = await FlatListing.find(query)
+    const listings = await FlatListing.find(finalFilter)
       .select('title description rentAmount city colony bedrooms amenities images createdAt')
       .sort({ createdAt: -1 })
       .lean()
       .limit(50);
-
     res.json(listings);
   } catch (error) {
     console.error('Error fetching Flat listings:', error);
@@ -389,58 +408,62 @@ router.get('/pg/student-listings', authenticateToken, async (req, res) => {
 // Get filtered PG listings (for students, public) - all listings with filters
 router.get('/pg/filtered', async (req, res) => {
   try {
-    const { city, colony, minRent, maxRent, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
+    const { city, colony, rentAmount, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
     const filter = {};
+    const exprFilters = [];
     
-    // City filter
+    // City filter (ignore all spaces and case)
     if (city) {
-      // Normalize spaces: replace multiple spaces with \\s+ and trim
-      const cityPattern = city.trim().replace(/\s+/g, '\\s+');
-      filter.city = { $regex: cityPattern, $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$city" }, find: " ", replacement: "" } },
+            regex: city.trim().toLowerCase().replace(/\s+/g, ''),
+          }
+        }
+      });
     }
-    
-    // Colony filter
+    // Colony filter (ignore all spaces and case)
     if (colony) {
-      const colonyPattern = colony.trim().replace(/\s+/g, '\\s+');
-      filter.colony = { $regex: colonyPattern, $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$colony" }, find: " ", replacement: "" } },
+            regex: colony.trim().toLowerCase().replace(/\s+/g, ''),
+          }
+        }
+      });
     }
-    
-    // Price range filter
-    if (minRent || maxRent) {
-      filter.rentAmount = {};
-      if (minRent) filter.rentAmount.$gte = minRent.toString(); // Convert to string for PG listings
-      if (maxRent) filter.rentAmount.$lte = maxRent.toString(); // Convert to string for PG listings
+    // Rent filter
+    if (rentAmount) {
+      filter.rentAmount = { $lte: Number(rentAmount) };
     }
-    
-    // Number of rooms filter
     if (numberOfRooms) {
       if (numberOfRooms === '4+') {
         filter.numberOfRooms = { $gte: '4' };
       } else {
-        filter.numberOfRooms = numberOfRooms; // Keep as string for PG listings
+        filter.numberOfRooms = numberOfRooms;
       }
     }
-    
-    // Furnishing status filter
     if (furnishingStatus) {
       filter.furnishingStatus = furnishingStatus;
     }
-    
-    // Amenities filters - only apply when explicitly set to true
     if (wifi === 'true' || wifi === true) {
       filter.wifi = true;
     }
-    
     if (airConditioning === 'true' || airConditioning === true) {
       filter.airConditioning = true;
     }
-    
     if (independent === 'true' || independent === true) {
       filter.independent = true;
     }
-    
-    console.log('Applied PG filters:', filter);
-    const listings = await PGListing.find(filter);
+    // Combine exprFilters with $and if needed
+    let finalFilter = filter;
+    if (exprFilters.length > 0) {
+      finalFilter = { ...filter, $and: exprFilters };
+    }
+    console.log('Applied PG filters:', finalFilter);
+    const listings = await PGListing.find(finalFilter);
     console.log(`Found ${listings.length} PG listings matching filters`);
     res.json(listings);
   } catch (err) {
@@ -452,67 +475,68 @@ router.get('/pg/filtered', async (req, res) => {
 // Get filtered PG listings for students (including their own and others)
 router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
   try {
-    const { city, colony, minRent, maxRent, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
+    const { city, colony, rentAmount, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
     const userId = req.user.userId;
     const filter = {};
-    
-    // City filter
+    const exprFilters = [];
+    // City filter (ignore all spaces and case)
     if (city) {
-      // Normalize spaces: replace multiple spaces with \\s+ and trim
-      const cityPattern = city.trim().replace(/\s+/g, '\\s+');
-      filter.city = { $regex: cityPattern, $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$city" }, find: " ", replacement: "" } },
+            regex: city.trim().toLowerCase().replace(/\s+/g, ''),
+          }
+        }
+      });
     }
-    
-    // Colony filter
+    // Colony filter (ignore all spaces and case)
     if (colony) {
-      const colonyPattern = colony.trim().replace(/\s+/g, '\\s+');
-      filter.colony = { $regex: colonyPattern, $options: 'i' };
+      exprFilters.push({
+        $expr: {
+          $regexMatch: {
+            input: { $replaceAll: { input: { $toLower: "$colony" }, find: " ", replacement: "" } },
+            regex: colony.trim().toLowerCase().replace(/\s+/g, ''),
+          }
+        }
+      });
     }
-    
-    // Price range filter
-    if (minRent || maxRent) {
-      filter.rentAmount = {};
-      if (minRent) filter.rentAmount.$gte = minRent.toString(); // Convert to string for PG listings
-      if (maxRent) filter.rentAmount.$lte = maxRent.toString(); // Convert to string for PG listings
+    // Rent filter
+    if (rentAmount) {
+      filter.rentAmount = { $lte: Number(rentAmount) };
     }
-    
-    // Number of rooms filter
     if (numberOfRooms) {
       if (numberOfRooms === '4+') {
         filter.numberOfRooms = { $gte: '4' };
       } else {
-        filter.numberOfRooms = numberOfRooms; // Keep as string for PG listings
+        filter.numberOfRooms = numberOfRooms;
       }
     }
-    
-    // Furnishing status filter
     if (furnishingStatus) {
       filter.furnishingStatus = furnishingStatus;
     }
-    
-    // Amenities filters - only apply when explicitly set to true
     if (wifi === 'true' || wifi === true) {
       filter.wifi = true;
     }
-    
     if (airConditioning === 'true' || airConditioning === true) {
       filter.airConditioning = true;
     }
-    
     if (independent === 'true' || independent === true) {
       filter.independent = true;
     }
-    
-    console.log('Applied PG student filters:', filter);
-    const listings = await PGListing.find(filter);
-    
+    // Combine exprFilters with $and if needed
+    let finalFilter = filter;
+    if (exprFilters.length > 0) {
+      finalFilter = { ...filter, $and: exprFilters };
+    }
+    console.log('Applied PG student filters:', finalFilter);
+    const listings = await PGListing.find(finalFilter);
     // Mark which listings belong to the current user
     const listingsWithOwnership = listings.map(listing => {
       const listingObj = listing.toObject();
       listingObj.isOwnedByUser = listing.owner.toString() === userId;
       return listingObj;
     });
-    
     console.log(`Found ${listingsWithOwnership.length} PG listings matching filters for student`);
     res.json(listingsWithOwnership);
   } catch (err) {

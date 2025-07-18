@@ -29,9 +29,13 @@ function StudentListings({ filters, searchTrigger }) {
                 if (filters) {
                     const params = new URLSearchParams();
                     if (filters.city && filters.city.trim()) params.append('city', filters.city.trim());
-                    if (filters.colony && filters.colony.trim()) params.append('colony', filters.colony.trim());
-                    if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
-                        params.append('maxRent', String(filters.rent[0]));
+                    if (filters.colony && filters.colony.trim()) {
+                        // Normalize colony: trim and lowercase
+                        const normalizedColony = filters.colony.trim().toLowerCase();
+                        params.append('colony', normalizedColony);
+                    }
+                    if (filters.rentAmount && filters.rentAmount.length > 0 && filters.rentAmount[0] > 0) {
+                        params.append('rentAmount', String(filters.rentAmount[0]));
                     }
                     if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('numberOfRooms', String(filters.numberOfRooms));
                     if (filters.amenities) {

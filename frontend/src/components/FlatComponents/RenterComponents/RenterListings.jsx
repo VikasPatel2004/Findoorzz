@@ -13,12 +13,10 @@ export default function RenterListings({ filters }) {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [savedListingIds, setSavedListingIds] = useState(new Set());
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchListings = async () => {
             setLoading(true);
-            setError(null);
             try {
                 // Build query params from filters
                 let query = '';
@@ -52,32 +50,44 @@ export default function RenterListings({ filters }) {
                 if (token) {
                     try {
                         myListings = await listingService.getMyCreatedFlatListings(token);
-                    } catch (err) {
+                    } catch {
                         myListings = [];
                     }
                 }
 
                 // Mark ownership and merge, avoiding duplicates
                 const myIds = new Set(myListings.map(l => l._id));
-                const mergedListings = [
+                let mergedListings = [
                     ...myListings.map(l => ({ ...l, isOwnedByUser: true })),
                     ...fetchedListings.filter(l => !myIds.has(l._id)).map(l => ({ ...l, isOwnedByUser: false })),
                 ];
+
+                // Filter mergedListings by city and colony if filters are set
+                if (filters) {
+                    const normalize = str => (str || '').toLowerCase().replace(/\s+/g, '');
+                    if (filters.city && filters.city.trim()) {
+                        const cityNorm = normalize(filters.city);
+                        mergedListings = mergedListings.filter(l => normalize(l.city) === cityNorm);
+                    }
+                    if (filters.colony && filters.colony.trim()) {
+                        const colonyNorm = normalize(filters.colony);
+                        mergedListings = mergedListings.filter(l => normalize(l.colony) === colonyNorm);
+                    }
+                }
 
                 // Fetch saved listings only if user is authenticated
                 let savedListings = [];
                 if (token) {
                     try {
                         savedListings = await listingService.getSavedFlatListings();
-                    } catch (e) {
+                    } catch {
                         savedListings = [];
                     }
                 }
                 const savedIdsSet = new Set(savedListings.map(listing => listing._id));
                 setListings(mergedListings);
                 setSavedListingIds(savedIdsSet);
-            } catch (e) {
-                setError('Failed to fetch listings');
+            } catch {
                 setListings([]);
                 setSavedListingIds(new Set());
             } finally {
@@ -121,10 +131,6 @@ export default function RenterListings({ filters }) {
 
     if (loading) {
         return <div className="text-center py-10">Loading listings...</div>;
-    }
-
-    if (error) {
-        return <div className="text-center py-10 text-red-500">{error}</div>;
     }
 
     if (listings.length === 0) {
