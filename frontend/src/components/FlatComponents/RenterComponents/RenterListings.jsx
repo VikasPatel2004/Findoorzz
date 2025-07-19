@@ -18,28 +18,24 @@ export default function RenterListings({ filters }) {
         const fetchListings = async () => {
             setLoading(true);
             try {
-                // Build query params from filters
-                let query = '';
+                // Build filterParams object from filters
+                let filterParams = {};
                 if (filters) {
-                    const params = new URLSearchParams();
-                    if (filters.city && filters.city.trim()) params.append('city', filters.city.trim());
-                    if (filters.colony && filters.colony.trim()) params.append('colony', filters.colony.trim());
+                    if (filters.city && filters.city.trim()) filterParams.city = filters.city.trim();
+                    if (filters.colony && filters.colony.trim()) filterParams.colony = filters.colony.trim();
                     if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
-                        params.append('maxPrice', String(filters.rent[0]));
+                        filterParams.maxPrice = filters.rent[0];
                     }
-                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) params.append('bedrooms', String(filters.numberOfRooms));
+                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) filterParams.bedrooms = filters.numberOfRooms;
                     if (filters.amenities) {
-                        if (filters.amenities.wifi === true) params.append('wifi', 'true');
-                        if (filters.amenities.ac === true) params.append('airConditioning', 'true');
+                        if (filters.amenities.wifi === true) filterParams.wifi = true;
+                        if (filters.amenities.ac === true) filterParams.airConditioning = true;
                     }
-                    query = params.toString() ? '?' + params.toString() : '';
                 }
-                console.log('Colony filter value:', filters.colony);
-                console.log('Query string:', query);
                 // Fetch all listings
                 let data;
-                if (query) {
-                    data = await listingService.getFlatListings(null, query);
+                if (Object.keys(filterParams).length > 0) {
+                    data = await listingService.getFlatListings(filterParams);
                 } else {
                     data = await listingService.getAllFlatListings();
                 }
@@ -72,6 +68,9 @@ export default function RenterListings({ filters }) {
                     if (filters.colony && filters.colony.trim()) {
                         const colonyNorm = normalize(filters.colony);
                         mergedListings = mergedListings.filter(l => normalize(l.colony) === colonyNorm);
+                    }
+                    if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
+                        mergedListings = mergedListings.filter(l => l.rentAmount <= filters.rent[0]);
                     }
                 }
 

@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
+import pawanImg from '../../assets/pawan.jpeg';
+import parasImg from '../../assets/Paras.jpeg';
+import tilakImg from '../../assets/Tilak.jpeg';
 
 const testimonials = [
   {
-    name: 'John Doe',
+    name: 'Pawan Kumar',
     feedback: 'Findoorz made renting my flat so easy and hassle-free. Highly recommended!',
-    photo: 'https://randomuser.me/api/portraits/men/32.jpg',
+    photo: pawanImg,
   },
   {
-    name: 'Jane Smith',
+    name: 'Paras Bhalse',
     feedback: 'Excellent service and support throughout the renting process. Very professional.',
-    photo: 'https://randomuser.me/api/portraits/women/44.jpg',
+    photo: parasImg,
   },
   {
-    name: 'Michael Johnson',
+    name: 'Tilak Wagadre',
     feedback: 'The broker assigned was very helpful and made the whole experience smooth.',
-    photo: 'https://randomuser.me/api/portraits/men/65.jpg',
+    photo: tilakImg,
   },
 ];
 

@@ -199,6 +199,7 @@ function LandlordListingForm() {
                     required
                     value={formData.numberOfRooms}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
                 <div>
@@ -268,6 +269,7 @@ function LandlordListingForm() {
                     required
                     value={formData.rentAmount}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
               </div>

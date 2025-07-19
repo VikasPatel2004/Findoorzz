@@ -217,6 +217,7 @@ function LenderListingForm() {
                     required
                     value={formData.numberOfRooms}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
                 <div>
@@ -286,6 +287,7 @@ function LenderListingForm() {
                     required
                     value={formData.rentAmount}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
               </div>

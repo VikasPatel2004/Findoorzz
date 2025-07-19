@@ -20,9 +20,10 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
     };
 
     const handlePriceRangeChange = (e) => {
+        const value = e.target.value;
         onFilterChange({
             ...filters,
-            rent: [Number(e.target.value)],
+            rent: value === '' ? [] : [Number(value)],
         });
     };
 
@@ -112,6 +113,7 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                         type="number"
                         value={filters.rent && filters.rent.length > 0 ? filters.rent[0] : ''}
                         onChange={handlePriceRangeChange}
+                        onWheel={e => e.target.blur()}
                         className="border rounded-md p-1 w-full"
                         placeholder="Max Rent"
                     />

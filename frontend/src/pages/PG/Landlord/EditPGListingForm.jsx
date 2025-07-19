@@ -237,6 +237,7 @@ function EditPGListingForm() {
                     required
                     value={formData.numberOfRooms}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
                 <div>
@@ -306,6 +307,7 @@ function EditPGListingForm() {
                     required
                     value={formData.rentAmount}
                     onChange={handleChange}
+                    onWheel={e => e.target.blur()}
                   />
                 </div>
               </div>
