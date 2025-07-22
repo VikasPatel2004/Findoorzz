@@ -132,14 +132,19 @@ export default function RenterListings({ filters }) {
         return <div className="text-center py-10">Loading listings...</div>;
     }
 
-    if (listings.length === 0) {
+    // Filter out listings that are both booked and owned by the current user
+    const filteredListings = listings.filter(
+        (listing) => !(listing.booked && listing.isOwnedByUser)
+    );
+
+    if (filteredListings.length === 0) {
         return <div className="text-center py-10">No listings found matching your criteria.</div>;
     }
 
     return (
         <div className="container mx-auto text-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-4">
-                {listings.map((listing) => (
+                {filteredListings.map((listing) => (
                     <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
                         {/* Mini Image Gallery */}
                         <MiniImageGallery 
@@ -188,13 +193,18 @@ export default function RenterListings({ filters }) {
                                      Independent: {listing.independent ? 'Yes' : 'No'}
                                  </span>
                              </div>
-                             <button 
-                                 type="button" 
-                                 className="btn btn-warning px-5 py-2 mt-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300" 
-                                 onClick={() => handleExploreClick(listing._id)}
-                             >
-                                 Explore
-                             </button> 
+                             {/* Show 'Booked' badge if listing is booked and not owned by the user, else show Explore button */}
+                             {listing.booked && !listing.isOwnedByUser ? (
+                                 <span className="inline-block bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-full mt-2">Booked</span>
+                             ) : (
+                                 <button 
+                                     type="button" 
+                                     className="btn btn-warning px-5 py-2 mt-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300" 
+                                     onClick={() => handleExploreClick(listing._id)}
+                                 >
+                                     Explore
+                                 </button>
+                             )}
                         </div> 
                     </div>
                 ))}

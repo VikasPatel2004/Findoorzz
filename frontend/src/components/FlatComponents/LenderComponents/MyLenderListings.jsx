@@ -30,6 +30,7 @@ function MyListings() {
         try {
             setLoading(true);
             const listings = await listingService.getMyCreatedFlatListings();
+            console.log('Fetched lender listings:', listings); // DEBUG
             setLenderListings(Array.isArray(listings) ? listings : []);
         } catch (err) {
             setError('Failed to fetch listings');
@@ -82,7 +83,10 @@ function MyListings() {
                     <p>No listings found.</p>
                 ) : (
                     lenderListings.map((listing) => (
-                        <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
+                        <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
+                            {listing.booked && (
+                                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">Booked</span>
+                            )}
                             {listing.propertyImages && listing.propertyImages.length > 0 ? (
                                 <img 
                                     src={listing.propertyImages[0]} 

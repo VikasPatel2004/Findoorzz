@@ -17,7 +17,7 @@ const router = express.Router();
 router.get('/flat/list-all', async (req, res) => {
   try {
     console.log('Fetching all flat listings...');
-    const listings = await FlatListing.find({});
+    const listings = await FlatListing.find({ booked: false });
     console.log(`Found ${listings.length} flat listings`);
     res.json(listings);
   } catch (err) {
@@ -30,7 +30,7 @@ router.get('/flat/list-all', async (req, res) => {
 router.get('/flat/my-created', authenticateToken, async (req, res) => {
   try {
     const filter = { owner: req.user.userId };
-    const listings = await FlatListing.find(filter);
+    const listings = await FlatListing.find(filter).select('+booked');
     res.json(listings);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching your created flat listings', error: err.message });
@@ -65,7 +65,7 @@ router.get('/flat/saved', authenticateToken, async (req, res) => {
 router.get('/flat', async (req, res) => {
   try {
     const { city, colony, minPrice, maxPrice, bedrooms, amenities } = req.query;
-    let filter = { type: 'Flat' };
+    let filter = { type: 'Flat', booked: false };
     const exprFilters = [];
     // City filter (ignore all spaces and case, exact match)
     if (city) {
@@ -386,17 +386,14 @@ router.get('/pg/student-listings', authenticateToken, async (req, res) => {
   try {
     console.log('Fetching all PG listings for student...');
     const userId = req.user.userId;
-    
     // Get all listings
-    const allListings = await PGListing.find({});
-    
+    const allListings = await PGListing.find({ booked: false });
     // Mark which listings belong to the current user
     const listingsWithOwnership = allListings.map(listing => {
       const listingObj = listing.toObject();
       listingObj.isOwnedByUser = listing.owner.toString() === userId;
       return listingObj;
     });
-    
     console.log(`Found ${listingsWithOwnership.length} PG listings for student`);
     res.json(listingsWithOwnership);
   } catch (err) {
@@ -409,7 +406,7 @@ router.get('/pg/student-listings', authenticateToken, async (req, res) => {
 router.get('/pg/filtered', async (req, res) => {
   try {
     const { city, colony, rentAmount, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
-    const filter = {};
+    const filter = { booked: false };
     const exprFilters = [];
     
     // City filter (ignore all spaces and case)
@@ -477,7 +474,7 @@ router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
   try {
     const { city, colony, rentAmount, numberOfRooms, furnishingStatus, wifi, airConditioning, independent } = req.query;
     const userId = req.user.userId;
-    const filter = {};
+    const filter = { booked: false };
     const exprFilters = [];
     // City filter (ignore all spaces and case)
     if (city) {
@@ -549,7 +546,7 @@ router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
 router.get('/pg/my-created', authenticateToken, async (req, res) => {
   try {
     const filter = { owner: req.user.userId };
-    const listings = await PGListing.find(filter);
+    const listings = await PGListing.find(filter).select('+booked');
     res.json(listings);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching your created PG listings', error: err.message });

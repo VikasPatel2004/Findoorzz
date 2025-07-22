@@ -47,8 +47,15 @@ export const listingService = {
   },
   
   // Delete listing
-  deleteListing: (id) => 
-    apiService.delete(`/listings/${id}`),
+  deleteListing: (type, id) => {
+    if (type === 'pg') {
+      return apiService.delete(`/listings/pg/${id}`);
+    } else if (type === 'flat') {
+      return apiService.delete(`/listings/flat/${id}`);
+    } else {
+      return apiService.delete(`/listings/${id}`);
+    }
+  },
   
   // Upload listing images
   uploadImages: (formData, onProgress) => 

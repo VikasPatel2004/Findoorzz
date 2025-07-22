@@ -83,7 +83,10 @@ function RenterSavedListings() {
             <h2 className="text-3xl text-gray-600 font-bold mt-5 mb-8">My Favourites</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-12">
                 {validListings.map((listing) => (
-                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
+                    <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
+                        {listing.booked && (
+                            <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">Booked</span>
+                        )}
                         {listing.propertyImages && listing.propertyImages.length > 0 ? (
                             <img 
                                 src={listing.propertyImages[0]} 
@@ -99,8 +102,7 @@ function RenterSavedListings() {
                             <p className="text-lg font-bold">
                                 <div>{listing.houseNumber}, {listing.colony}, {listing.city}</div>
                                 <div>
-                                    &#8377;{listing.rentAmount}/month 
-                                    <span className="text-gray-500"> +18% GST</span>
+                                    &#8377;{listing.rentAmount}/month
                                 </div>
                             </p>
                             <p className="mb-1">Furnishing: {listing.furnishingStatus}</p>

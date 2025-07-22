@@ -79,7 +79,10 @@ function StudentSavedListings() {
                 {listings.map((listing) => {
                     console.log('Rendering listing:', listing);
                     return (
-                        <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden" key={listing._id}>
+                        <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
+                            {listing.booked && (
+                                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">Booked</span>
+                            )}
                             {listing.propertyImages && listing.propertyImages.length > 0 ? (
                                 <img 
                                     src={listing.propertyImages[0]} 
@@ -95,8 +98,7 @@ function StudentSavedListings() {
                                 <p className="text-lg font-bold">
                                     <div>{listing.houseNumber || 'Unknown'}, {listing.colony || 'Unknown'}, {listing.city || 'Unknown'}</div>
                                     <div>
-                                        &#8377;{listing.rentAmount || 'Unknown'}/month 
-                                        <span className="text-gray-500"> +18% GST</span>
+                                        &#8377;{listing.rentAmount || 'Unknown'}/month
                                     </div>
                                 </p>
                                 <p className="mb-1">Furnishing: {listing.furnishingStatus}</p>

@@ -19,6 +19,7 @@ const pgListingSchema = new mongoose.Schema({
   propertyImages: [{ type: String }], // store image URLs or paths
   description: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  booked: { type: Boolean, default: false }, // Indicates if the listing is booked
 }, { timestamps: true });
 
 // Add indexes for better query performance

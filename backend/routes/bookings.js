@@ -50,6 +50,13 @@ router.post('/', authenticateToken, async (req, res) => {
     const booking = new Booking(bookingData);
     await booking.save();
 
+    // Mark the listing as booked
+    if (listingType === 'FlatListing') {
+      await FlatListing.findByIdAndUpdate(listingId, { booked: true });
+    } else if (listingType === 'PGListing') {
+      await PGListing.findByIdAndUpdate(listingId, { booked: true });
+    }
+
     // Notification logic
     let ownerId;
     let listingTitle;
