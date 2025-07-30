@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Avatar from '../assets/Avatar.svg';
 import { validateLoginForm } from '../utils/validators';
+import SocialLoginButtons from '../components/SocialLoginButtons';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -11,19 +12,27 @@ export default function LoginPage() {
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Auto-focus email input
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      emailInput.focus();
+    }
   }, []);
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    rememberMe: false,
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
     // Clear field-specific errors on input change
     if (errors[name]) {
@@ -38,7 +47,7 @@ export default function LoginPage() {
     e.preventDefault();
     setErrors({});
     setIsSubmitting(true);
-    
+
     // Validate form
     const validationErrors = validateLoginForm(formData);
     if (Object.keys(validationErrors).length > 0) {
@@ -52,21 +61,34 @@ export default function LoginPage() {
       const result = await login(formData.email, formData.password);
       console.log('Login result:', result);
       if (result.success) {
+        // Optionally handle rememberMe here (e.g., extend token expiry)
         navigate('/');
       } else {
-        setErrors({ general: [result.message] });
+        const generalError = 'Invalid email or password.';
+        if (typeof result.message === 'object' && result.message !== null) {
+          const hasFieldErrors = Object.keys(result.message).length > 0;
+          if (hasFieldErrors) {
+            setErrors(result.message);
+          } else {
+            setErrors({ general: [generalError] });
+          }
+        } else {
+          setErrors({ general: [generalError] });
+        }
       }
     } catch (err) {
       console.error('Login error:', err);
-      // Handle specific backend errors
+      const generalError = 'Invalid email or password.';
       if (err.response?.data?.errors) {
-        // Backend validation errors
-        setErrors(err.response.data.errors);
-      } else if (err.response?.data?.message) {
-        // General backend error
-        setErrors({ general: [err.response.data.message] });
+        const fieldErrors = err.response.data.errors;
+        const hasFieldErrors = Object.keys(fieldErrors).length > 0;
+        if (hasFieldErrors) {
+          setErrors(fieldErrors);
+        } else {
+          setErrors({ general: [generalError] });
+        }
       } else {
-        setErrors({ general: ['Login failed. Please try again.'] });
+        setErrors({ general: [generalError] });
       }
     } finally {
       setIsSubmitting(false);
@@ -77,10 +99,23 @@ export default function LoginPage() {
     navigate('/Signup');
   }, [navigate]);
 
+  const toggleShowPassword = () => {
+    setShowPassword(prev => !prev);
+  };
+
+  const handleSocialLoginSuccess = (provider, response) => {
+    console.log(provider + ' login success:', response);
+    // TODO: Implement backend login with social token here
+  };
+
+  const handleSocialLoginFailure = (provider, response) => {
+    console.error(provider + ' login failure:', response);
+    // TODO: Show error to user
+  };
+
   return (
     <div className="min-h-screen flex items-start justify-center bg-white pt-12 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col-reverse md:flex-row-reverse items-center justify-center gap-8 w-full max-w-4xl">
-        {/* Logo Box */}
         {/* Avatar Box */}
         <div className="flex items-center justify-center p-0 md:p-0 w-full max-w-xs md:max-w-sm">
           <img src={Avatar} alt="FinDoorz Avatar" className="w-full h-auto max-w-md object-contain" />
@@ -111,14 +146,14 @@ export default function LoginPage() {
                     placeholder="Email address"
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <label htmlFor="password" className="sr-only">
                     Password
                   </label>
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     required
                     value={formData.password}
@@ -128,6 +163,14 @@ export default function LoginPage() {
                     }`}
                     placeholder="Password"
                   />
+                  <button
+                    type="button"
+                    onClick={toggleShowPassword}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-600 hover:text-gray-900 focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
                 </div>
               </div>
               {(errors.email || errors.password) && (
@@ -155,6 +198,30 @@ export default function LoginPage() {
                   </div>
                 </div>
               )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="rememberMe"
+                    name="rememberMe"
+                    type="checkbox"
+                    checked={formData.rememberMe}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-yellow-500 focus:ring-yellow-400 border-gray-300 rounded"
+                  />
+                  <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
+                    Remember me
+                  </label>
+                </div>
+                <div className="text-sm">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/ForgotPassword')}
+                    className="font-medium text-yellow-500 hover:text-yellow-600"
+                  >
+                    Forgot your password?
+                  </button>
+                </div>
+              </div>
               <div>
                 <button
                   type="submit"
@@ -167,23 +234,28 @@ export default function LoginPage() {
                       Signing in...
                     </div>
                   ) : (
-                    'Sign in'
+                    'Sign In'
                   )}
                 </button>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-600">
-                  New user?{' '}
-                  <button
-                    type="button"
-                    onClick={handleSignupClick}
-                    className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors duration-200"
-                  >
-                    Sign up here
-                  </button>
-                </p>
-              </div>
             </form>
+            <p className="mt-6 text-center text-sm text-gray-600">
+              Or continue with
+            </p>
+            <SocialLoginButtons
+              onLoginSuccess={handleSocialLoginSuccess}
+              onLoginFailure={handleSocialLoginFailure}
+            />
+            <p className="text-center mt-6 text-gray-600">
+              Don't have an account?{' '}
+              <button
+                type="button"
+                onClick={handleSignupClick}
+                className="font-medium text-yellow-500 hover:text-yellow-600"
+              >
+                Sign Up
+              </button>
+            </p>
           </div>
         </div>
       </div>

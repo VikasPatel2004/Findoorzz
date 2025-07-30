@@ -9,6 +9,9 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 // Register new user
 router.post('/register',
   [
@@ -68,6 +71,45 @@ router.post('/register',
     }
   }
 );
+
+// Social login endpoint
+router.post('/social-login', async (req, res) => {
+  const { token } = req.body;
+  console.log('Received social login token:', token);
+  if (!token) {
+    return res.status(400).json({ message: 'Token is required' });
+  }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    console.log('Google token payload:', payload);
+    const { sub, email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({ name, email, profilePicture: picture });
+      await user.save();
+    }
+
+    const jwtToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      },
+    });
+  } catch (error) {
+    console.error('Social login error:', error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+});
 
 // Login user
 router.post('/login', 
