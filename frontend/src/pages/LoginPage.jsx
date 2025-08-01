@@ -9,14 +9,10 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Auto-focus email input
     const emailInput = document.getElementById('email');
-    if (emailInput) {
-      emailInput.focus();
-    }
+    if (emailInput) emailInput.focus();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -34,12 +30,8 @@ export default function LoginPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    // Clear field-specific errors on input change
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
+      setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   }, [errors]);
 
@@ -47,21 +39,15 @@ export default function LoginPage() {
     e.preventDefault();
     setErrors({});
     setIsSubmitting(true);
-
-    // Validate form
     const validationErrors = validateLoginForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsSubmitting(false);
       return;
     }
-
     try {
-      console.log('Attempting login with:', { email: formData.email, password: formData.password });
       const result = await login(formData.email, formData.password);
-      console.log('Login result:', result);
       if (result.success) {
-        // Optionally handle rememberMe here (e.g., extend token expiry)
         navigate('/');
       } else {
         const generalError = 'Invalid email or password.';
@@ -77,7 +63,6 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
       const generalError = 'Invalid email or password.';
       if (err.response?.data?.errors) {
         const fieldErrors = err.response.data.errors;
@@ -99,33 +84,50 @@ export default function LoginPage() {
     navigate('/Signup');
   }, [navigate]);
 
-  const toggleShowPassword = () => {
-    setShowPassword(prev => !prev);
-  };
+  const toggleShowPassword = () => setShowPassword(prev => !prev);
 
-  const handleSocialLoginSuccess = (provider, response) => {
-    console.log(provider + ' login success:', response);
-    // TODO: Implement backend login with social token here
-  };
-
-  const handleSocialLoginFailure = (provider, response) => {
-    console.error(provider + ' login failure:', response);
-    // TODO: Show error to user
+  const { setUser } = useContext(AuthContext);
+  const handleGoogleLogin = async (provider, credentialResponse) => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/social-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        // Fetch user profile and set in context
+        try {
+          const profileRes = await fetch('http://localhost:5000/api/auth/profile', {
+            headers: { Authorization: `Bearer ${data.token}` }
+          });
+          const profile = await profileRes.json();
+          setUser(profile);
+        } catch (profileErr) {
+          // If profile fetch fails, just continue
+        }
+        navigate('/');
+      } else {
+        setErrors({ general: [data.message || 'Google login failed'] });
+      }
+    } catch (err) {
+      setErrors({ general: ['Google login failed'] });
+    }
   };
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-white pt-12 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col-reverse md:flex-row-reverse items-center justify-center gap-8 w-full max-w-4xl">
-        {/* Avatar Box */}
         <div className="flex items-center justify-center p-0 md:p-0 w-full max-w-xs md:max-w-sm">
           <img src={Avatar} alt="FinDoorz Avatar" className="w-full h-auto max-w-md object-contain" />
         </div>
-        {/* Form Box */}
         <div className="flex items-center justify-center bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12 w-full max-w-md">
           <div className="w-full">
             <h2 className="mb-6 text-center text-3xl font-extrabold text-black">
               Sign <span className='text-center text-3xl font-extrabold text-amber-400'>In</span>
             </h2>
+            <SocialLoginButtons onLoginSuccess={handleGoogleLogin} />
             <form className="space-y-6" onSubmit={handleLogin}>
               <div className="rounded-md shadow-sm -space-y-px">
                 <div>
@@ -239,13 +241,6 @@ export default function LoginPage() {
                 </button>
               </div>
             </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-              Or continue with
-            </p>
-            <SocialLoginButtons
-              onLoginSuccess={handleSocialLoginSuccess}
-              onLoginFailure={handleSocialLoginFailure}
-            />
             <p className="text-center mt-6 text-gray-600">
               Don't have an account?{' '}
               <button
