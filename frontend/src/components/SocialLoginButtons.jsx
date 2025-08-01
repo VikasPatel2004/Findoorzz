@@ -23,7 +23,6 @@ export default function SocialLoginButtons({ onLoginSuccess, onLoginFailure }) {
       <GoogleLogin
         onSuccess={handleGoogleSuccess}
         onError={handleGoogleFailure}
-        useOneTap
       />
     </div>
   );

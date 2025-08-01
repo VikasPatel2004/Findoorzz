@@ -108,6 +108,7 @@ export default function LoginPage() {
           // If profile fetch fails, just continue
         }
         navigate('/');
+        window.location.reload();
       } else {
         setErrors({ general: [data.message || 'Google login failed'] });
       }
@@ -127,7 +128,7 @@ export default function LoginPage() {
             <h2 className="mb-6 text-center text-3xl font-extrabold text-black">
               Sign <span className='text-center text-3xl font-extrabold text-amber-400'>In</span>
             </h2>
-            <SocialLoginButtons onLoginSuccess={handleGoogleLogin} />
+           
             <form className="space-y-6" onSubmit={handleLogin}>
               <div className="rounded-md shadow-sm -space-y-px">
                 <div>
@@ -239,6 +240,10 @@ export default function LoginPage() {
                     'Sign In'
                   )}
                 </button>
+              </div>
+              {/* Add spacing and move Google login below Sign In button */}
+              <div className="my-6">
+                <SocialLoginButtons onLoginSuccess={handleGoogleLogin} />
               </div>
             </form>
             <p className="text-center mt-6 text-gray-600">
