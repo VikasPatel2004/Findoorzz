@@ -89,7 +89,7 @@ export default function LoginPage() {
   const { setUser } = useContext(AuthContext);
   const handleGoogleLogin = async (provider, credentialResponse) => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/social-login', {
+      const res = await fetch('https://findoorzz.onrender.com/api/auth/social-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -99,7 +99,7 @@ export default function LoginPage() {
         localStorage.setItem('token', data.token);
         // Fetch user profile and set in context
         try {
-          const profileRes = await fetch('http://localhost:5000/api/auth/profile', {
+          const profileRes = await fetch('https://findoorzz.onrender.com/api/auth/profile', {
             headers: { Authorization: `Bearer ${data.token}` }
           });
           const profile = await profileRes.json();
