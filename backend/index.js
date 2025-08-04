@@ -45,7 +45,8 @@ const authRoutes = require('./routes/auth');
 const listingRoutes = require('./routes/listings');
 const bookingRoutes = require('./routes/bookings');
 const paymentRoutes = require('./routes/payment');
-const razorpayRoutes = require('./routes/razorpay');
+const cashfreeRoutes = require('./routes/cashfree');
+
 const reviewRoutes = require('./routes/review');
 const notificationRoutes = require('./routes/notification');
 const userRoutes = require('./routes/user');
@@ -54,7 +55,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/razorpay', razorpayRoutes);
+app.use('/api/cashfree', cashfreeRoutes);
+
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/user', userRoutes);

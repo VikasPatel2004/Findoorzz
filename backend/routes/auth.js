@@ -102,6 +102,7 @@ router.post('/social-login', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         profilePicture: user.profilePicture,
       },
     });
@@ -159,12 +160,13 @@ router.post('/login',
       }
       
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      res.json({ 
-        token, 
+      res.json({
+        token,
         user: { 
           id: user._id, 
           name: user.name, 
           email: user.email, 
+          phone: user.phone, 
           profilePicture: user.profilePicture 
         } 
       });
@@ -182,7 +184,13 @@ router.get('/profile', authenticateToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      profilePicture: user.profilePicture
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -197,9 +205,10 @@ router.put('/profile', authenticateToken, upload.single('profilePicture'), async
       return res.status(404).json({ message: 'User not found' });
     }
     
-    const { name, email, password } = req.body;
+    const { name, email, phone, password } = req.body;
     if (name) user.name = name;
     if (email) user.email = email;
+    if (phone) user.phone = phone;
     if (password) {
       await user.setPassword(password);
     }
@@ -238,6 +247,7 @@ router.put('/profile', authenticateToken, upload.single('profilePicture'), async
       message: 'Profile updated successfully',
       user: {
         id: user._id,
+        phone: user.phone,
         name: user.name,
         email: user.email,
         profilePicture: user.profilePicture

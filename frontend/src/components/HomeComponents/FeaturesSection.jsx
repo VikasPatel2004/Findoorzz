@@ -68,16 +68,16 @@ const FeatureSection = () => {
   return (
     <section id="feature-section" ref={sectionRef} className="max-w-md w-full mx-auto px-2 py-12 bg-white rounded-lg shadow md:max-w-6xl md:bg-transparent md:shadow-none md:p-0 md:rounded-none md:mx-auto md:px-4 md:py-12">
       {/* Centered Heading */}
-      <motion.h2 
-        className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-12"
+      <motion.div 
+        className="text-center mb-12"
         initial={{ opacity: 0, y: -20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
       >
-       <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight">
+       <h2 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight">
               <span className="text-yellow-400">Why </span>Findoorz ?
-                    </h1>
-      </motion.h2>
+       </h2>
+      </motion.div>
 
       <motion.div 
         className="flex flex-col-reverse md:flex-row items-center gap-8"

@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: { type: String, required: true },
   profilePicture: { type: String }, // URL to the profile picture
+  phone: { type: String }, // User's phone number for payment processing
 }, { timestamps: true });
 
 // Method to set password hash

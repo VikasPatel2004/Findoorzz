@@ -35,6 +35,7 @@ import About from './components/About';
 // Payment Management Pages
 import PaymentForm from './pages/PaymentManagement/PaymentForm';
 import PaymentHistory from './pages/PaymentManagement/PaymentHistory';
+import PaymentStatus from './pages/PaymentManagement/PaymentStatus';
 
 // Legal Pages
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
@@ -208,6 +209,11 @@ function App() {
               <Route path="/payment-history" element={
                 <PrivateRoute>
                   <PaymentHistory />
+                </PrivateRoute>
+              } />
+              <Route path="/payment-status/:order_id" element={
+                <PrivateRoute>
+                  <PaymentStatus />
                 </PrivateRoute>
               } />
 

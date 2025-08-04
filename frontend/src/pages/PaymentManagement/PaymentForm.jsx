@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import razorpayService from '../../services/razorpayService';
+
 import bookingService from '../../services/bookingService';
+import cashfreeService from '../../services/cashfreeService';
 
 const PaymentForm = () => {
   const { token, user } = useContext(AuthContext);
@@ -53,26 +54,29 @@ const PaymentForm = () => {
       const amount = calculateAmount();
       const description = `Payment for ${booking.listingTitle || 'property booking'}`;
 
-      const result = await razorpayService.processPayment(
+      await cashfreeService.processPayment(
         bookingId,
         amount,
         description,
         {
+          id: user._id,
           name: user?.name || '',
           email: user?.email || '',
           phone: user?.phone || ''
         },
-        token
+        token,
+        () => {
+            setSuccess(true);
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 3000);
+        },
+        (error) => {
+            setError(error.message || 'Payment failed');
+        }
       );
 
-      if (result.success) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 3000);
-      } else {
-        setError(result.message || 'Payment failed');
-      }
+      
 
     } catch (err) {
       setError('Payment processing failed. Please try again.');
@@ -148,7 +152,7 @@ const PaymentForm = () => {
           {/* Header */}
           <div className="bg-blue-600 px-6 py-4">
             <h1 className="text-2xl font-bold text-white">Complete Payment</h1>
-            <p className="text-blue-100 mt-1">Secure payment powered by Razorpay</p>
+            <p className="text-blue-100 mt-1">Secure payment powered by Cashfree</p>
           </div>
 
           {/* Booking Details */}
@@ -189,7 +193,7 @@ const PaymentForm = () => {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Payment Method:</span>
-                  <span>Razorpay (Cards, UPI, Net Banking)</span>
+                  <span>Cashfree (Cards, UPI, Net Banking)</span>
                 </div>
               </div>
             </div>

@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 import bookingService from '../../../services/bookingService';
-import razorpayService from '../../../services/razorpayService';
+import cashfreeService from '../../../services/cashfreeService';
+
 import ImageGallery from '../../ImageGallery';
 
 const StudentListingDetail = ({ listing }) => {
@@ -66,40 +67,61 @@ const StudentListingDetail = ({ listing }) => {
             const booking = await bookingService.createBooking(bookingData, token);
             console.log('Booking created:', booking);
 
-            // Process payment with Razorpay - Only 2% booking fee
+            // Process payment with Cashfree - Only 2% booking fee
             const bookingFee = Math.round(listing.rentAmount * 0.02); // 2% of rent amount
-            const amount = bookingFee * 100; // Convert to paise
+            const amount = bookingFee; // Amount in rupees
             const description = `Booking fee (2%) for ${listing.landlordName} - ${listing.houseNumber}`;
 
             console.log('Processing payment...');
-            const result = await razorpayService.processPayment(
+            console.log('User object:', user);
+            console.log('User object structure:', {
+                id: user.id,
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            });
+            // More detailed logging for debugging
+            console.log('User ID type:', typeof user._id);
+            console.log('User ID value:', user._id);
+            console.log('User ID (id property) type:', typeof user.id);
+            console.log('User ID (id property) value:', user.id);
+            // Check if user has a phone number before proceeding with payment
+            if (!user.phone) {
+                clearTimeout(timeoutId);
+                setIsBooking(false);
+                const goToProfile = window.confirm('A phone number is required for payment processing. Would you like to update your profile now?');
+                if (goToProfile) {
+                    navigate('/profile/edit');
+                }
+                return;
+            }
+
+            await cashfreeService.processPayment(
                 booking._id,
                 amount,
                 description,
                 {
+                    id: user.id || user._id,
                     name: user.name || '',
                     email: user.email || '',
-                    phone: user.phone || ''
+                    phone: user.phone
                 },
                 token,
-                () => { // onModalClose
-                    clearTimeout(timeoutId);
-                    setIsBooking(false);
-                },
                 () => { // onPaymentSuccess
                     clearTimeout(timeoutId);
                     setIsBooking(false);
+                    setHasBooked(true);
+                    alert(`Booking successful! Booking fee of ₹${bookingFee} has been charged.`);
+                    window.location.href = `/RoomDetail/${listing._id}?justBooked=true`;
+                },
+                (error) => { // onPaymentFailure
+                    clearTimeout(timeoutId);
+                    setIsBooking(false);
+                    alert(error.message || 'Payment failed. Please try again.');
                 }
             );
-            console.log('Payment result:', result);
-
-            if (result.success) {
-                setHasBooked(true);
-                alert(`Booking successful! Booking fee of ₹${bookingFee} has been charged.`);
-                window.location.href = `/RoomDetail/${listing._id}?justBooked=true`;
-            } else {
-                alert(result.message || 'Payment failed. Please try again.');
-            }
+            
 
         } catch (error) {
             console.error('Booking error:', error);

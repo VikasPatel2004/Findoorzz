@@ -10,6 +10,7 @@ const EditProfile = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -24,7 +25,8 @@ const EditProfile = () => {
       setFormData(prev => ({
         ...prev,
         name: user.name || '',
-        email: user.email || ''
+        email: user.email || '',
+        phone: user.phone || ''
       }));
       setPreviewUrl(user.profilePicture);
     }
@@ -77,6 +79,7 @@ const EditProfile = () => {
       const updateData = new FormData();
       updateData.append('name', formData.name);
       updateData.append('email', formData.email);
+      updateData.append('phone', formData.phone);
 
       if (formData.newPassword) {
         updateData.append('currentPassword', formData.currentPassword);
@@ -229,6 +232,24 @@ const EditProfile = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter your email address"
                 />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your phone number (required for payments)"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Your phone number is required for payment processing.
+                </p>
               </div>
             </div>
 
