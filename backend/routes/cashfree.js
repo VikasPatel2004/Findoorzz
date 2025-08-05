@@ -1,25 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const { Cashfree } = require('../config/cashfree');
+const { Cashfree, isInitialized } = require('../config/cashfree');
 const Booking = require('../models/Booking');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Create Cashfree payment
 router.post('/create-payment', authMiddleware, async (req, res) => {
     try {
-        const { bookingId, amount, description, userDetails } = req.body;
-
-        // Validate required fields
-        if (!bookingId || !amount || !userDetails) {
-            return res.status(400).json({ 
-                message: 'Missing required fields: bookingId, amount, or userDetails' 
+        if (!isInitialized) {
+            return res.status(500).json({
+                message: 'Payment service not properly configured',
+                error: 'Cashfree not initialized'
             });
         }
 
-        // Validate user details
-        if (!userDetails.id || !userDetails.email || !userDetails.phone) {
+        const { bookingId, amount, description, userDetails } = req.body;
+
+        // Basic validation
+        if (!bookingId || !amount || !userDetails) {
             return res.status(400).json({ 
-                message: 'Missing required user details: id, email, or phone' 
+                message: 'Missing required fields',
+                fields: ['bookingId', 'amount', 'userDetails']
+            });
+        }
+
+        // Check user account status
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ 
+                message: 'User not found'
+            });
+        }
+
+        if (user.verificationStatus === 'pending' || user.verificationStatus === 'under_review') {
+            return res.status(403).json({ 
+                message: 'Account verification required. Please complete your profile verification.',
+                verificationStatus: user.verificationStatus
             });
         }
 
@@ -28,42 +45,39 @@ router.post('/create-payment', authMiddleware, async (req, res) => {
             order_currency: "INR",
             order_id: `order_${bookingId}_${Date.now()}`,
             customer_details: {
-                customer_id: userDetails.id.toString(),
+                customer_id: (userDetails.id || userDetails._id).toString(),
                 customer_email: userDetails.email,
                 customer_phone: userDetails.phone.toString()
             },
             order_meta: {
-                return_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/payment-status/{order_id}`
+                return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payment-status/{order_id}`
             },
             order_note: description || 'Property booking payment'
         };
-
-        console.log('Creating Cashfree order:', order);
 
         const payment = await Cashfree.PGCreateOrder("2023-08-01", order);
         
         res.json({
             success: true,
             payment_session_id: payment.data.payment_session_id,
-            orderId: order.order_id,
-            order_amount: payment.data.order_amount,
-            order_currency: payment.data.order_currency
+            orderId: order.order_id
         });
 
     } catch (error) {
-        console.error('Error creating Cashfree payment:', error);
+        console.error('Payment error:', error);
         
-        if (error.response) {
-            // Cashfree API error
-            res.status(error.response.status || 500).json({ 
-                message: error.response.data?.message || 'Failed to create payment',
-                error: error.response.data 
+        if (error.response?.status === 401) {
+            res.status(401).json({ 
+                message: 'Invalid Cashfree credentials'
+            });
+        } else if (error.response?.status === 400) {
+            res.status(400).json({ 
+                message: error.response.data?.message || 'Invalid payment data'
             });
         } else {
-            // Other errors
             res.status(500).json({ 
-                message: 'Failed to create payment',
-                error: error.message 
+                message: 'Payment processing failed',
+                error: error.message
             });
         }
     }
@@ -72,32 +86,28 @@ router.post('/create-payment', authMiddleware, async (req, res) => {
 // Verify Cashfree payment
 router.post('/verify-payment', authMiddleware, async (req, res) => {
     try {
-        const { orderId, bookingData } = req.body;
+        const { orderId } = req.body;
 
         if (!orderId) {
             return res.status(400).json({ 
-                message: 'Missing required parameter: orderId' 
+                message: 'Missing orderId' 
             });
         }
-
-        console.log('Verifying payment for order:', orderId);
 
         const payment = await Cashfree.PGOrderFetchPayments("2023-08-01", orderId);
 
         if (!payment.data || payment.data.length === 0) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'No payment found for this order' 
+                message: 'No payment found' 
             });
         }
 
         const paymentData = payment.data[0];
         
         if (paymentData.payment_status === 'SUCCESS') {
-            // Extract booking ID from order ID
             const bookingId = orderId.split('_')[1];
             
-            // Update booking status
             const updatedBooking = await Booking.findByIdAndUpdate(
                 bookingId, 
                 { 
@@ -109,19 +119,10 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
                 { new: true }
             );
 
-            if (!updatedBooking) {
-                console.error('Booking not found:', bookingId);
-                return res.status(404).json({ 
-                    success: false, 
-                    message: 'Booking not found' 
-                });
-            }
-
             res.json({ 
                 success: true, 
                 message: 'Payment successful',
-                payment: paymentData,
-                booking: updatedBooking
+                payment: paymentData
             });
         } else {
             res.json({ 
@@ -132,51 +133,9 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
         }
 
     } catch (error) {
-        console.error('Error verifying Cashfree payment:', error);
-        
-        if (error.response) {
-            res.status(error.response.status || 500).json({ 
-                message: error.response.data?.message || 'Failed to verify payment',
-                error: error.response.data 
-            });
-        } else {
-            res.status(500).json({ 
-                message: 'Failed to verify payment',
-                error: error.message 
-            });
-        }
-    }
-});
-
-// Get payment status
-router.get('/payment-status/:orderId', authMiddleware, async (req, res) => {
-    try {
-        const { orderId } = req.params;
-
-        if (!orderId) {
-            return res.status(400).json({ 
-                message: 'Missing required parameter: orderId' 
-            });
-        }
-
-        const payment = await Cashfree.PGOrderFetchPayments("2023-08-01", orderId);
-
-        if (!payment.data || payment.data.length === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'No payment found for this order' 
-            });
-        }
-
-        res.json({
-            success: true,
-            payment: payment.data[0]
-        });
-
-    } catch (error) {
-        console.error('Error fetching payment status:', error);
+        console.error('Verification error:', error);
         res.status(500).json({ 
-            message: 'Failed to fetch payment status',
+            message: 'Payment verification failed',
             error: error.message 
         });
     }

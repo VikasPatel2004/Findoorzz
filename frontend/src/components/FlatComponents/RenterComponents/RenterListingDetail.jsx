@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
@@ -16,7 +17,7 @@ const RenterListingDetail = ({ listing }) => {
     const [hasBooked, setHasBooked] = useState(false);
 
     // Check if current user is the owner of this listing
-    const isOwner = user && listing.owner === user._id;
+    const isOwner = user && (String(listing.owner) === String(user._id) || String(listing.owner) === String(user.id));
 
     const handleEdit = () => {
         navigate(`/edit-flat-listing/${listing._id}`);

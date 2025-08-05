@@ -17,7 +17,7 @@ const StudentListingDetail = ({ listing }) => {
     const [hasBooked, setHasBooked] = useState(false);
 
     // Check if current user is the owner of this listing
-    const isOwner = user && listing.owner === user._id;
+              const isOwner = user && (String(listing.owner) === String(user._id) || String(listing.owner) === String(user.id));
 
     const handleEdit = () => {
         navigate(`/edit-pg-listing/${listing._id}`);

@@ -4,7 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 
 // Load Cashfree SDK
 const loadCashfreeSDK = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (window.Cashfree) {
       resolve();
       return;
@@ -13,21 +13,18 @@ const loadCashfreeSDK = () => {
     try {
       const script = document.createElement('script');
       script.src = 'https://sdk.cashfree.com/js/v3/cashfree-checkout.js';
-      script.crossOrigin = 'anonymous'; // Add cross-origin attribute
+      script.crossOrigin = 'anonymous';
       script.onload = () => {
         console.log('Cashfree SDK loaded successfully');
         resolve();
       };
       script.onerror = (error) => {
         console.error('Failed to load Cashfree SDK:', error);
-        // Resolve anyway to prevent blocking the payment flow
-        // The application should handle the absence of the SDK gracefully
-        resolve();
+        resolve(); // Resolve anyway to prevent blocking
       };
       document.head.appendChild(script);
     } catch (error) {
       console.error('Error loading Cashfree SDK:', error);
-      // Resolve anyway to prevent blocking the payment flow
       resolve();
     }
   });
@@ -112,22 +109,22 @@ const cashfreeService = {
         throw new Error('❌ Failed to receive payment_session_id from server');
       }
 
-      // Initialize Cashfree SDK and redirect
-      if (window.Cashfree) {
-        try {
-          console.log('Initializing Cashfree with session ID:', payment_session_id);
-          const cashfree = new window.Cashfree(payment_session_id);
-          cashfree.redirect();
-        } catch (sdkError) {
-          console.error('Error initializing Cashfree SDK:', sdkError);
-          // Fallback: Redirect to payment page directly
-          window.location.href = `${process.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
-        }
-      } else {
-        console.warn('Cashfree SDK not available, using direct redirect');
-        // Fallback: Redirect to payment page directly
-        window.location.href = `${process.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
-      }
+          // Initialize Cashfree SDK and redirect
+          if (window.Cashfree) {
+            try {
+              console.log('Initializing Cashfree with session ID:', payment_session_id);
+              const cashfree = new window.Cashfree(payment_session_id);
+              cashfree.redirect();
+            } catch (sdkError) {
+              console.error('Error initializing Cashfree SDK:', sdkError);
+              // Fallback: Redirect to payment page directly
+              window.location.href = `${import.meta.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
+            }
+          } else {
+            console.warn('Cashfree SDK not available, using direct redirect');
+            // Fallback: Redirect to payment page directly
+            window.location.href = `${import.meta.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
+          }
 
       if (onSuccess) {
         onSuccess({ orderId, payment_session_id });
