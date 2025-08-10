@@ -29,10 +29,13 @@ router.get('/flat/list-all', async (req, res) => {
 // Get user's own flat listings (for any user who has created flat listings)
 router.get('/flat/my-created', authenticateToken, async (req, res) => {
   try {
-    const filter = { owner: req.user.userId };
+    console.log('Fetching my-created flat listings for user:', req.user);
+    const filter = { owner: req.user.id }; // Use req.user.id instead of userId
     const listings = await FlatListing.find(filter).select('+booked');
+    console.log(`Found ${listings.length} flat listings for user ${req.user.id}`);
     res.json(listings);
   } catch (err) {
+    console.error('Error fetching my-created flat listings:', err);
     res.status(500).json({ message: 'Error fetching your created flat listings', error: err.message });
   }
 });
@@ -40,7 +43,7 @@ router.get('/flat/my-created', authenticateToken, async (req, res) => {
 // Get flat listings for authenticated user (lender) - only their own listings
 router.get('/flat/my-listings', authenticateToken, async (req, res) => {
   try {
-    const filter = { owner: req.user.userId };
+    const filter = { owner: req.user.id };
     const listings = await FlatListing.find(filter);
     res.json(listings);
   } catch (err) {
@@ -251,7 +254,7 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
       independent: independent === 'true' || independent === true,
       description,
       propertyImages,
-      owner: req.user.userId
+      owner: req.user.id
     });
 
     await newListing.save();
@@ -545,10 +548,13 @@ router.get('/pg/student-filtered', authenticateToken, async (req, res) => {
 // Get user's own PG listings (for any user who has created PG listings)
 router.get('/pg/my-created', authenticateToken, async (req, res) => {
   try {
-    const filter = { owner: req.user.userId };
+    console.log('Fetching my-created PG listings for user:', req.user);
+    const filter = { owner: req.user.id }; // Use req.user.id instead of userId
     const listings = await PGListing.find(filter).select('+booked');
+    console.log(`Found ${listings.length} PG listings for user ${req.user.id}`);
     res.json(listings);
   } catch (err) {
+    console.error('Error fetching my-created PG listings:', err);
     res.status(500).json({ message: 'Error fetching your created PG listings', error: err.message });
   }
 });
@@ -737,7 +743,7 @@ router.post('/pg', authenticateToken, upload.array('propertyImages', 10), async 
       independent: independent === 'true' || independent === true,
       description,
       propertyImages,
-      owner: req.user.userId
+      owner: req.user.id
     });
 
     await newListing.save();
@@ -924,7 +930,7 @@ router.post('/', authenticateToken, upload.array('propertyImages', 10), async (r
     const listingDataToSave = {
       ...listingData,
       propertyImages,
-      owner: req.user.userId,
+      owner: req.user.id,
       type
     };
 

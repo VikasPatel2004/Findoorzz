@@ -11,10 +11,10 @@ const router = express.Router();
 router.post('/', authenticateToken, async (req, res) => {
   try {
     console.log('Booking request received:', req.body);
-    console.log('User ID from token:', req.user.userId);
+    console.log('User ID from token:', req.user.id, req.user.userId);
     
     const { listingType, listingId, bookingStartDate, bookingEndDate } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user.id; // Use req.user.id for consistency
 
     // Check for overlapping bookings for the same listing
     const overlappingBooking = await Booking.findOne({

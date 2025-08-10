@@ -40,87 +40,50 @@ const RenterListingDetail = ({ listing }) => {
     };
 
     const handleBookNow = async () => {
-        if (!user || !token) {
-            alert('Please login to book this flat');
-            navigate('/LoginPage');
-            return;
-        }
+  try {
+    setIsBooking(true);
 
-        try {
-            setIsBooking(true);
-
-            console.log('Token being sent:', token); // Debug log
-            console.log('User data:', user); // Debug log
-            console.log('User object structure:', {
-                id: user.id,
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone
-            });
-            // More detailed logging for debugging
-            console.log('User ID type:', typeof user._id);
-            console.log('User ID value:', user._id);
-            console.log('User ID (id property) type:', typeof user.id);
-            console.log('User ID (id property) value:', user.id);
-
-            // Create booking first
-            const bookingData = {
-                listingType: 'FlatListing',
-                listingId: listing._id,
-                bookingStartDate: new Date().toISOString(),
-                bookingEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
-            };
-
-            console.log('Booking data being sent:', bookingData); // Debug log
-
-            const booking = await bookingService.createBooking(bookingData, token);
-
-            // Process payment with Cashfree - Only 2% booking fee
-            const bookingFee = Math.round(listing.rentAmount * 0.02); // 2% of rent amount
-            const amount = bookingFee; // Amount in rupees
-            const description = `Booking fee (2%) for ${listing.landlordName} - ${listing.houseNumber}`;
-
-            // Check if user has a phone number before proceeding with payment
-            if (!user.phone) {
-                setIsBooking(false);
-                const goToProfile = window.confirm('A phone number is required for payment processing. Would you like to update your profile now?');
-                if (goToProfile) {
-                    navigate('/profile/edit');
-                }
-                return;
-            }
-
-            await cashfreeService.processPayment(
-                booking._id,
-                amount,
-                description,
-                {
-                    id: user.id || user._id,
-                    name: user.name || '',
-                    email: user.email || '',
-                    phone: user.phone
-                },
-                token,
-                () => {
-                    setHasBooked(true);
-                    alert(`Booking successful! Booking fee of ₹${bookingFee} has been charged.`);
-                },
-                (error) => {
-                    alert(error.message || 'Payment failed. Please try again.');
-                }
-            );
-
-            
-
-        } catch (error) {
-            console.error('Booking error:', error);
-            const errorMessage = error.response?.data?.message || 'Failed to process booking. Please try again.';
-            alert(errorMessage);
-        } finally {
-            setIsBooking(false);
-        }
+    // Create booking
+    const bookingData = {
+      listingType: 'FlatListing',
+      listingId: listing._id,
+      bookingStartDate: new Date().toISOString(),
+      bookingEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     };
+
+    const booking = await bookingService.createBooking(bookingData, token);
+
+    // Process payment with Cashfree
+    const bookingFee = Math.round(listing.rentAmount * 0.02);
+    
+    await cashfreeService.processPayment(
+      booking._id,
+      bookingFee,
+      `Booking fee for ${listing.landlordName}`,
+      {
+        id: user.id || user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone
+      },
+      token,
+      () => {
+        setHasBooked(true);
+        alert('Payment successful! Redirecting to Cashfree...');
+      },
+      (error) => {
+        alert('Payment failed: ' + error.message);
+      }
+    );
+
+  } catch (error) {
+    console.error('Booking error:', error);
+    alert('Failed to process booking: ' + error.message);
+  } finally {
+    setIsBooking(false);
+  }
+};
+
 
     // Ensure propertyImages is always an array
     const propertyImages = Array.isArray(listing.propertyImages) ? listing.propertyImages : [];

@@ -32,121 +32,33 @@ const loadCashfreeSDK = () => {
 
 const cashfreeService = {
   processPayment: async (listingId, amount, description, userDetails, token, onSuccess, onFailure) => {
-    try {
-      console.log('🔁 Starting Cashfree payment process...');
+  try {
+    // Step 1: Create order with backend
+    const response = await axios.post(`${API_BASE_URL}/cashfree/create-payment`, {
+      bookingId: listingId,
+      amount,
+      description,
+      userDetails
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      if (!token || typeof token !== 'string') {
-        throw new Error('❌ Missing or invalid authentication token');
-      }
+    const { payment_session_id } = response.data;
 
-      try {
-        await loadCashfreeSDK();
-        console.log('Cashfree SDK loaded or already available');
-      } catch (error) {
-        console.warn('Proceeding without Cashfree SDK:', error);
-        // Continue with the payment process even if SDK loading fails
-      }
-
-      // Sanitize and verify required fields
-      if (!listingId || !amount) {
-        throw new Error('❌ Incomplete payment details: Missing listing ID or amount');
-      }
-      
-      // Check for user ID (could be either id or _id)
-      const userId = userDetails?.id || userDetails?._id;
-      
-      // Log the user details for debugging
-      console.log('User details received:', userDetails);
-      console.log('User ID extracted:', userId);
-      console.log('User ID type:', typeof userId);
-      
-      // Normalize the userDetails object to ensure id is correctly set
-      const normalizedUserDetails = {
-        ...userDetails,
-        id: userId.toString() // Ensure id is set correctly using the extracted userId as a string
-      };
-      
-      console.log('Normalized user details for API call:', normalizedUserDetails);
-      
-      if (!userId || !userDetails?.email) {
-        // Log the missing details for debugging
-        console.error('Missing user details:', { 
-          hasId: !!userId, 
-          hasEmail: !!userDetails?.email,
-          userDetails
-        });
-        throw new Error('❌ Incomplete payment details: Missing user information');
-      }
-      
-      if (!userDetails?.phone) {
-        throw new Error('❌ Phone number is required for payment processing. Please update your profile with a valid phone number.');
-      }
-      
-      console.log('Sending payment request with user details:', normalizedUserDetails);
-      
-      console.log('Sending API request with normalized user details:', {
-        bookingId: listingId,
-        amount,
-        description,
-        userDetails: normalizedUserDetails
-      });
-      
-      const response = await axios.post(`${API_BASE_URL}/cashfree/create-payment`, {
-        bookingId: listingId,
-        amount,
-        description,
-        userDetails: normalizedUserDetails
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const { payment_session_id, orderId } = response.data;
-
-      if (!payment_session_id) {
-        throw new Error('❌ Failed to receive payment_session_id from server');
-      }
-
-          // Initialize Cashfree SDK and redirect
-          if (window.Cashfree) {
-            try {
-              console.log('Initializing Cashfree with session ID:', payment_session_id);
-              const cashfree = new window.Cashfree(payment_session_id);
-              cashfree.redirect();
-            } catch (sdkError) {
-              console.error('Error initializing Cashfree SDK:', sdkError);
-              // Fallback: Redirect to payment page directly
-              window.location.href = `${import.meta.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
-            }
-          } else {
-            console.warn('Cashfree SDK not available, using direct redirect');
-            // Fallback: Redirect to payment page directly
-            window.location.href = `${import.meta.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order'}/${payment_session_id}`;
-          }
-
-      if (onSuccess) {
-        onSuccess({ orderId, payment_session_id });
-      }
-
-    } catch (error) {
-      console.error('🚨 Cashfree Payment Error:', error);
-
-      let errorMessage = 'Payment processing failed';
-      if (error.response?.data) {
-        errorMessage = error.response.data.message || error.response.data.error?.message || `Server error: ${error.response.status}`;
-      } else if (error.request) {
-        errorMessage = 'Network error: No response from server';
-      } else {
-        errorMessage = error.message || 'Unknown payment error';
-      }
-
-      if (onFailure) {
-        onFailure(new Error(errorMessage));
-      }
+    // Step 2: Redirect to Cashfree using payment session
+    if (window.Cashfree && payment_session_id) {
+      const cashfree = new window.Cashfree(payment_session_id);
+      cashfree.redirect();
+    } else {
+      // Fallback redirect
+      window.location.href = `https://payments.cashfree.com/order/#${payment_session_id}`;
     }
-  },
+
+  } catch (error) {
+    console.error('Payment error:', error);
+    onFailure(error);
+  }
+},
 
   verifyPayment: async (orderId, bookingData, token) => {
     try {

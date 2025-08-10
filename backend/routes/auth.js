@@ -44,23 +44,21 @@ router.post('/register',
     }
     try {
       const { name, email, password } = req.body;
-      
-      // Check for existing user by email
+
       const existingUserByEmail = await User.findOne({ email });
       if (existingUserByEmail) {
-        return res.status(409).json({ 
+        return res.status(409).json({
           errors: { email: ['This email is already registered'] }
         });
       }
-      
-      // Check for existing user by username
+
       const existingUserByName = await User.findOne({ name });
       if (existingUserByName) {
-        return res.status(409).json({ 
+        return res.status(409).json({
           errors: { name: ['This username is already taken'] }
         });
       }
-      
+
       const user = new User({ name, email });
       await user.setPassword(password);
       await user.save();
@@ -113,7 +111,7 @@ router.post('/social-login', async (req, res) => {
 });
 
 // Login user
-router.post('/login', 
+router.post('/login',
   [
     body('email')
       .notEmpty().withMessage('Email is required')
@@ -134,41 +132,41 @@ router.post('/login',
       });
       return res.status(400).json({ errors: formattedErrors });
     }
-    
+
     try {
       const { email, password } = req.body;
       console.log('Login attempt for email:', email);
-      
+
       const user = await User.findOne({ email });
       console.log('User found:', user ? 'Yes' : 'No');
-      
+
       if (!user) {
         console.log('No user found with email:', email);
-        return res.status(401).json({ 
+        return res.status(401).json({
           errors: { email: ['No account found with this email address'] }
         });
       }
-      
+
       const isValidPassword = await user.validatePassword(password);
       console.log('Password validation result:', isValidPassword);
-      
+
       if (!isValidPassword) {
         console.log('Invalid password for user:', email);
-        return res.status(401).json({ 
+        return res.status(401).json({
           errors: { password: ['Incorrect password'] }
         });
       }
-      
+
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.json({
         token,
-        user: { 
-          id: user._id, 
-          name: user.name, 
-          email: user.email, 
-          phone: user.phone, 
-          profilePicture: user.profilePicture 
-        } 
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          profilePicture: user.profilePicture
+        }
       });
     } catch (err) {
       console.error('Login error:', err);
@@ -180,7 +178,7 @@ router.post('/login',
 // Get user profile
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-passwordHash -salt');
+    const user = await User.findById(req.user.id).select('-passwordHash -salt');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -200,11 +198,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
 // Update user profile
 router.put('/profile', authenticateToken, upload.single('profilePicture'), async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     const { name, email, phone, password } = req.body;
     if (name) user.name = name;
     if (email) user.email = email;
@@ -216,10 +214,9 @@ router.put('/profile', authenticateToken, upload.single('profilePicture'), async
     // Handle profile picture upload
     if (req.file) {
       try {
-        // Upload to Cloudinary
         const result = await new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
-            { 
+            {
               resource_type: 'auto',
               folder: 'profile-pictures',
               transformation: [
@@ -243,7 +240,7 @@ router.put('/profile', authenticateToken, upload.single('profilePicture'), async
     }
 
     await user.save();
-    res.json({ 
+    res.json({
       message: 'Profile updated successfully',
       user: {
         id: user._id,

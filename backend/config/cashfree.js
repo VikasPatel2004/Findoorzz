@@ -1,10 +1,10 @@
 const { Cashfree } = require('cashfree-pg');
 
-// Enhanced configuration with better error handling
+// Initialize Cashfree credentials and environment
 const initializeCashfree = () => {
   const appId = process.env.CASHFREE_APP_ID;
   const secretKey = process.env.CASHFREE_SECRET_KEY;
-  const environment = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'SANDBOX';
+  const environment = process.env.CASHFREE_ENVIRONMENT || 'SANDBOX';
 
   if (!appId || !secretKey) {
     console.error('❌ Missing Cashfree credentials in .env');
@@ -12,27 +12,30 @@ const initializeCashfree = () => {
     return false;
   }
 
-  // Validate credentials format
   const isValidAppId = appId.length > 10;
   const isValidSecretKey = secretKey.length > 20;
 
   if (!isValidAppId || !isValidSecretKey) {
     console.error('❌ Invalid Cashfree credentials format');
+    console.log('❌ App ID length:', appId?.length, 'Secret Key length:', secretKey?.length);
     return false;
   }
 
+  // Initialize Cashfree v5.x properly
   Cashfree.XClientId = appId;
   Cashfree.XClientSecret = secretKey;
   Cashfree.XEnvironment = environment;
 
   console.log(`✅ Cashfree configured for ${environment} environment`);
+  console.log(`✅ App ID: ${appId}`);
+  console.log(`✅ Environment: ${environment}`);
   return true;
 };
 
-// Initialize Cashfree
+// Initialize once at startup
 const isInitialized = initializeCashfree();
 
-// Enhanced error handling wrapper
+// Centralized error-handling wrapper
 const safeCashfreeCall = async (method, ...args) => {
   try {
     if (!isInitialized) {
@@ -54,7 +57,6 @@ const safeCashfreeCall = async (method, ...args) => {
       status: error.response?.status
     });
 
-    // Handle specific error cases
     if (error.response?.status === 401) {
       throw new Error('Invalid Cashfree credentials. Please check your API keys.');
     }
@@ -71,18 +73,28 @@ const safeCashfreeCall = async (method, ...args) => {
   }
 };
 
-// Enhanced order creation with better error handling
-Cashfree.PGCreateOrder = async (version, order) => {
-  return safeCashfreeCall('PGCreateOrder', version, order);
+// Create a single Cashfree instance for the application
+const cashfreeInstance = isInitialized ? new Cashfree() : null;
+
+// Export methods that use the instance
+const createPaymentOrder = async (version, order) => {
+  if (!cashfreeInstance) {
+    throw new Error('Cashfree not properly initialized');
+  }
+  return await cashfreeInstance.PGCreateOrder(version, order);
 };
 
-// Enhanced payment verification
-Cashfree.PGOrderFetchPayments = async (version, orderId) => {
-  return safeCashfreeCall('PGOrderFetchPayments', version, orderId);
+const fetchPayments = async (version, orderId) => {
+  if (!cashfreeInstance) {
+    throw new Error('Cashfree not properly initialized');
+  }
+  return await cashfreeInstance.PGOrderFetchPayments(version, orderId);
 };
 
-module.exports = { 
-  Cashfree, 
+module.exports = {
+  Cashfree,
   isInitialized,
-  initializeCashfree 
+  initializeCashfree,
+  createPaymentOrder,
+  fetchPayments
 };
