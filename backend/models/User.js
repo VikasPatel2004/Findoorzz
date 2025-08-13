@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema({
     enum: ['pending', 'verified', 'under_review'], 
     default: 'verified' // Set default to verified so existing users can make payments
   },
+  role: {
+    type: String,
+    enum: ['student', 'landlord', 'lender', 'renter', 'broker', 'admin'],
+    default: 'student'
+  },
+  isAdmin: { type: Boolean, default: false }, // Quick admin check
 }, { timestamps: true });
 
 // Method to set password hash

@@ -47,6 +47,7 @@ import CancellationPolicy from './pages/Legal/CancellationPolicy';
 import { AuthProvider } from './context/AuthContext';
 import { SavedListingsProvider } from './context/SavedListingsContext';
 import PrivateRoute from './components/PrivateRoute';
+import AdminPanel from './components/Admin/AdminPanel';
 
 function App() {
   return (
@@ -221,6 +222,13 @@ function App() {
               <Route path="/notifications" element={
                 <PrivateRoute>
                   <NotificationCenter />
+                </PrivateRoute>
+              } />
+
+              {/* Admin Panel Route */}
+              <Route path="/admin" element={
+                <PrivateRoute>
+                  <AdminPanel />
                 </PrivateRoute>
               } />
             </Routes>

@@ -50,6 +50,7 @@ const cashfreeRoutes = require('./routes/cashfree');
 const reviewRoutes = require('./routes/review');
 const notificationRoutes = require('./routes/notification');
 const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
@@ -60,6 +61,7 @@ app.use('/api/cashfree', cashfreeRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Serve static files from the frontend build (adjust path if needed)
 // app.use(express.static(path.join(__dirname, '../frontend/dist')));

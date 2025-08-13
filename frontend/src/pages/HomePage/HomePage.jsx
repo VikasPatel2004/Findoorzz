@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import HomeSection from '../../components/HomeComponents/HomeSection';
 import CardSection from '../../components/HomeComponents/CardSection';
 import HowItWorksSection from '../../components/HomeComponents/HowItWorks';
 import FeatureSection from '../../components/HomeComponents/FeaturesSection';
 import HomeCards from "../../components/HomeComponents/RoomCards";
 import ReviewSlider from "../../components/HomeComponents/ReviewSlides";
+import AdminPanel from '../../components/Admin/AdminPanel';
+import { AuthContext } from '../../context/AuthContext';
 import LegalInformation from '../../assets/LegalInformation.svg';
 
 function LegalInformationSection() {
@@ -51,9 +53,25 @@ function LegalInformationSection() {
 }
 
 function HomePage() {
+    const { user } = useContext(AuthContext);
     const [isCard1Visible, setIsCard1Visible] = useState(false);
     const [isCard2Visible, setIsCard2Visible] = useState(false);
     const [isWorksVisible, setIsWorksVisible] = useState(false);
+    
+    // Define admin emails
+    const adminEmails = ['vp0552850@gmail.com', 'findoorz@gmail.com'];
+    
+    // Check if user is admin by email
+    const isAdmin = user && adminEmails.includes(user.email?.toLowerCase());
+
+    // Debug logging with useEffect to prevent re-render loops
+    // useEffect(() => {
+    //     console.log('HomePage Admin Check:');
+    //     console.log('- User:', user);
+    //     console.log('- User email:', user?.email);
+    //     console.log('- Admin emails:', adminEmails);
+    //     console.log('- Is Admin?:', isAdmin);
+    // }, [user, isAdmin]); // Only run when user or isAdmin changes
 
     // Scroll to top when component mounts
     useEffect(() => {
@@ -107,6 +125,44 @@ function HomePage() {
                 isCard1Visible={isCard1Visible} 
                 isCard2Visible={isCard2Visible} 
             />
+            
+            {/* DEBUG: Show admin status */}
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm">
+                    <h3 className="font-bold mb-2">🐛 Admin Access Debug:</h3>
+                    <p><strong>User logged in:</strong> {user ? 'Yes' : 'No'}</p>
+                    <p><strong>User email:</strong> {user?.email || 'None'}</p>
+                    <p><strong>Email lowercase:</strong> {user?.email?.toLowerCase() || 'None'}</p>
+                    <p><strong>Admin emails:</strong> {adminEmails.join(', ')}</p>
+                    <p><strong>Email in admin list:</strong> {user && adminEmails.includes(user.email?.toLowerCase()) ? 'Yes' : 'No'}</p>
+                    <p><strong>Is Admin:</strong> <span className={`font-bold ${isAdmin ? 'text-green-600' : 'text-red-600'}`}>{isAdmin ? '✅ YES' : '❌ NO'}</span></p>
+                    <details className="mt-2">
+                        <summary className="cursor-pointer">Full User Object:</summary>
+                        <pre className="mt-2 text-xs bg-gray-100 p-2 rounded">
+                            {JSON.stringify(user, null, 2)}
+                        </pre>
+                    </details>
+                </div>
+            </section>
+
+            {/* Admin Panel Section - Only visible to admin users */}
+            {isAdmin && (
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-3xl shadow-2xl border border-red-100 p-8">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                                🛠️ Admin Control Panel
+                            </h2>
+                            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                                Welcome to the admin dashboard. Here you can manage listings, users, view analytics, and monitor system activity.
+                            </p>
+                        </div>
+                        <AdminPanel />
+                    </div>
+                </section>
+            )}
+
+            
             <HowItWorksSection isVisible={isWorksVisible} />
             <FeatureSection isVisible={isWorksVisible} />
             <ReviewSlider/>
