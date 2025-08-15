@@ -9,9 +9,9 @@ const AdminAuditLogs = () => {
   const [filters, setFilters] = useState({
     action: '',
     targetType: '',
-    userId: '',
-    startDate: '',
-    endDate: '',
+    adminId: '',
+    dateFrom: '',
+    dateTo: '',
     page: 1,
     limit: 25
   });
@@ -23,8 +23,8 @@ const AdminAuditLogs = () => {
     try {
       setLoading(true);
       const response = await adminService.getAuditLogs(filters);
-      setLogs(response.data.logs);
-      setTotalPages(response.data.totalPages);
+      setLogs(response.logs);
+      setTotalPages(response.pagination?.totalPages || 1);
       setError(null);
     } catch (err) {
       console.error('Error fetching audit logs:', err);
@@ -47,28 +47,37 @@ const AdminAuditLogs = () => {
   };
 
   const getActionBadgeColor = (action) => {
-    switch (action?.toLowerCase()) {
-      case 'create': return 'bg-green-100 text-green-800';
-      case 'update': return 'bg-blue-100 text-blue-800';
-      case 'delete': return 'bg-red-100 text-red-800';
-      case 'login': return 'bg-purple-100 text-purple-800';
-      case 'logout': return 'bg-gray-100 text-gray-800';
-      case 'approve': return 'bg-emerald-100 text-emerald-800';
-      case 'reject': return 'bg-orange-100 text-orange-800';
-      case 'suspend': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+    switch (action) {
+      case 'CREATE_LISTING':
+      case 'APPROVE_LISTING':
+      case 'UNBAN_USER':
+        return 'bg-green-100 text-green-800';
+      case 'UPDATE_LISTING':
+      case 'UPDATE_USER':
+      case 'CHANGE_USER_ROLE':
+      case 'BULK_UPDATE':
+        return 'bg-blue-100 text-blue-800';
+      case 'DELETE_LISTING':
+      case 'BAN_USER':
+      case 'BULK_DELETE':
+        return 'bg-red-100 text-red-800';
+      case 'VIEW_ADMIN_DASHBOARD':
+        return 'bg-purple-100 text-purple-800';
+      case 'ACTIVATE_LISTING':
+      case 'DEACTIVATE_LISTING':
+        return 'bg-amber-100 text-amber-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTargetTypeBadgeColor = (targetType) => {
-    switch (targetType?.toLowerCase()) {
-      case 'user': return 'bg-blue-100 text-blue-800';
-      case 'listing': return 'bg-green-100 text-green-800';
-      case 'pglisting': return 'bg-indigo-100 text-indigo-800';
-      case 'flatlisting': return 'bg-teal-100 text-teal-800';
-      case 'booking': return 'bg-purple-100 text-purple-800';
-      case 'payment': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+    switch (targetType) {
+      case 'User': return 'bg-blue-100 text-blue-800';
+      case 'PGListing': return 'bg-indigo-100 text-indigo-800';
+      case 'FlatListing': return 'bg-teal-100 text-teal-800';
+      case 'System': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-green-100 text-green-800';
     }
   };
 
@@ -104,7 +113,7 @@ const AdminAuditLogs = () => {
           </div>
           <div>
             <h4 className="font-medium text-gray-900">User</h4>
-            <p className="text-sm text-gray-600">{log.userId?.name || log.userId?.email || 'System'}</p>
+            <p className="text-sm text-gray-600">{log.admin?.name || log.admin?.email || 'System'}</p>
           </div>
           <div>
             <h4 className="font-medium text-gray-900">IP Address</h4>
@@ -125,7 +134,7 @@ const AdminAuditLogs = () => {
         {log.targetId && (
           <div>
             <h4 className="font-medium text-gray-900">Target ID</h4>
-            <p className="text-sm text-gray-600 font-mono">{log.targetId}</p>
+            <p className="text-sm text-gray-600 font-mono">{String(log.targetId)}</p>
           </div>
         )}
 
@@ -136,20 +145,20 @@ const AdminAuditLogs = () => {
           </div>
         )}
 
-        {log.beforeData && (
+        {log.beforeSnapshot && (
           <div>
             <h4 className="font-medium text-gray-900 mb-2">Before Data</h4>
             <pre className="text-xs bg-gray-50 p-3 rounded-lg overflow-auto max-h-40">
-              {JSON.stringify(log.beforeData, null, 2)}
+              {JSON.stringify(log.beforeSnapshot, null, 2)}
             </pre>
           </div>
         )}
 
-        {log.afterData && (
+        {log.afterSnapshot && (
           <div>
             <h4 className="font-medium text-gray-900 mb-2">After Data</h4>
             <pre className="text-xs bg-gray-50 p-3 rounded-lg overflow-auto max-h-40">
-              {JSON.stringify(log.afterData, null, 2)}
+              {JSON.stringify(log.afterSnapshot, null, 2)}
             </pre>
           </div>
         )}
@@ -187,14 +196,20 @@ const AdminAuditLogs = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Actions</option>
-              <option value="create">Create</option>
-              <option value="update">Update</option>
-              <option value="delete">Delete</option>
-              <option value="login">Login</option>
-              <option value="logout">Logout</option>
-              <option value="approve">Approve</option>
-              <option value="reject">Reject</option>
-              <option value="suspend">Suspend</option>
+              <option value="CREATE_LISTING">Create Listing</option>
+              <option value="UPDATE_LISTING">Update Listing</option>
+              <option value="DELETE_LISTING">Delete Listing</option>
+              <option value="APPROVE_LISTING">Approve Listing</option>
+              <option value="REJECT_LISTING">Reject Listing</option>
+              <option value="ACTIVATE_LISTING">Activate Listing</option>
+              <option value="DEACTIVATE_LISTING">Deactivate Listing</option>
+              <option value="UPDATE_USER">Update User</option>
+              <option value="BAN_USER">Ban User</option>
+              <option value="UNBAN_USER">Unban User</option>
+              <option value="CHANGE_USER_ROLE">Change User Role</option>
+              <option value="VIEW_ADMIN_DASHBOARD">View Admin Dashboard</option>
+              <option value="BULK_DELETE">Bulk Delete</option>
+              <option value="BULK_UPDATE">Bulk Update</option>
             </select>
           </div>
 
@@ -211,31 +226,30 @@ const AdminAuditLogs = () => {
               <option value="User">User</option>
               <option value="PGListing">PG Listing</option>
               <option value="FlatListing">Flat Listing</option>
-              <option value="Booking">Booking</option>
-              <option value="Payment">Payment</option>
+              <option value="System">System</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Start Date
+              From Date
             </label>
             <input
               type="date"
-              value={filters.startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
+              value={filters.dateFrom}
+              onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              End Date
+              To Date
             </label>
             <input
               type="date"
-              value={filters.endDate}
-              onChange={(e) => handleFilterChange('endDate', e.target.value)}
+              value={filters.dateTo}
+              onChange={(e) => handleFilterChange('dateTo', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -262,9 +276,9 @@ const AdminAuditLogs = () => {
                 setFilters({
                   action: '',
                   targetType: '',
-                  userId: '',
-                  startDate: '',
-                  endDate: '',
+                  adminId: '',
+                  dateFrom: '',
+                  dateTo: '',
                   page: 1,
                   limit: 25
                 });
@@ -320,10 +334,10 @@ const AdminAuditLogs = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {log.userId?.name || 'System'}
+                      {log.admin?.name || 'System'}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {log.userId?.email || 'N/A'}
+                      {log.admin?.email || 'N/A'}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -339,7 +353,7 @@ const AdminAuditLogs = () => {
                     </div>
                     {log.targetId && (
                       <div className="text-xs text-gray-500 font-mono mt-1">
-                        {log.targetId.substring(0, 8)}...
+                        {String(log.targetId).substring(0, 8)}...
                       </div>
                     )}
                   </td>

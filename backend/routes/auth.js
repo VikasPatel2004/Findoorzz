@@ -102,6 +102,9 @@ router.post('/social-login', async (req, res) => {
         email: user.email,
         phone: user.phone,
         profilePicture: user.profilePicture,
+        role: user.role,
+        isAdmin: user.isAdmin,
+        verificationStatus: user.verificationStatus
       },
     });
   } catch (error) {
@@ -165,7 +168,10 @@ router.post('/login',
           name: user.name,
           email: user.email,
           phone: user.phone,
-          profilePicture: user.profilePicture
+          profilePicture: user.profilePicture,
+          role: user.role,
+          isAdmin: user.isAdmin,
+          verificationStatus: user.verificationStatus
         }
       });
     } catch (err) {
@@ -187,7 +193,10 @@ router.get('/profile', authenticateToken, async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      profilePicture: user.profilePicture
+      profilePicture: user.profilePicture,
+      role: user.role,
+      isAdmin: user.isAdmin,
+      verificationStatus: user.verificationStatus
     });
   } catch (err) {
     console.error(err);

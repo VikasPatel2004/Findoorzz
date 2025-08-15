@@ -1,4 +1,6 @@
 const { Cashfree } = require('cashfree-pg');
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 // Initialize Cashfree credentials and environment
 const initializeCashfree = () => {
@@ -22,13 +24,18 @@ const initializeCashfree = () => {
   }
 
   // Initialize Cashfree v5.x properly
+  // Also set environment variables recognized by SDK
+  process.env.CF_CLIENT_ID = appId;
+  process.env.CF_CLIENT_SECRET = secretKey;
+  process.env.CF_ENVIRONMENT = environment;
+
   Cashfree.XClientId = appId;
   Cashfree.XClientSecret = secretKey;
   Cashfree.XEnvironment = environment;
 
-  console.log(`✅ Cashfree configured for ${environment} environment`);
-  console.log(`✅ App ID: ${appId}`);
-  console.log(`✅ Environment: ${environment}`);
+  const maskedId = appId ? appId.slice(0, 4) + '...' + appId.slice(-4) : 'N/A';
+  console.log(`✅ Cashfree configured for ${environment} environment (App ID: ${maskedId})`);
+  console.log(`✅ CF env vars set: ${!!process.env.CF_CLIENT_ID && !!process.env.CF_CLIENT_SECRET}`);
   return true;
 };
 

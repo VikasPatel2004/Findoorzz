@@ -166,7 +166,8 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
             res.json({ 
                 success: true, 
                 message: 'Payment successful',
-                payment: paymentData
+                payment: paymentData,
+                booking: updatedBooking
             });
         } else {
             res.json({ 
@@ -190,6 +191,48 @@ router.get('/redirect/:paymentSessionId', (req, res) => {
     const { paymentSessionId } = req.params;
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontendUrl}/payment-status/${paymentSessionId}`);
+});
+
+// Payment status endpoint for polling
+router.get('/payment-status/:orderId', authMiddleware, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        if (!orderId) {
+            return res.status(400).json({ message: 'Missing orderId' });
+        }
+
+        const payment = await fetchPayments("2023-08-01", orderId);
+        if (!payment.data || payment.data.length === 0) {
+            return res.status(404).json({ success: false, message: 'No payment found' });
+        }
+
+        const paymentData = payment.data[0];
+        let booking = null;
+
+        // Extract booking ID if present in our order_id format: order_<bookingId>_<timestamp>
+        const parts = orderId.split('_');
+        if (parts.length >= 3) {
+            const bookingId = parts[1];
+            try {
+                booking = await Booking.findById(bookingId);
+            } catch (e) {
+                // ignore lookup errors
+            }
+        }
+
+        return res.json({
+            success: paymentData.payment_status === 'SUCCESS',
+            payment: paymentData,
+            booking
+        });
+
+    } catch (error) {
+        console.error('Payment status error:', error);
+        return res.status(500).json({ 
+            message: 'Failed to fetch payment status', 
+            error: error.message 
+        });
+    }
 });
 
 module.exports = router;

@@ -72,6 +72,15 @@ const adminService = {
     return await adminAxios.patch(`/users/${userId}`, updateData);
   },
 
+  // Convenience helpers for Users
+  updateUserRole: async (userId, role) => {
+    return await adminAxios.patch(`/users/${userId}`, { role });
+  },
+
+  updateUserStatus: async (userId, verificationStatus) => {
+    return await adminAxios.patch(`/users/${userId}`, { verificationStatus });
+  },
+
   // Audit Logs
   getAuditLogs: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();

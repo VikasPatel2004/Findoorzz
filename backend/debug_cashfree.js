@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const { Cashfree } = require('cashfree-pg');
 
 console.log('=== Cashfree Authentication Debug ===\n');
@@ -44,7 +45,7 @@ async function testMinimalOrder() {
         
         console.log('Order data:', JSON.stringify(minimalOrder, null, 2));
         
-        const result = await cashfree.PGCreateOrder("2022-09-01", minimalOrder);
+        const result = await cashfree.PGCreateOrder("2023-08-01", minimalOrder);
         
         console.log('✅ Success!', result);
         

@@ -45,14 +45,9 @@ const cashfreeService = {
 
     const { payment_session_id } = response.data;
 
-    // Step 2: Redirect to Cashfree using payment session
-    if (window.Cashfree && payment_session_id) {
-      const cashfree = new window.Cashfree(payment_session_id);
-      cashfree.redirect();
-    } else {
-      // Fallback redirect
-      window.location.href = `https://payments.cashfree.com/order/#${payment_session_id}`;
-    }
+    // Step 2: Redirect to Cashfree using payment session (always via URL)
+    const checkoutBase = import.meta.env.VITE_CASHFREE_PAYMENT_URL || 'https://payments.cashfree.com/order';
+    window.location.href = `${checkoutBase}/#${payment_session_id}`;
 
   } catch (error) {
     console.error('Payment error:', error);

@@ -7,11 +7,14 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    search: '',
-    role: '',
-    status: '',
+    role: 'all',
+    verificationStatus: 'all',
+    email: '',
+    name: '',
     page: 1,
-    limit: 10
+    limit: 10,
+    sortBy: 'createdAt',
+    sortOrder: 'desc'
   });
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -24,8 +27,8 @@ const AdminUsers = () => {
     try {
       setLoading(true);
       const response = await adminService.getUsers(filters);
-      setUsers(response.data.users);
-      setTotalPages(response.data.totalPages);
+      setUsers(response.users);
+      setTotalPages(response.pagination?.totalPages || 1);
       setError(null);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -81,12 +84,12 @@ const AdminUsers = () => {
     }
   };
 
-  const handleUpdateStatus = async (userId, status) => {
+  const handleUpdateStatus = async (userId, verificationStatus) => {
     try {
       setActionLoading(true);
-      await adminService.updateUserStatus(userId, status);
+      await adminService.updateUserStatus(userId, verificationStatus);
       setUsers(prev => prev.map(user => 
-        user._id === userId ? { ...user, status } : user
+        user._id === userId ? { ...user, verificationStatus } : user
       ));
     } catch (err) {
       console.error('Error updating user status:', err);
@@ -96,20 +99,32 @@ const AdminUsers = () => {
     }
   };
 
-  const handleBulkAction = async (action) => {
+  const handleBulkAction = async (verificationStatus) => {
     if (selectedUsers.length === 0) {
       alert('Please select users first.');
       return;
     }
 
-    const confirmMessage = `Are you sure you want to ${action} ${selectedUsers.length} user(s)?`;
+    const confirmMessage = `Are you sure you want to set ${selectedUsers.length} user(s) to "${verificationStatus}"?`;
     if (!confirm(confirmMessage)) return;
 
     try {
       setActionLoading(true);
-      await adminService.bulkUpdateUsers(selectedUsers, { status: action });
+      let success = 0;
+      let failed = 0;
+      for (const userId of selectedUsers) {
+        try {
+          await adminService.updateUserStatus(userId, verificationStatus);
+          success++;
+        } catch (e) {
+          failed++;
+        }
+      }
       await fetchUsers();
       setSelectedUsers([]);
+      if (failed > 0) {
+        alert(`Bulk update complete. Success: ${success}, Failed: ${failed}`);
+      }
     } catch (err) {
       console.error('Error performing bulk action:', err);
       alert('Failed to perform bulk action. Please try again.');
@@ -130,9 +145,9 @@ const AdminUsers = () => {
 
   const getStatusBadgeColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      case 'suspended': return 'bg-yellow-100 text-yellow-800';
+      case 'verified': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'under_review': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -159,13 +174,26 @@ const AdminUsers = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search Users
+              Name
             </label>
             <input
               type="text"
-              placeholder="Search by name or email..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              placeholder="Search by name..."
+              value={filters.name}
+              onChange={(e) => handleFilterChange('name', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="text"
+              placeholder="Search by email..."
+              value={filters.email}
+              onChange={(e) => handleFilterChange('email', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -179,27 +207,29 @@ const AdminUsers = () => {
               onChange={(e) => handleFilterChange('role', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Roles</option>
+              <option value="all">All Roles</option>
               <option value="admin">Admin</option>
               <option value="landlord">Landlord</option>
-              <option value="tenant">Tenant</option>
+              <option value="lender">Lender</option>
+              <option value="renter">Renter</option>
               <option value="broker">Broker</option>
+              <option value="student">Student</option>
             </select>
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
+              Verification Status
             </label>
             <select
-              value={filters.status}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
+              value={filters.verificationStatus}
+              onChange={(e) => handleFilterChange('verificationStatus', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
+              <option value="all">All</option>
+              <option value="verified">Verified</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
             </select>
           </div>
 
@@ -224,25 +254,25 @@ const AdminUsers = () => {
         {selectedUsers.length > 0 && (
           <div className="flex gap-2 mb-4">
             <button
-              onClick={() => handleBulkAction('active')}
+              onClick={() => handleBulkAction('verified')}
               disabled={actionLoading}
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
             >
-              Activate Selected ({selectedUsers.length})
+              Verify Selected ({selectedUsers.length})
             </button>
             <button
-              onClick={() => handleBulkAction('suspended')}
+              onClick={() => handleBulkAction('under_review')}
               disabled={actionLoading}
               className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 disabled:opacity-50"
             >
-              Suspend Selected ({selectedUsers.length})
+              Mark Under Review ({selectedUsers.length})
             </button>
             <button
-              onClick={() => handleBulkAction('inactive')}
+              onClick={() => handleBulkAction('pending')}
               disabled={actionLoading}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+              className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50"
             >
-              Deactivate Selected ({selectedUsers.length})
+              Mark Pending ({selectedUsers.length})
             </button>
           </div>
         )}
@@ -324,8 +354,8 @@ const AdminUsers = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(user.status)}`}>
-                      {user.status || 'Unknown'}
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(user.verificationStatus)}`}>
+                      {user.verificationStatus || 'Unknown'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -348,12 +378,12 @@ const AdminUsers = () => {
                     <button
                       onClick={() => handleUpdateStatus(
                         user._id, 
-                        user.status === 'active' ? 'inactive' : 'active'
+                        user.verificationStatus === 'verified' ? 'under_review' : 'verified'
                       )}
                       disabled={actionLoading}
-                      className={`${user.status === 'active' ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'} disabled:opacity-50`}
+                      className={`${user.verificationStatus === 'verified' ? 'text-yellow-700 hover:text-yellow-900' : 'text-green-600 hover:text-green-900'} disabled:opacity-50`}
                     >
-                      {user.status === 'active' ? 'Deactivate' : 'Activate'}
+                      {user.verificationStatus === 'verified' ? 'Mark Under Review' : 'Verify'}
                     </button>
                   </td>
                 </tr>
