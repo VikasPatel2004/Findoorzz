@@ -6,7 +6,7 @@ const flatListingSchema = new mongoose.Schema({
   houseNumber: { type: String, required: true },
   colony: { type: String, required: true },
   city: { type: String, required: true },
-  numberOfRooms: { type: Number, required: true, min: 1 },
+  bhk: { type: String, enum: ['1BHK', '2BHK', '3BHK'], required: true },
   furnishingStatus: { 
     type: String, 
     enum: ['Furnished', 'Semi-Furnished', 'Unfurnished'], 
@@ -20,18 +20,18 @@ const flatListingSchema = new mongoose.Schema({
   description: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   booked: { type: Boolean, default: false }, // Indicates if the listing is booked
+  reviewStatus: { type: String, enum: ['available', 'under_review', 'broker_assigned', 'confirmed'], default: 'available' },
+  assignedBroker: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
 // Add indexes for better query performance
-flatListingSchema.index({ type: 1 });
 flatListingSchema.index({ city: 1 });
 flatListingSchema.index({ colony: 1 });
 flatListingSchema.index({ rentAmount: 1 });
-flatListingSchema.index({ bedrooms: 1 });
+flatListingSchema.index({ bhk: 1 });
 flatListingSchema.index({ owner: 1 });
 flatListingSchema.index({ createdAt: -1 });
 flatListingSchema.index({ city: 1, colony: 1 });
 flatListingSchema.index({ city: 1, rentAmount: 1 });
-flatListingSchema.index({ type: 1, city: 1, rentAmount: 1 });
 
 module.exports = mongoose.model('FlatListing', flatListingSchema);

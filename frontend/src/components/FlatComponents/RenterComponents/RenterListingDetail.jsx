@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 import bookingService from '../../../services/bookingService';
-import cashfreeService from '../../../services/cashfreeService';
+import razorpayService from '../../../services/razorpayService';
 
 import ImageGallery from '../../ImageGallery';
 
@@ -27,9 +27,9 @@ const RenterListingDetail = ({ listing }) => {
         if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
             try {
                 setIsDeleting(true);
-                await listingService.deleteListing(listing._id);
+                await listingService.deleteListing('flat', listing._id);
                 alert('Listing deleted successfully');
-                navigate('/lender'); // Redirect to lender page after deletion
+                navigate('/Lender'); // Redirect to lender page after deletion
             } catch (error) {
                 console.error('Error deleting listing:', error);
                 alert('Failed to delete listing. Please try again.');
@@ -53,10 +53,10 @@ const RenterListingDetail = ({ listing }) => {
 
     const booking = await bookingService.createBooking(bookingData, token);
 
-    // Process payment with Cashfree
-    const bookingFee = Math.round(listing.rentAmount * 0.02);
+    // Process payment with Razorpay
+    const bookingFee = Math.round(listing.rentAmount * 0.10);
     
-    await cashfreeService.processPayment(
+    await razorpayService.processPayment(
       booking._id,
       bookingFee,
       `Booking fee for ${listing.landlordName}`,
@@ -69,7 +69,7 @@ const RenterListingDetail = ({ listing }) => {
       token,
       () => {
         setHasBooked(true);
-        alert('Payment successful! Redirecting to Cashfree...');
+        alert('Payment successful!');
       },
       (error) => {
         alert('Payment failed: ' + error.message);
@@ -181,7 +181,7 @@ const RenterListingDetail = ({ listing }) => {
                             </button>
                             {!hasBooked && (
                                 <p className="text-sm text-gray-600 mt-2">
-                                    Booking Fee: ₹{Math.round(listing.rentAmount * 0.02)} (2% of rent)
+                                    Booking Fee: ₹{Math.round(listing.rentAmount * 0.10)} (10% of rent)
                                 </p>
                             )}
                             {hasBooked && (

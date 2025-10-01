@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 import bookingService from '../../services/bookingService';
-import cashfreeService from '../../services/cashfreeService';
+import razorpayService from '../../services/razorpayService';
 
 const PaymentForm = () => {
   const { token, user } = useContext(AuthContext);
@@ -54,7 +54,7 @@ const PaymentForm = () => {
       const amount = calculateAmount();
       const description = `Payment for ${booking.listingTitle || 'property booking'}`;
 
-      await cashfreeService.processPayment(
+      await razorpayService.processPayment(
         bookingId,
         amount,
         description,
@@ -152,7 +152,7 @@ const PaymentForm = () => {
           {/* Header */}
           <div className="bg-blue-600 px-6 py-4">
             <h1 className="text-2xl font-bold text-white">Complete Payment</h1>
-            <p className="text-blue-100 mt-1">Secure payment powered by Cashfree</p>
+            <p className="text-blue-100 mt-1">Secure payment powered by Razorpay</p>
           </div>
 
           {/* Booking Details */}
@@ -193,7 +193,7 @@ const PaymentForm = () => {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Payment Method:</span>
-                  <span>Cashfree (Cards, UPI, Net Banking)</span>
+                  <span>Razorpay (Cards, UPI, Net Banking)</span>
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
 import listingService from '../../../services/listingService';
 import bookingService from '../../../services/bookingService';
-import cashfreeService from '../../../services/cashfreeService';
+import razorpayService from '../../../services/razorpayService';
 
 import ImageGallery from '../../ImageGallery';
 
@@ -17,10 +17,29 @@ const StudentListingDetail = ({ listing }) => {
     const [hasBooked, setHasBooked] = useState(false);
 
     // Check if current user is the owner of this listing
-              const isOwner = user && (String(listing.owner) === String(user._id) || String(listing.owner) === String(user.id));
+    const isOwner = user && (String(listing.owner) === String(user._id) || String(listing.owner) === String(user.id));
+    // Check if user is admin
+    const isAdmin = user && user.isAdmin;
 
     const handleEdit = () => {
         navigate(`/edit-pg-listing/${listing._id}`);
+    };
+    const [isActivating, setIsActivating] = useState(false);
+
+    // Handler to activate listing (admin only)
+    const handleActivateListing = async () => {
+        if (!user || !token || !isAdmin) return;
+        try {
+            setIsActivating(true);
+            await listingService.activateListing(listing._id, token);
+            alert('Listing activated and now available to students.');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error activating listing:', error);
+            alert('Failed to activate listing. Please try again.');
+        } finally {
+            setIsActivating(false);
+        }
     };
 
     const handleDelete = async () => {
@@ -63,29 +82,35 @@ const StudentListingDetail = ({ listing }) => {
                 bookingEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
             };
 
-            console.log('Booking data being sent:', bookingData);
+            // Log all booking data fields
+            console.log('Booking data being sent:', JSON.stringify(bookingData, null, 2));
+            console.log('User token:', token);
             const booking = await bookingService.createBooking(bookingData, token);
             console.log('Booking created:', booking);
 
-            // Process payment with Cashfree - Only 2% booking fee
-            const bookingFee = Math.round(listing.rentAmount * 0.02); // 2% of rent amount
-            const amount = bookingFee; // Amount in rupees
+            // Process payment with Razorpay - Only 2% booking fee
+            let bookingFee = Math.round((listing.rentAmount || 0) * 0.02); // 2% of rent amount
+            if (!bookingFee || bookingFee <= 0) {
+                bookingFee = 10; // fallback to ₹10 if rentAmount is missing or zero
+            }
+            const amount = bookingFee * 100; // Amount in paise
             const description = `Booking fee (2%) for ${listing.landlordName} - ${listing.houseNumber}`;
 
+            // Log all payment data fields
             console.log('Processing payment...');
-            console.log('User object:', user);
-            console.log('User object structure:', {
-                id: user.id,
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone
+            console.log('Payment data:', {
+                bookingId: booking._id,
+                amount,
+                description,
+                userDetails: {
+                    id: user.id || user._id,
+                    name: user.name || '',
+                    email: user.email || '',
+                    phone: user.phone
+                },
+                token
             });
-            // More detailed logging for debugging
-            console.log('User ID type:', typeof user._id);
-            console.log('User ID value:', user._id);
-            console.log('User ID (id property) type:', typeof user.id);
-            console.log('User ID (id property) value:', user.id);
+
             // Check if user has a phone number before proceeding with payment
             if (!user.phone) {
                 clearTimeout(timeoutId);
@@ -97,7 +122,7 @@ const StudentListingDetail = ({ listing }) => {
                 return;
             }
 
-            await cashfreeService.processPayment(
+            await razorpayService.processPayment(
                 booking._id,
                 amount,
                 description,
@@ -113,7 +138,8 @@ const StudentListingDetail = ({ listing }) => {
                     setIsBooking(false);
                     setHasBooked(true);
                     alert(`Booking successful! Booking fee of ₹${bookingFee} has been charged.`);
-                    window.location.href = `/RoomDetail/${listing._id}?justBooked=true`;
+                    // Redirect to the booked listing's detail page with all details shown
+                    navigate(`/RoomDetail/${listing._id}`);
                 },
                 (error) => { // onPaymentFailure
                     clearTimeout(timeoutId);
@@ -121,7 +147,6 @@ const StudentListingDetail = ({ listing }) => {
                     alert(error.message || 'Payment failed. Please try again.');
                 }
             );
-            
 
         } catch (error) {
             console.error('Booking error:', error);
@@ -147,7 +172,8 @@ const StudentListingDetail = ({ listing }) => {
                         return (
                             bookingListingId === listing._id &&
                             booking.listingType === 'PGListing' &&
-                            booking.status !== 'cancelled'
+                            booking.status !== 'cancelled' &&
+                            booking.paymentStatus === 'completed'
                         );
                     });
                     setHasBooked(hasBookedThisListing);
@@ -156,15 +182,15 @@ const StudentListingDetail = ({ listing }) => {
                 }
             }
         };
-        
         checkBookingStatus();
     }, [user, token, listing._id, isOwner]);
 
     useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      if (params.get('justBooked') === 'true') {
-        window.location.reload();
-      }
+            // Removed reload to prevent infinite loop after payment
+            // const params = new URLSearchParams(location.search);
+            // if (params.get('justBooked') === 'true') {
+            //   window.location.reload();
+            // }
     }, [location.search]);
 
     return (
@@ -229,6 +255,17 @@ const StudentListingDetail = ({ listing }) => {
                     {/* Book Button - Show for non-owners or when not editing */}
                     {!isOwner && (
                         <div className="flex flex-col items-center pt-3">
+                            {/* Admin Activate Button - Only show if admin and listing is booked (not available) */}
+                            {(isAdmin && hasBooked) ? (
+                                <button
+                                    type="button"
+                                    className="bg-green-500 text-white font-semibold px-5 py-2 rounded-md hover:bg-green-600 transition duration-300 mt-3"
+                                    onClick={handleActivateListing}
+                                    disabled={isActivating}
+                                >
+                                    {isActivating ? 'Activating...' : 'Activate Listing'}
+                                </button>
+                            ) : null}
                             <button 
                                 type="button" 
                                 className={`font-semibold px-5 py-2 rounded-md transition duration-300 ${

@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: { type: String, required: true },
   profilePicture: { type: String }, // URL to the profile picture
   phone: { type: String }, // User's phone number for payment processing
+  upiId: { type: String }, // UPI ID for payouts
   verificationStatus: { 
     type: String, 
     enum: ['pending', 'verified', 'under_review'], 

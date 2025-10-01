@@ -27,10 +27,10 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
         });
     };
 
-    const handleRoomTypeChange = (e) => {
+    const handleBhkChange = (e) => {
         onFilterChange({
             ...filters,
-            numberOfRooms: e.target.value,
+            bhk: e.target.value,
         });
     };
 
@@ -119,15 +119,14 @@ const RenterSearchFilter = ({ filters, onFilterChange }) => {
                     />
                 </div>
 
-                {/* Room Type Filter */}
+                {/* BHK Filter */}
                 <div className="p-2 rounded-md text-center">
-                    <label className="block mb-1">No. of Rooms</label>
-                    <select value={filters.numberOfRooms} onChange={handleRoomTypeChange} className="border rounded-md p-1 w-full">
-                        <option value="">Select No. of Rooms</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4+">4+</option>
+                    <label className="block mb-1">BHK</label>
+                    <select value={filters.bhk || ''} onChange={handleBhkChange} className="border rounded-md p-1 w-full">
+                        <option value="">Select BHK</option>
+                        <option value="1BHK">1BHK</option>
+                        <option value="2BHK">2BHK</option>
+                        <option value="3BHK">3BHK</option>
                     </select>
                 </div>
             </div>

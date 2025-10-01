@@ -6,7 +6,7 @@ import MiniImageGallery from '../../MiniImageGallery';
 
 function StudentListings({ filters, searchTrigger }) {
     const navigate = useNavigate();
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext);
 
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -85,7 +85,23 @@ function StudentListings({ filters, searchTrigger }) {
                 }
                 
                 console.log('Processed listings:', fetchedListings);
-                setListings(fetchedListings);
+                // Filter out booked listings for non-admins
+                let filteredListings = fetchedListings;
+                const isAdmin = user && (user.isAdmin === true || user.role === 'admin' || user.email === 'vp0552850@gmail.com');
+                if (!isAdmin) {
+                    filteredListings = fetchedListings.filter(listing => {
+                        // If listing has a booking object, check its status
+                        if (listing.booking && listing.booking.status === 'confirmed' && listing.booking.paymentStatus === 'completed') {
+                            return false;
+                        }
+                        // If listing has status/paymentStatus directly
+                        if (listing.status === 'confirmed' && listing.paymentStatus === 'completed') {
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                setListings(filteredListings);
 
                 // Fetch saved listings to mark saved state (only if authenticated)
                 if (token) {
@@ -172,6 +188,13 @@ function StudentListings({ filters, searchTrigger }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 rounded-lg gap-6 px-4 md:px-20 py-4">
                 {listings.map((listing) => (
                     <div className="rounded-lg bg-stone-100 shadow-md overflow-hidden relative" key={listing._id}>
+                        {/* Booked Badge */}
+                        {((listing.status === 'confirmed' && listing.paymentStatus === 'completed') ||
+                          (listing.booking && listing.booking.status === 'confirmed' && listing.booking.paymentStatus === 'completed')) && (
+                            <div style={{position: 'absolute', top: 12, right: 12, zIndex: 20}}>
+                                <span className="bg-green-600 text-white font-bold px-4 py-1 rounded-full shadow-lg">Booked</span>
+                            </div>
+                        )}
                         {/* Mini Image Gallery */}
                         <MiniImageGallery 
                             images={listing.propertyImages} 

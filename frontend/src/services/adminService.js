@@ -24,12 +24,10 @@ adminAxios.interceptors.response.use(
   (response) => response.data,
   (error) => {
     console.error('Admin API Error:', error.response?.data || error.message);
-    
-    if (error.response?.status === 403) {
-      // Redirect to home if not authorized
-      window.location.href = '/';
-    }
-    
+    // Commented out redirect to prevent reload loop for debugging
+    // if (error.response?.status === 403) {
+    //   window.location.href = '/';
+    // }
     return Promise.reject(error.response?.data || { message: error.message });
   }
 );

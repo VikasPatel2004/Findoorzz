@@ -16,7 +16,7 @@ function EditFlatListingForm() {
     houseNumber: '',
     colony: '',
     city: '',
-    numberOfRooms: '',
+    bhk: '',
     furnishingStatus: '',
     wifi: false,
     airConditioning: false,
@@ -45,7 +45,7 @@ function EditFlatListingForm() {
           houseNumber: listing.houseNumber || '',
           colony: listing.colony || '',
           city: listing.city || '',
-          numberOfRooms: listing.numberOfRooms || '',
+          bhk: listing.bhk || '',
           furnishingStatus: listing.furnishingStatus || '',
           wifi: listing.wifi || false,
           airConditioning: listing.airConditioning || false,
@@ -98,7 +98,7 @@ function EditFlatListingForm() {
       data.append('houseNumber', formData.houseNumber);
       data.append('colony', formData.colony);
       data.append('city', formData.city);
-      data.append('numberOfRooms', Number(formData.numberOfRooms));
+      data.append('bhk', formData.bhk);
       data.append('furnishingStatus', formData.furnishingStatus);
       data.append('wifi', formData.wifi ? 'true' : 'false');
       data.append('airConditioning', formData.airConditioning ? 'true' : 'false');
@@ -228,17 +228,20 @@ function EditFlatListingForm() {
             <div>
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label htmlFor="numberOfRooms" className="block text-sm font-medium text-gray-700">Number of Rooms:</label>
-                  <input
-                    id="numberOfRooms"
-                    name="numberOfRooms"
-                    type="number"
+                  <label htmlFor="bhk" className="block text-sm font-medium text-gray-700">BHK:</label>
+                  <select
+                    id="bhk"
+                    name="bhk"
                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring focus:ring-gray-500"
                     required
-                    value={formData.numberOfRooms}
+                    value={formData.bhk}
                     onChange={handleChange}
-                    onWheel={e => e.target.blur()}
-                  />
+                  >
+                    <option value="">Select</option>
+                    <option value="1BHK">1BHK</option>
+                    <option value="2BHK">2BHK</option>
+                    <option value="3BHK">3BHK</option>
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="furnishingStatus" className="block text-sm font-medium text-gray-700">Furnishing Status:</label>

@@ -3,6 +3,7 @@ const requireAdmin = require('../middleware/adminMiddleware');
 const FlatListing = require('../models/FlatListing');
 const PGListing = require('../models/PGListing');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 const AuditLog = require('../models/AuditLog');
 const mongoose = require('mongoose');
 
@@ -631,6 +632,65 @@ router.post('/listings/bulk-action', requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error in bulk action:', error);
     res.status(500).json({ message: 'Error performing bulk action', error: error.message });
+  }
+});
+
+// Assign a broker to a Flat listing
+router.patch('/listings/:id/assign-broker', requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { brokerId } = req.body;
+
+    if (!brokerId || !mongoose.Types.ObjectId.isValid(brokerId)) {
+      return res.status(400).json({ message: 'Valid brokerId is required' });
+    }
+
+    const broker = await User.findById(brokerId).select('name email role');
+    if (!broker) {
+      return res.status(404).json({ message: 'Broker user not found' });
+    }
+    if (broker.role !== 'broker') {
+      return res.status(400).json({ message: 'Selected user is not a verified broker' });
+    }
+
+    const flat = await FlatListing.findById(id);
+    if (!flat) {
+      return res.status(404).json({ message: 'Flat listing not found' });
+    }
+
+    const beforeState = flat.toObject();
+
+    flat.assignedBroker = broker._id;
+    flat.reviewStatus = 'broker_assigned';
+    await flat.save();
+
+    // Notify broker
+    try {
+      await Notification.create({
+        user: broker._id,
+        message: `You are selected as broker for flat ${flat.houseNumber}, ${flat.colony}, ${flat.city}`,
+        type: 'Broker',
+        relatedListing: flat._id
+      });
+    } catch (nerr) {
+      console.error('Failed to notify broker:', nerr.message);
+    }
+
+    await logAction(
+      req,
+      'ASSIGN_BROKER',
+      'FlatListing',
+      id,
+      `${flat.houseNumber}, ${flat.colony}`,
+      `Assigned broker ${broker.name} (${broker.email}) to flat listing`,
+      beforeState,
+      flat.toObject()
+    );
+
+    res.json({ message: 'Broker assigned successfully', listing: flat });
+  } catch (error) {
+    console.error('Error assigning broker:', error);
+    res.status(500).json({ message: 'Error assigning broker', error: error.message });
   }
 });
 

@@ -16,11 +16,12 @@ router.post('/', authenticateToken, async (req, res) => {
     const { listingType, listingId, bookingStartDate, bookingEndDate } = req.body;
     const userId = req.user.id; // Use req.user.id for consistency
 
-    // Check for overlapping bookings for the same listing
+    // Only block if booking is confirmed and payment is completed
     const overlappingBooking = await Booking.findOne({
       listingType,
       listingId,
-      status: { $ne: 'cancelled' },
+      status: 'confirmed',
+      paymentStatus: 'completed',
       $or: [
         { bookingStartDate: { $lte: bookingEndDate, $gte: bookingStartDate } },
         { bookingEndDate: { $lte: bookingEndDate, $gte: bookingStartDate } },
@@ -33,30 +34,25 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(409).json({ message: 'Listing is already booked for the selected dates' });
     }
 
-    // Check if user has already booked this listing
+    // Only block if user's previous booking is confirmed and payment is completed
     const existingUserBooking = await Booking.findOne({
       listingType,
       listingId,
       user: userId,
-      status: { $ne: 'cancelled' }
+      status: 'confirmed',
+      paymentStatus: 'completed'
     });
 
     if (existingUserBooking) {
-      console.log('User already has a booking for this listing:', existingUserBooking);
+      console.log('User already has a confirmed and paid booking for this listing:', existingUserBooking);
       return res.status(409).json({ message: 'You have already booked this listing' });
     }
 
-    const bookingData = { listingType, listingId, bookingStartDate, bookingEndDate, user: userId };
-    const booking = new Booking(bookingData);
-    await booking.save();
+  const bookingData = { listingType, listingId, bookingStartDate, bookingEndDate, user: userId, status: 'pending', paymentStatus: 'pending' };
+  const booking = new Booking(bookingData);
+  await booking.save();
 
-    // Mark the listing as booked
-    if (listingType === 'FlatListing') {
-      await FlatListing.findByIdAndUpdate(listingId, { booked: true });
-    } else if (listingType === 'PGListing') {
-      await PGListing.findByIdAndUpdate(listingId, { booked: true });
-    }
-
+    
     // Notification logic
     let ownerId;
     let listingTitle;

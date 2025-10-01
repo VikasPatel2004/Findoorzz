@@ -26,7 +26,7 @@ export default function RenterListings({ filters }) {
                     if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
                         filterParams.maxPrice = filters.rent[0];
                     }
-                    if (filters.numberOfRooms && filters.numberOfRooms.trim()) filterParams.bedrooms = filters.numberOfRooms;
+                    if (filters.bhk && filters.bhk.trim()) filterParams.bhk = filters.bhk.trim();
                     if (filters.amenities) {
                         if (filters.amenities.wifi === true) filterParams.wifi = true;
                         if (filters.amenities.ac === true) filterParams.airConditioning = true;
@@ -72,6 +72,7 @@ export default function RenterListings({ filters }) {
                     if (filters.rent && filters.rent.length > 0 && filters.rent[0] > 0) {
                         mergedListings = mergedListings.filter(l => l.rentAmount <= filters.rent[0]);
                     }
+                    // No client-side numberOfRooms filtering; using backend bhk filter
                 }
 
                 // Fetch saved listings only if user is authenticated
@@ -184,6 +185,7 @@ export default function RenterListings({ filters }) {
                                  {listing.houseNumber}, {listing.colony}, {listing.city}
                              </p>
                              <p className="mb-1">Rent: &#8377;{listing.rentAmount}/month</p>
+                             <p className="mb-1">BHK: {listing.bhk || 'N/A'}</p>
                              <p className="mb-1">Furnishing: {listing.furnishingStatus}</p>
                              <div className="flex flex-wrap gap-2 justify-center mb-1">
                                  <span className="inline-block bg-amber-100 font-semibold px-3 py-1 rounded-full border border-gray-200">

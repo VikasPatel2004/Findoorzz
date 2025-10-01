@@ -67,9 +67,12 @@ router.get('/flat/saved', authenticateToken, async (req, res) => {
 // Get all flat listings (with optional filters) - for renters to see all listings
 router.get('/flat', async (req, res) => {
   try {
-    const { city, colony, minPrice, maxPrice, bedrooms, amenities } = req.query;
-    let filter = { type: 'Flat', booked: false };
+    const { city, colony, minPrice, maxPrice, bhk, wifi, airConditioning } = req.query;
+
+    // Base filter: only non-booked flats
+    let filter = { booked: false };
     const exprFilters = [];
+
     // City filter (ignore all spaces and case, exact match)
     if (city) {
       exprFilters.push({
@@ -92,30 +95,36 @@ router.get('/flat', async (req, res) => {
         }
       });
     }
-    // Other filters (unchanged)
+
+    // Price filters
     if (minPrice || maxPrice) {
       filter.rentAmount = {};
       if (minPrice) filter.rentAmount.$gte = Number(minPrice);
       if (maxPrice) filter.rentAmount.$lte = Number(maxPrice);
-      filter.rentAmount.$ne = null;
     }
-    if (bedrooms) {
-      filter.bedrooms = parseInt(bedrooms);
+
+    // BHK filter
+    if (bhk) {
+      filter.bhk = bhk;
     }
-    if (amenities) {
-      filter.amenities = { $in: amenities.split(',') };
+
+    // Amenities booleans
+    if (wifi === 'true' || wifi === true) {
+      filter.wifi = true;
     }
+    if (airConditioning === 'true' || airConditioning === true) {
+      filter.airConditioning = true;
+    }
+
     // Combine exprFilters with $and if needed
-    let finalFilter = filter;
-    if (exprFilters.length > 0) {
-      finalFilter = { ...filter, $and: exprFilters };
-    }
+    const finalFilter = exprFilters.length > 0 ? { ...filter, $and: exprFilters } : filter;
+
     // Use lean() for better performance
     const listings = await FlatListing.find(finalFilter)
-      .select('title description rentAmount city colony bedrooms amenities images createdAt')
       .sort({ createdAt: -1 })
       .lean()
       .limit(50);
+
     res.json(listings);
   } catch (error) {
     console.error('Error fetching Flat listings:', error);
@@ -179,7 +188,7 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
       houseNumber,
       colony,
       city,
-      numberOfRooms,
+      bhk,
       furnishingStatus,
       wifi,
       airConditioning,
@@ -188,7 +197,7 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
       description
     } = req.body;
 
-    if (!landlordName || !contactNumber || !houseNumber || !colony || !city || !numberOfRooms || !furnishingStatus || !rentAmount || !description) {
+    if (!landlordName || !contactNumber || !houseNumber || !colony || !city || !bhk || !furnishingStatus || !rentAmount || !description) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -246,7 +255,7 @@ router.post('/flat', authenticateToken, upload.array('propertyImages', 10), asyn
       houseNumber,
       colony,
       city,
-      numberOfRooms: Number(numberOfRooms),
+      bhk,
       furnishingStatus,
       wifi: wifi === 'true' || wifi === true,
       airConditioning: airConditioning === 'true' || airConditioning === true,
@@ -325,9 +334,6 @@ router.put('/flat/:id', authenticateToken, checkListingOwnership, upload.array('
     }
 
     // Convert numeric fields
-    if (updateData.numberOfRooms !== undefined) {
-      updateData.numberOfRooms = Number(updateData.numberOfRooms);
-    }
     if (updateData.rentAmount !== undefined) {
       updateData.rentAmount = Number(updateData.rentAmount);
     }

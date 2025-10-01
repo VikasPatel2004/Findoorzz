@@ -255,7 +255,7 @@ router.put('/profile', authenticateToken, upload.single('profilePicture'), async
         id: user._id,
         phone: user.phone,
         name: user.name,
-        email: user.email,
+            email: user.email,
         profilePicture: user.profilePicture
       }
     });
