@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const pgListingSchema = new mongoose.Schema({
+  detailsRevealedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Users who viewed details
   landlordName: { type: String, required: true },
   contactNumber: { type: String, required: true },
   houseNumber: { type: String, required: true },

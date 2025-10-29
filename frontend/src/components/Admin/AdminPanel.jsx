@@ -77,6 +77,17 @@ const AdminPanel = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Debug Panel */}
+      {user && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-left">
+          <h3 className="font-bold mb-2">Admin Debug Info</h3>
+          <div><strong>Name:</strong> {user.name}</div>
+          <div><strong>Email:</strong> {user.email}</div>
+          <div><strong>isAdmin:</strong> {String(user.isAdmin)}</div>
+          <div><strong>Role:</strong> {user.role}</div>
+          <div><strong>adminService.isAdmin(user):</strong> {String(adminService.isAdmin(user))}</div>
+        </div>
+      )}
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

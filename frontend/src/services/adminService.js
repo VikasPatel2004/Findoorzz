@@ -87,8 +87,8 @@ const adminService = {
 
   // Utility Methods
   isAdmin: (user) => {
-    // Allow specific email for admin access
-    if (user && user.email === 'vp0552850@gmail.com') {
+    // Allow specific email for admin access (case-insensitive)
+    if (user && typeof user.email === 'string' && user.email.toLowerCase() === 'vp0552850@gmail.com') {
       return true;
     }
     return user && (user.isAdmin === true || user.role === 'admin');
